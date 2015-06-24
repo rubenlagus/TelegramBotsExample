@@ -2,10 +2,10 @@
 A simple to use library to create Telegram Bots in Java (Still Beta Version)
 
 ## Webhooks vs GetUpdates
-Both ways are supported (but I still didn't tested webhooks). To change between them, just go to ´BuildVars.java´ and change variable ´useWebHook´value.
+Both ways are supported (but I still didn't tested webhooks). To change between them, just go to *BuildVars.java* and change variable *useWebHook* value.
 
 ## Example bots
-Open them and send them /help command to get some information about their capabilities:
+Open them and send them */help* command to get some information about their capabilities:
 
 https://telegram.me/weatherbot 
 

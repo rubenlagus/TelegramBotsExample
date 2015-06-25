@@ -32,14 +32,14 @@ public class WeatherHandlers implements UpdatesCallback {
     private static final int CURRENTWEATHERID = 0;
     private static final int FORECASTWEATHERID = 1;
 
-    private static final int webhookPort = 9990;
+    private static final String webhookPath = "weatherBot";
     private final Webhook webhook;
     private final UpdatesThread updatesThread;
     private ConcurrentHashMap<Integer, Integer> listOfSentMessages = new ConcurrentHashMap<>();
 
     public WeatherHandlers() {
         if (BuildVars.useWebHook) {
-            webhook = new Webhook(this, webhookPort);
+            webhook = new Webhook(this, webhookPath);
             updatesThread = null;
             SenderHelper.SendWebhook(webhook.getURL(), TOKEN);
         } else {

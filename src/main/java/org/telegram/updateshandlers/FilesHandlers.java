@@ -23,7 +23,7 @@ import java.util.Map;
  */
 public class FilesHandlers implements UpdatesCallback {
     private static final String TOKEN = BotConfig.TOKENFILES;
-    private static final int webhookPort = 9992;
+    private static final String webhookPath = "filesBot";
 
     private static final int INITIAL_UPLOAD_STATUS = 0;
     private static final int DELETE_UPLOADED_STATUS = 1;
@@ -32,7 +32,7 @@ public class FilesHandlers implements UpdatesCallback {
 
     public FilesHandlers() {
         if (BuildVars.useWebHook) {
-            webhook = new Webhook(this, webhookPort);
+            webhook = new Webhook(this, webhookPath);
             updatesThread = null;
             SenderHelper.SendWebhook(webhook.getURL(), TOKEN);
         } else {

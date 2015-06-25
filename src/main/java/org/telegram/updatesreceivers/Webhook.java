@@ -20,14 +20,15 @@ import java.net.URI;
  * @date 20 of June of 2015
  */
 public class Webhook {
+    private static final int PORT = 443;
     private static final String KEYSTORE_SERVER_FILE = "./keystore_server";
     private static final String KEYSTORE_SERVER_PWD = "asdfgh";
 
-    private final URI URL;
-    private final int port;
+    private final String path;
 
-    public Webhook(UpdatesCallback callback, int webhookPort) {
-        this.port = webhookPort;
+
+    public Webhook(UpdatesCallback callback, String webhookPath) {
+        this.path = webhookPath;
         RestApi restApi = new RestApi(callback);
         SSLContextConfigurator sslContext = new SSLContextConfigurator();
 
@@ -39,8 +40,6 @@ public class Webhook {
         rc.register(restApi);
         rc.register(JacksonFeature.class);
         rc.property(JSONConfiguration.FEATURE_POJO_MAPPING, true);
-
-        URL = getBaseURI();
 
         final HttpServer grizzlyServer = GrizzlyHttpServerFactory.createHttpServer(
                 getBaseURI(),
@@ -54,10 +53,10 @@ public class Webhook {
     }
 
     private URI getBaseURI() {
-        return URI.create(BuildVars.INTERNALWEBHOOKURL + ":" + this.port);
+        return URI.create(String.format("%s:%d/%s", BuildVars.INTERNALWEBHOOKURL, PORT, this.path));
     }
 
     public String getURL() {
-        return String.format("%s:%d/callback", BuildVars.BASEWEBHOOKURL, this.port);
+        return String.format("%s/%s/callback", BuildVars.BASEWEBHOOKURL, this.path);
     }
  }

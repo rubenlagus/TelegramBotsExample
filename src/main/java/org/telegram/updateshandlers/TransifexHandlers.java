@@ -19,13 +19,13 @@ import java.util.List;
  */
 public class TransifexHandlers implements UpdatesCallback {
     private static final String TOKEN = BotConfig.TOKENTRANSIFEX;
-    private static final int webhookPort = 9991;
+    private static final String webhookPath = "transifexBot";
     private final Webhook webhook;
     private final UpdatesThread updatesThread;
 
     public TransifexHandlers() {
         if (BuildVars.useWebHook) {
-            webhook = new Webhook(this, webhookPort);
+            webhook = new Webhook(this, webhookPath);
             updatesThread = null;
             SenderHelper.SendWebhook(webhook.getURL(), TOKEN);
         } else {

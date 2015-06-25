@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class DirectionsHandlers implements UpdatesCallback {
     private static final String TOKEN = BotConfig.TOKENDIRECTIONS;
-    private final int webhookPort = 9993;
+    private static final String webhookPath = "directionsBot";
     private final Webhook webhook;
     private final UpdatesThread updatesThread;
     private static final int WATING_ORIGIN_STATUS = 0;
@@ -29,7 +29,7 @@ public class DirectionsHandlers implements UpdatesCallback {
 
     public DirectionsHandlers() {
         if (BuildVars.useWebHook) {
-            webhook = new Webhook(this, webhookPort);
+            webhook = new Webhook(this, webhookPath);
             updatesThread = null;
             SenderHelper.SendWebhook(webhook.getURL(), TOKEN);
         } else {
@@ -60,8 +60,9 @@ public class DirectionsHandlers implements UpdatesCallback {
                     DatabaseManager.getInstance().addUserForDirection(message.getFrom().getId(), WATING_ORIGIN_STATUS,
                             sentMessage.getMessageId(),null);
                 }
-            } else if (message.getText().startsWith(Commands.help) ||
-                    (message.getText().startsWith(Commands.startCommand) || !message.isGroupMessage())) {
+            } else if ((message.getText().startsWith(Commands.help) ||
+                    (message.getText().startsWith(Commands.startCommand) || !message.isGroupMessage())) &&
+                    DatabaseManager.getInstance().getUserDestinationStatus(message.getFrom().getId()) == -1) {
                 SendMessage sendMessageRequest = new SendMessage();
                 sendMessageRequest.setText(CustomMessages.helpDirections);
                 sendMessageRequest.setChatId(message.getChatId());

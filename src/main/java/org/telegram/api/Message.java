@@ -107,7 +107,7 @@ public class Message {
         if (jsonObject.has(DOCUMENT_FIELD)) {
             this.document = new Document(jsonObject.getJSONObject(DOCUMENT_FIELD));
         }
-        this.photo = new ArrayList<PhotoSize>();
+        this.photo = new ArrayList<>();
         if (jsonObject.has(PHOTO_FIELD)) {
             JSONArray photos = jsonObject.getJSONArray(PHOTO_FIELD);
             for (int i = 0; i < photos.length(); i++) {

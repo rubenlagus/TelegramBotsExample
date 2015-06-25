@@ -47,13 +47,6 @@ public class FilesHandlers implements UpdatesCallback {
         handleFileUpdate(update);
     }
 
-    @Override
-    public void onUpdatesReceived(List<Update> updates) {
-        for (Update update: updates) {
-            handleFileUpdate(update);
-        }
-    }
-
     public void handleFileUpdate(Update update) {
         Message message = update.getMessage();
         if (message != null && message.hasText()) {

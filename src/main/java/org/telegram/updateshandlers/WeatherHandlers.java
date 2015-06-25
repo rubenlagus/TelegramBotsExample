@@ -54,13 +54,6 @@ public class WeatherHandlers implements UpdatesCallback {
         sendWeatherInformation(update);
     }
 
-    @Override
-    public void onUpdatesReceived(List<Update> updates) {
-        for (Update update: updates) {
-            sendWeatherInformation(update);
-        }
-    }
-
     public void sendWeatherInformation(Update update) {
         Message message = update.getMessage();
         if (message != null && message.hasText()) {

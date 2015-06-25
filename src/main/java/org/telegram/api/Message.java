@@ -71,7 +71,7 @@ public class Message {
     private String newChatTitle; ///< Optional. A group title was changed to this value
     public static final String NEWCHATPHOTO_FIELD = "new_chat_photo";
     @JsonProperty(NEWCHATPHOTO_FIELD)
-    private String newChatPhoto; ///< Optional. A group photo was change to this value
+    private List<PhotoSize> newChatPhoto; ///< Optional. A group photo was change to this value
     public static final String DELETECHATPHOTO_FIELD = "delete_chat_photo";
     @JsonProperty(DELETECHATPHOTO_FIELD)
     private Boolean deleteChatPhoto; ///< Optional. Informs that the group photo was deleted
@@ -136,7 +136,13 @@ public class Message {
             this.replyToMessage = new Message(jsonObject.getJSONObject(REPLYTOMESSAGE_FIELD));
         }
         this.newChatTitle = jsonObject.optString(NEWCHATTITLE_FIELD, "");
-        this.newChatPhoto = jsonObject.optString(NEWCHATPHOTO_FIELD, "");
+        if (jsonObject.has(NEWCHATPHOTO_FIELD)) {
+            JSONArray photoArray = jsonObject.getJSONArray(NEWCHATPHOTO_FIELD);
+            this.newChatPhoto = new ArrayList<>();
+            for (int i = 0; i < photoArray.length(); i++) {
+                this.newChatPhoto.add(new PhotoSize(photoArray.getJSONObject(i)));
+            }
+        }
         this.deleteChatPhoto = jsonObject.optBoolean(DELETECHATPHOTO_FIELD, false);
         this.groupchatCreated = jsonObject.optBoolean(GROUPCHATCREATED_FIELD, false);
     }
@@ -293,11 +299,11 @@ public class Message {
         this.newChatTitle = newChatTitle;
     }
 
-    public String getNewChatPhoto() {
+    public List<PhotoSize> getNewChatPhoto() {
         return newChatPhoto;
     }
 
-    public void setNewChatPhoto(String newChatPhoto) {
+    public void setNewChatPhoto(List<PhotoSize> newChatPhoto) {
         this.newChatPhoto = newChatPhoto;
     }
 

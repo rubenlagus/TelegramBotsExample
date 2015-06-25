@@ -44,13 +44,6 @@ public class DirectionsHandlers implements UpdatesCallback {
         handleDirections(update);
     }
 
-    @Override
-    public void onUpdatesReceived(List<Update> updates) {
-        for (Update update: updates) {
-            handleDirections(update);
-        }
-    }
-
     public void handleDirections(Update update) {
         Message message = update.getMessage();
         if (message != null && message.hasText()) {

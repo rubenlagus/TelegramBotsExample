@@ -177,24 +177,26 @@ public class TransifexService {
      * @param language Language requested
      */
     public SendDocument getAndroidSupportLanguageFile(String language) {
-        String file = getFileAndroid(language);
-        SendDocument sendDocument;
-        if (file != null && file.getBytes().length / BYTES1024 >= 10) {
-            file = file.replaceAll("\"LanguageName\"\\>(\\w*)\\<\\/string\\>", "\"LanguageName\"\\>$1_1\\<\\/string\\>").replaceAll("\"LanguageCode\"\\>(\\w*)\\<\\/string\\>", "\"LanguageCode\"\\>$1_1\\<\\/string\\>");
-            try {
-                String fileName = "languages_Android_" + language + ".xml";
-                PrintWriter localFile = new PrintWriter(fileName);
-                localFile.print(file);
-                localFile.close();
-                File fileToUpload = new File(fileName);
-                sendDocument = new SendDocument();
-                sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                sendDocument = null;
+        SendDocument sendDocument = null;
+        try {
+            String file = getFileAndroid(language);
+
+            if (file != null && file.getBytes().length / BYTES1024 >= 10) {
+                file = file.replaceAll("\"LanguageName\"\\>(\\w*)\\<\\/string\\>", "\"LanguageName\"\\>$1_1\\<\\/string\\>").replaceAll("\"LanguageCode\"\\>(\\w*)\\<\\/string\\>", "\"LanguageCode\"\\>$1_1\\<\\/string\\>");
+                try {
+                    String fileName = "languages_Android_" + language + ".xml";
+                    PrintWriter localFile = new PrintWriter(fileName);
+                    localFile.print(file);
+                    localFile.close();
+                    File fileToUpload = new File(fileName);
+                    sendDocument = new SendDocument();
+                    sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
-        } else {
-            sendDocument = null;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return sendDocument;
     }
@@ -204,23 +206,24 @@ public class TransifexService {
      * @param language Language requested
      */
     public SendDocument getAndroidLanguageFile(String language) {
-        String file = getFileAndroid(language);
-        SendDocument sendDocument;
-        if (file != null && file.getBytes().length / BYTES1024 >= 10) {
-            try {
-                String fileName = "languages_Android_" + language + ".xml";
-                PrintWriter localFile = new PrintWriter(fileName);
-                localFile.print(file);
-                localFile.close();
-                File fileToUpload = new File(fileName);
-                sendDocument = new SendDocument();
-                sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                sendDocument = null;
+        SendDocument sendDocument = null;
+        try {
+            String file = getFileAndroid(language);
+            if (file != null && file.getBytes().length / BYTES1024 >= 10) {
+                try {
+                    String fileName = "languages_Android_" + language + ".xml";
+                    PrintWriter localFile = new PrintWriter(fileName);
+                    localFile.print(file);
+                    localFile.close();
+                    File fileToUpload = new File(fileName);
+                    sendDocument = new SendDocument();
+                    sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
-        } else {
-            sendDocument = null;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return sendDocument;
     }
@@ -231,23 +234,24 @@ public class TransifexService {
      * @param language Language requested
      */
     public SendDocument getiOSLanguageFile(String language) {
-        byte[] file = getFileiOS(language);
-        SendDocument sendDocument;
-        if (file != null && file.length / BYTES1024 >= 10) {
-            try {
-                String fileName = "languages_ios_" + language + ".strings";
-                File fileToUpload = new File(fileName);
-                FileOutputStream output = new FileOutputStream(fileToUpload);
-                IOUtils.write(file, output);
-                output.close();
-                sendDocument = new SendDocument();
-                sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
-            } catch (IOException e) {
-                e.printStackTrace();
-                sendDocument = null;
+        SendDocument sendDocument = null;
+        try {
+            byte[] file = getFileiOS(language);
+            if (file != null && file.length / BYTES1024 >= 10) {
+                try {
+                    String fileName = "languages_ios_" + language + ".strings";
+                    File fileToUpload = new File(fileName);
+                    FileOutputStream output = new FileOutputStream(fileToUpload);
+                    IOUtils.write(file, output);
+                    output.close();
+                    sendDocument = new SendDocument();
+                    sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        } else {
-            sendDocument = null;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return sendDocument;
     }
@@ -257,23 +261,24 @@ public class TransifexService {
      * @param language Language requested
      */
     public SendDocument getOSXLanguageFile(String language) {
-        byte[] file = getFileOSX(language);
-        SendDocument sendDocument;
-        if (file != null && file.length / BYTES1024 >= 10) {
-            try {
-                String fileName = "languages_osx_" + language + ".strings";
-                File fileToUpload = new File(fileName);
-                FileOutputStream output = new FileOutputStream(fileToUpload);
-                IOUtils.write(file, output);
-                output.close();
-                sendDocument = new SendDocument();
-                sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
-            } catch (IOException e) {
-                e.printStackTrace();
-                sendDocument = null;
+        SendDocument sendDocument = null;
+        try {
+            byte[] file = getFileOSX(language);
+            if (file != null && file.length / BYTES1024 >= 10) {
+                try {
+                    String fileName = "languages_osx_" + language + ".strings";
+                    File fileToUpload = new File(fileName);
+                    FileOutputStream output = new FileOutputStream(fileToUpload);
+                    IOUtils.write(file, output);
+                    output.close();
+                    sendDocument = new SendDocument();
+                    sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-        } else {
-            sendDocument = null;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return sendDocument;
     }
@@ -283,22 +288,26 @@ public class TransifexService {
      * @param language Language requested
      */
     public SendDocument getTdesktopLanguageFile(String language) {
-        byte[] file = getFileTDesktop(language);
         SendDocument sendDocument = null;
-        if (file != null && file.length / BYTES1024 >= 10) {
-            try {
-                String fileName = "languages_tdesktop_" + language + ".strings";
-                File fileToUpload = new File(fileName);
-                FileOutputStream output = new FileOutputStream(fileToUpload);
-                IOUtils.write(file, output);
-                output.close();
-                if (fileToUpload.exists()) {
-                    sendDocument = new SendDocument();
-                    sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+        try {
+            byte[] file = getFileTDesktop(language);
+            if (file != null && file.length / BYTES1024 >= 10) {
+                try {
+                    String fileName = "languages_tdesktop_" + language + ".strings";
+                    File fileToUpload = new File(fileName);
+                    FileOutputStream output = new FileOutputStream(fileToUpload);
+                    IOUtils.write(file, output);
+                    output.close();
+                    if (fileToUpload.exists()) {
+                        sendDocument = new SendDocument();
+                        sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return sendDocument;
     }
@@ -308,22 +317,26 @@ public class TransifexService {
      * @param language Language requested
      */
     public SendDocument getWebogramLanguageFile(String language) {
-        byte[] file = getFileWebogram(language);
         SendDocument sendDocument = null;
-        if (file != null && file.length / BYTES1024 >= 10) {
-            try {
-                String fileName = "languages_webogram_" + language + ".json";
-                File fileToUpload = new File(fileName);
-                FileOutputStream output = new FileOutputStream(fileToUpload);
-                IOUtils.write(file, output);
-                output.close();
-                if (fileToUpload.exists()) {
-                    sendDocument = new SendDocument();
-                    sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+        try {
+            byte[] file = getFileWebogram(language);
+            if (file != null && file.length / BYTES1024 >= 10) {
+                try {
+                    String fileName = "languages_webogram_" + language + ".json";
+                    File fileToUpload = new File(fileName);
+                    FileOutputStream output = new FileOutputStream(fileToUpload);
+                    IOUtils.write(file, output);
+                    output.close();
+                    if (fileToUpload.exists()) {
+                        sendDocument = new SendDocument();
+                        sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return sendDocument;
     }
@@ -333,22 +346,26 @@ public class TransifexService {
      * @param language Language requested
      */
     public SendDocument getWPLanguageFile(String language) {
-        byte[] file = getFileWP(language);
         SendDocument sendDocument = null;
-        if (file != null && file.length / BYTES1024 >= 10) {
-            try {
-                String fileName = "languages_wp_" + language + ".xml";
-                File fileToUpload = new File(fileName);
-                FileOutputStream output = new FileOutputStream(fileToUpload);
-                IOUtils.write(file, output);
-                output.close();
-                if (fileToUpload.exists()) {
-                    sendDocument = new SendDocument();
-                    sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+        try {
+            byte[] file = getFileWP(language);
+            if (file != null && file.length / BYTES1024 >= 10) {
+                try {
+                    String fileName = "languages_wp_" + language + ".xml";
+                    File fileToUpload = new File(fileName);
+                    FileOutputStream output = new FileOutputStream(fileToUpload);
+                    IOUtils.write(file, output);
+                    output.close();
+                    if (fileToUpload.exists()) {
+                        sendDocument = new SendDocument();
+                        sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return sendDocument;
     }

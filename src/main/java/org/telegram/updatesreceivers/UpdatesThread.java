@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * @author Ruben Bermudez
@@ -31,19 +34,19 @@ import java.util.List;
 public class UpdatesThread {
     private final UpdatesCallback callback;
     private final ReaderThread readerThread;
+    private final HandlerThread handlerThread;
     private int lastReceivedUpdate;
     private String token;
+    private final ConcurrentLinkedQueue<Update> receivedUpdates = new ConcurrentLinkedQueue<>();
 
     public UpdatesThread(String token, UpdatesCallback callback) {
         this.token = token;
         this.callback = callback;
         this.lastReceivedUpdate = -1;
-        if (BuildVars.useWebHook) {
-            this.readerThread = null;
-        } else {
-            this.readerThread = new ReaderThread();
-            this.readerThread.start();
-        }
+        this.readerThread = new ReaderThread();
+        this.readerThread.start();
+        this.handlerThread = new HandlerThread();
+        this.handlerThread.start();
     }
 
     private class ReaderThread extends Thread {
@@ -81,7 +84,10 @@ public class UpdatesThread {
                                 updates.add(update);
 
                             }
-                            callback.onUpdatesReceived(updates);
+                            receivedUpdates.addAll(updates);
+                            synchronized (receivedUpdates) {
+                                receivedUpdates.notifyAll();
+                            }
                         } else {
                             try {
                                 synchronized (this) {
@@ -105,6 +111,30 @@ public class UpdatesThread {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+    private class HandlerThread extends Thread {
+        @Override
+        public void run() {
+            while(true) {
+                Update update = receivedUpdates.poll();
+                if (update == null) {
+                    synchronized (receivedUpdates) {
+                        try {
+                            receivedUpdates.wait();
+                        } catch (InterruptedException e) {
+                            continue;
+                        }
+                        update = receivedUpdates.poll();
+                        if (update == null) {
+                            continue;
+                        }
+                    }
+                }
+
+                callback.onUpdateReceived(update);
             }
         }
     }

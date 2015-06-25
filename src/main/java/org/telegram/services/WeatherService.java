@@ -95,7 +95,7 @@ public class WeatherService {
             } else {
                 responseToUser = "City not found";
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             responseToUser = "Error fetching weather info";
         }
         return responseToUser;
@@ -134,7 +134,7 @@ public class WeatherService {
             } else {
                 responseToUser = "City not found";
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             responseToUser = "Error fetching weather info";
         }
         return responseToUser;
@@ -174,7 +174,7 @@ public class WeatherService {
             } else {
                 responseToUser = "City not found";
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             responseToUser = "Error fetching weather info";
         }
         return responseToUser;
@@ -213,7 +213,7 @@ public class WeatherService {
             } else {
                 responseToUser = "City not found";
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             responseToUser = "Error fetching weather info";
         }
         return responseToUser;

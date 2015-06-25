@@ -91,7 +91,7 @@ public class DirectionsService {
             } else {
                 responseToUser = "Directions not found between " + origin + " and " + destination;
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             responseToUser = "Error fetching weather info";
         }
         return responseToUser;
@@ -101,7 +101,7 @@ public class DirectionsService {
         return URLEncoder.encode(address, "UTF-8");
     }
 
-    public String getDirectionsSteps(JSONArray steps) {
+    private String getDirectionsSteps(JSONArray steps) {
         String stepsStringify = "";
         for (int i = 0; i < steps.length(); i++) {
             stepsStringify += i + ".\t" + getDirectionForStep(steps.getJSONObject(i)) + "\n\n";

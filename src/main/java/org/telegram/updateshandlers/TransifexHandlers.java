@@ -40,13 +40,6 @@ public class TransifexHandlers implements UpdatesCallback {
         sendTransifexFile(update);
     }
 
-    @Override
-    public void onUpdatesReceived(List<Update> updates) {
-        for (Update update: updates) {
-            sendTransifexFile(update);
-        }
-    }
-
     public void sendTransifexFile(Update update) {
         Message message = update.getMessage();
         if (message != null && message.hasText()) {

@@ -1,6 +1,5 @@
 package org.telegram.updatesreceivers;
 
-import jdk.internal.org.objectweb.asm.Handle;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;

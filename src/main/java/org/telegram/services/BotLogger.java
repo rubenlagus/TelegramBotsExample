@@ -65,8 +65,6 @@ public class BotLogger {
                     file.createNewFile();
                 }
                 logginFile = new PrintWriter(new BufferedWriter(new FileWriter(currentFileName, true)));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -330,7 +328,7 @@ public class BotLogger {
     }
 
     private void logMsgToFile(Level level, String msg, String dateForLog) {
-        dateForLog += level.toString() + " - " + msg;
+        dateForLog += " [" + logger.getName() + "]"  + level.toString() + " - " + msg;
         logsToFile.add(dateForLog);
         synchronized (logsToFile) {
             logsToFile.notifyAll();

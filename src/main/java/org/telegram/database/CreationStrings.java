@@ -9,7 +9,7 @@ package org.telegram.database;
 public class CreationStrings {
     public static final int version = 3;
     public static final String createVersionTable = "CREATE TABLE IF NOT EXISTS Versions(ID INTEGER PRIMARY KEY AUTO_INCREMENT, Version INTEGER);";
-    public static final String insertCurrentVersion = "INSERT IGNORE INTO Versions (Version) VALUES(" + version + ");";
+    public static final String insertCurrentVersion = "INSERT IGNORE INTO Versions (Version) VALUES(%d);";
     public static final String createFilesTable = "CREATE TABLE IF NOT EXISTS Files (fileId VARCHAR(100) PRIMARY KEY, userId INTEGER NOT NULL, caption TEXT NOT NULL)";
     public static final String createUsersForFilesTable = "CREATE TABLE IF NOT EXISTS FilesUsers (userId INTEGER PRIMARY KEY, status INTEGER NOT NULL DEFAULT 0)";
     public static final String createRecentWeatherTable = "CREATE TABLE IF NOT EXISTS RecentWeather (ID INTEGER PRIMARY KEY AUTO_INCREMENT, userId INTEGER NOT NULL, " +
@@ -17,6 +17,7 @@ public class CreationStrings {
             "CONSTRAINT unique_cistyuser UNIQUE (userId,cityId))";
     public static final String createDirectionsDatabase = "CREATE TABLE IF NOT EXISTS Directions (userId INTEGER PRIMARY KEY, status INTEGER NOT NULL, " +
             "messageId INTEGER NOT NULL DEFAULT 0, origin VARCHAR(100));";
+    public static final String createLastUpdateDatabase = "CREATE TABLE IF NOT EXISTS LastUpdate (token STRING PRIMARY KEY, updateId INTEGER NOT NULL DEFAULT -1);";
 
 
     /*public static final String createOperatingSystemsVersion = "CREATE TABLE IF NOT EXISTS OperatingSystems (operatingSystem VARCHAR(20) PRIMARY KEY);";

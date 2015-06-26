@@ -1,5 +1,6 @@
 package org.telegram.updatesreceivers;
 
+import com.sun.corba.se.impl.oa.toa.TOA;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -17,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.telegram.BuildVars;
 import org.telegram.api.Update;
+import org.telegram.database.DatabaseManager;
 import org.telegram.methods.Constants;
 import org.telegram.methods.GetUpdates;
 import org.telegram.methods.SendMessage;
@@ -50,7 +52,7 @@ public class UpdatesThread {
     public UpdatesThread(String token, UpdatesCallback callback) {
         this.token = token;
         this.callback = callback;
-        this.lastReceivedUpdate = -1;
+        this.lastReceivedUpdate = DatabaseManager.getInstance().getLastUpdate(this.token);
         this.readerThread = new ReaderThread();
         this.readerThread.start();
         this.handlerThread = new HandlerThread();
@@ -132,23 +134,27 @@ public class UpdatesThread {
         public void run() {
             setPriority(Thread.MIN_PRIORITY);
             while(true) {
-                Update update = receivedUpdates.poll();
-                if (update == null) {
-                    synchronized (receivedUpdates) {
-                        try {
-                            receivedUpdates.wait();
-                        } catch (InterruptedException e) {
-                            log.error(e);
-                            continue;
-                        }
-                        update = receivedUpdates.poll();
-                        if (update == null) {
-                            continue;
+                try {
+                    Update update = receivedUpdates.poll();
+                    if (update == null) {
+                        synchronized (receivedUpdates) {
+                            try {
+                                receivedUpdates.wait();
+                            } catch (InterruptedException e) {
+                                log.error(e);
+                                continue;
+                            }
+                            update = receivedUpdates.poll();
+                            if (update == null) {
+                                continue;
+                            }
                         }
                     }
+                    DatabaseManager.getInstance().putLastUpdate(token, update.getUpdateId());
+                    callback.onUpdateReceived(update);
+                } catch (Exception e) {
+                    log.error(e);
                 }
-
-                callback.onUpdateReceived(update);
             }
         }
     }

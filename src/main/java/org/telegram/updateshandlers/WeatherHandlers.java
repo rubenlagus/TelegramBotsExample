@@ -1,10 +1,7 @@
 package org.telegram.updateshandlers;
 
 import org.telegram.*;
-import org.telegram.api.ForceReply;
-import org.telegram.api.Message;
-import org.telegram.api.ReplyKeyboardMarkup;
-import org.telegram.api.Update;
+import org.telegram.api.*;
 import org.telegram.database.DatabaseManager;
 import org.telegram.methods.SendMessage;
 import org.telegram.services.BotLogger;
@@ -64,6 +61,11 @@ public class WeatherHandlers implements UpdatesCallback {
                     String citywithoutdescription = parts[1].split("-->", 2)[0].trim();
                     String weather = WeatherService.getInstance().fetchWeatherForecast(citywithoutdescription, message.getFrom().getId());
                     SendMessage sendMessageRequest = new SendMessage();
+                    ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
+                    replyKeyboardHide.setSelective(true);
+                    replyKeyboardHide.setHideKeyboard(true);
+                    sendMessageRequest.setReplayMarkup(replyKeyboardHide);
+                    sendMessageRequest.setReplayToMessageId(update.getMessage().getMessageId());
                     sendMessageRequest.setText(weather);
                     sendMessageRequest.setChatId(message.getChatId());
                     SenderHelper.SendMessage(sendMessageRequest, TOKEN);
@@ -105,6 +107,11 @@ public class WeatherHandlers implements UpdatesCallback {
                     String citywithoutdescription = parts[1].split("-->", 2)[0].trim();
                     String weather = WeatherService.getInstance().fetchWeatherCurrent(citywithoutdescription, message.getFrom().getId());
                     SendMessage sendMessageRequest = new SendMessage();
+                    ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
+                    replyKeyboardHide.setSelective(true);
+                    replyKeyboardHide.setHideKeyboard(true);
+                    sendMessageRequest.setReplayMarkup(replyKeyboardHide);
+                    sendMessageRequest.setReplayToMessageId(update.getMessage().getMessageId());
                     sendMessageRequest.setText(weather);
                     sendMessageRequest.setChatId(message.getChatId());
                     SenderHelper.SendMessage(sendMessageRequest, TOKEN);
@@ -150,6 +157,11 @@ public class WeatherHandlers implements UpdatesCallback {
                     String weather = WeatherService.getInstance().fetchWeatherForecast(message.getText(), message.getFrom().getId());
                     sendMessageRequest.setText(weather);
                 }
+                ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
+                replyKeyboardHide.setSelective(true);
+                replyKeyboardHide.setHideKeyboard(true);
+                sendMessageRequest.setReplayMarkup(replyKeyboardHide);
+                sendMessageRequest.setReplayToMessageId(update.getMessage().getMessageId());
                 sendMessageRequest.setChatId(message.getChatId());
                 SenderHelper.SendMessage(sendMessageRequest, TOKEN);
             } else if (parts[0].startsWith(Commands.help) ||
@@ -163,6 +175,11 @@ public class WeatherHandlers implements UpdatesCallback {
             String weather = WeatherService.getInstance().fetchWeatherForecastByLocation(message.getLocation().getLongitude(),
                     message.getLocation().getLatitude(), message.getFrom().getId());
             SendMessage sendMessageRequest = new SendMessage();
+            ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
+            replyKeyboardHide.setSelective(true);
+            replyKeyboardHide.setHideKeyboard(true);
+            sendMessageRequest.setReplayMarkup(replyKeyboardHide);
+            sendMessageRequest.setReplayToMessageId(update.getMessage().getMessageId());
             sendMessageRequest.setText(weather);
             sendMessageRequest.setChatId(message.getChatId());
             SenderHelper.SendMessage(sendMessageRequest, TOKEN);

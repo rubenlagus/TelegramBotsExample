@@ -89,15 +89,18 @@ public class DirectionsHandlers implements UpdatesCallback {
                         DatabaseManager.getInstance().getUserDestinationMessageId(message.getFrom().getId()) == message.getReplyToMessage().getMessageId()) {
                     String origin = DatabaseManager.getInstance().getUserOrigin(message.getFrom().getId());
                     String destiny = message.getText();
-                    String directions = DirectionsService.getInstance().getDirections(origin, destiny);
+                    List<String> directions = DirectionsService.getInstance().getDirections(origin, destiny);
                     SendMessage sendMessageRequest = new SendMessage();
                     sendMessageRequest.setChatId(message.getChatId());
                     ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
                     replyKeyboardHide.setSelective(true);
                     sendMessageRequest.setReplayMarkup(replyKeyboardHide);
                     sendMessageRequest.setReplayToMessageId(message.getMessageId());
-                    sendMessageRequest.setText(directions);
-                    Message sentMessage = SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+                    Message sentMessage = null;
+                    for (String direction: directions) {
+                        sendMessageRequest.setText(direction);
+                        sentMessage = SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+                    }
                     if (sentMessage != null) {
                         DatabaseManager.getInstance().deleteUserForDirections(message.getFrom().getId());
                     }

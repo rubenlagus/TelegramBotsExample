@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Ruben Bermudez
@@ -64,8 +66,8 @@ public class DirectionsService {
      * @param destination Destination address
      * @return Destinations
      */
-    public String getDirections(String origin, String destination) {
-        String responseToUser;
+    public List<String> getDirections(String origin, String destination) {
+        final List<String> responseToUser = new ArrayList<>();
         try {
             String completURL = BASEURL + "?origin=" + getQuery(origin) + "&destination=" +  getQuery(destination) + PARAMS + APIIDEND;
             HttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
@@ -79,20 +81,22 @@ public class DirectionsService {
             JSONObject jsonObject = new JSONObject(responseContent);
             if (jsonObject.getString("status").equals("OK")) {
                 JSONObject route = jsonObject.getJSONArray("routes").getJSONObject(0);
-                responseToUser = route.getJSONArray("legs").getJSONObject(0).getString("start_address");
-                responseToUser += " is ";
-                responseToUser += route.getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text");
-                responseToUser += " away from ";
-                responseToUser += route.getJSONArray("legs").getJSONObject(0).getString("end_address"); // TODO Destination
-                responseToUser += " and it takes ";
-                responseToUser += route.getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text");
-                responseToUser += " to arrive there following these directions:\n\n";
-                responseToUser += getDirectionsSteps(route.getJSONArray("legs").getJSONObject(0).getJSONArray("steps"));
+                String partialResponseToUser;
+                partialResponseToUser = route.getJSONArray("legs").getJSONObject(0).getString("start_address");
+                partialResponseToUser += " is ";
+                partialResponseToUser += route.getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text");
+                partialResponseToUser += " away from ";
+                partialResponseToUser += route.getJSONArray("legs").getJSONObject(0).getString("end_address"); // TODO Destination
+                partialResponseToUser += " and it takes ";
+                partialResponseToUser += route.getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text");
+                partialResponseToUser += " to arrive there following these directions:\n\n";
+                responseToUser.add(partialResponseToUser);
+                responseToUser.addAll(getDirectionsSteps(route.getJSONArray("legs").getJSONObject(0).getJSONArray("steps")));
             } else {
-                responseToUser = "Directions not found between " + origin + " and " + destination;
+                responseToUser.add("Directions not found between " + origin + " and " + destination);
             }
         } catch (Exception e) {
-            responseToUser = "Error fetching weather info";
+            responseToUser.add("Error fetching weather info");
         }
         return responseToUser;
     }
@@ -101,10 +105,19 @@ public class DirectionsService {
         return URLEncoder.encode(address, "UTF-8");
     }
 
-    private String getDirectionsSteps(JSONArray steps) {
-        String stepsStringify = "";
+    private List<String> getDirectionsSteps(JSONArray steps) {
+        List<String> stepsStringify = new ArrayList<>();
+        String partialStepsStringify = "";
         for (int i = 0; i < steps.length(); i++) {
-            stepsStringify += i + ".\t" + getDirectionForStep(steps.getJSONObject(i)) + "\n\n";
+            String step = getDirectionForStep(steps.getJSONObject(i));
+            if (partialStepsStringify.length() > 1000) {
+                stepsStringify.add(partialStepsStringify);
+                partialStepsStringify = "";
+            }
+            partialStepsStringify += i + ".\t" + step + "\n\n";
+        }
+        if (!partialStepsStringify.isEmpty()) {
+            stepsStringify.add(partialStepsStringify);
         }
         return stepsStringify;
     }

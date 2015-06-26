@@ -1,10 +1,15 @@
 package org.telegram.services;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.entity.BufferedHttpEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.telegram.BuildVars;
 import org.telegram.database.DatabaseManager;
@@ -26,6 +31,7 @@ import java.time.format.DateTimeFormatter;
  * @date 20 of June of 2015
  */
 public class WeatherService {
+    private static volatile BotLogger log = BotLogger.getLogger(WeatherService.class.getName());
     private static final String BASEURL = "http://api.openweathermap.org/data/2.5/"; ///< Base url for REST
     private static final String FORECASTPATH = "forecast/daily";
     private static final String CURRENTPATH = "weather";
@@ -73,17 +79,17 @@ public class WeatherService {
         String responseToUser;
         try {
             String completURL = BASEURL + FORECASTPATH + "?" + getCityQuery(city) + FORECASTPARAMS + APIIDEND;
-            HttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+            CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
-            HttpResponse response = client.execute(request);
-            BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-            String line;
-            String responseString = "";
-            while ((line = rd.readLine()) != null) {
-                responseString += line;
-            }
+
+            CloseableHttpResponse response = client.execute(request);
+            HttpEntity ht = response.getEntity();
+
+            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
+            String responseString = EntityUtils.toString(buf, "UTF-8");
 
             JSONObject jsonObject = new JSONObject(responseString);
+            log.warning(jsonObject.toString());
             if (jsonObject.getInt("cod") == 200) {
                 cityFound = jsonObject.getJSONObject("city").getString("name") + " (" +
                         jsonObject.getJSONObject("city").getString("country") + ")";
@@ -93,9 +99,11 @@ public class WeatherService {
                 responseToUser += "Thank you for using our Weather Bot.\n\n" +
                         "Your Telegram Team";
             } else {
+                log.warning(jsonObject.toString());
                 responseToUser = "City not found";
             }
         } catch (Exception e) {
+            log.error(e);
             responseToUser = "Error fetching weather info";
         }
         return responseToUser;
@@ -112,15 +120,13 @@ public class WeatherService {
         String responseToUser;
         try {
             String completURL = BASEURL + FORECASTPATH + "?lat=" + URLEncoder.encode(latitude + "", "UTF-8") + "&lon=" + URLEncoder.encode(longitude + "", "UTF-8") + FORECASTPARAMS + APIIDEND;;
-            HttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+            CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
-            HttpResponse response = client.execute(request);
-            BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-            String line;
-            String responseString = "";
-            while ((line = rd.readLine()) != null) {
-                responseString += line;
-            }
+            CloseableHttpResponse response = client.execute(request);
+            HttpEntity ht = response.getEntity();
+
+            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
+            String responseString = EntityUtils.toString(buf, "UTF-8");
 
             JSONObject jsonObject = new JSONObject(responseString);
             if (jsonObject.getInt("cod") == 200) {
@@ -132,9 +138,11 @@ public class WeatherService {
                 responseToUser += "Thank you for using our Weather Bot.\n\n" +
                         "Your Telegram Team";
             } else {
+                log.warning(jsonObject.toString());
                 responseToUser = "City not found";
             }
         } catch (Exception e) {
+            log.error(e);
             responseToUser = "Error fetching weather info";
         }
         return responseToUser;
@@ -152,15 +160,13 @@ public class WeatherService {
         String responseToUser;
         try {
             String completURL = BASEURL + CURRENTPATH + "?" + getCityQuery(city) + CURRENTPARAMS + APIIDEND;
-            HttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+            CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
-            HttpResponse response = client.execute(request);
-            BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-            String line;
-            String responseString = "";
-            while ((line = rd.readLine()) != null) {
-                responseString += line;
-            }
+            CloseableHttpResponse response = client.execute(request);
+            HttpEntity ht = response.getEntity();
+
+            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
+            String responseString = EntityUtils.toString(buf, "UTF-8");
 
             JSONObject jsonObject = new JSONObject(responseString);
             if (jsonObject.getInt("cod") == 200) {
@@ -172,9 +178,11 @@ public class WeatherService {
                 responseToUser += "Thank you for using our Weather Bot.\n\n" +
                         "Your Telegram Team";
             } else {
+                log.warning(jsonObject.toString());
                 responseToUser = "City not found";
             }
         } catch (Exception e) {
+            log.error(e);
             responseToUser = "Error fetching weather info";
         }
         return responseToUser;
@@ -191,15 +199,13 @@ public class WeatherService {
         String responseToUser;
         try {
             String completURL = BASEURL + CURRENTPATH + "?q=" + URLEncoder.encode("lat=" + latitude + "&lon=" + longitude, "UTF-8") + CURRENTPARAMS + APIIDEND;;
-            HttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+            CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
-            HttpResponse response = client.execute(request);
-            BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-            String line;
-            String responseString = "";
-            while ((line = rd.readLine()) != null) {
-                responseString += line;
-            }
+            CloseableHttpResponse response = client.execute(request);
+            HttpEntity ht = response.getEntity();
+
+            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
+            String responseString = EntityUtils.toString(buf, "UTF-8");
 
             JSONObject jsonObject = new JSONObject(responseString);
             if (jsonObject.getInt("cod") == 200) {
@@ -211,9 +217,11 @@ public class WeatherService {
                 responseToUser += "Thank you for using our Weather Bot.\n\n" +
                         "Your Telegram Team";
             } else {
+                log.warning(jsonObject.toString());
                 responseToUser = "City not found";
             }
         } catch (Exception e) {
+            log.error(e);
             responseToUser = "Error fetching weather info";
         }
         return responseToUser;

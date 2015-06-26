@@ -20,6 +20,7 @@ import org.telegram.methods.Constants;
 import org.telegram.methods.SendDocument;
 import org.telegram.methods.SendMessage;
 import org.telegram.methods.SetWebhook;
+import org.telegram.services.BotLogger;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,6 +35,8 @@ import java.util.List;
  * @date 20 of June of 2015
  */
 public class SenderHelper {
+    private static volatile BotLogger log = BotLogger.getLogger(SenderHelper.class.getName());
+
     public static Message SendMessage(SendMessage message, String botToken) {
         try {
             CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
@@ -54,6 +57,8 @@ public class SenderHelper {
                 nameValuePairs.add(new BasicNameValuePair(SendMessage.REPLYTOMESSAGEID_FIELD, message.getReplayToMessageId().toString()));
             }
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+            log.warning(httppost.toString());
+            log.warning(nameValuePairs.toString());
             CloseableHttpResponse response = httpclient.execute(httppost);
             HttpEntity ht = response.getEntity();
 

@@ -1,12 +1,17 @@
 package org.telegram.updatesreceivers;
 
+import jdk.internal.org.objectweb.asm.Handle;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +20,8 @@ import org.telegram.BuildVars;
 import org.telegram.api.Update;
 import org.telegram.methods.Constants;
 import org.telegram.methods.GetUpdates;
+import org.telegram.methods.SendMessage;
+import org.telegram.services.BotLogger;
 import org.telegram.updateshandlers.UpdatesCallback;
 
 import java.io.IOException;
@@ -32,6 +39,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @date 20 of June of 2015
  */
 public class UpdatesThread {
+    private static volatile BotLogger log = BotLogger.getLogger(UpdatesThread.class.getName());
+
     private final UpdatesCallback callback;
     private final ReaderThread readerThread;
     private final HandlerThread handlerThread;
@@ -52,17 +61,27 @@ public class UpdatesThread {
     private class ReaderThread extends Thread {
         @Override
         public void run() {
+            setPriority(Thread.MIN_PRIORITY);
             while(true) {
                 GetUpdates request = new GetUpdates();
-                request.setOffset(lastReceivedUpdate+1);
+                request.setLimit(100);
+                request.setOffset(lastReceivedUpdate + 1);
                 CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
                 String url = Constants.BASEURL + token + "/" + GetUpdates.PATH;
-                HttpGet httpGet = new HttpGet(url + request.getUrlParams());
-                httpGet.addHeader("Content-type", "application/x-www-form-urlencoded");
-                httpGet.addHeader("charset", "UTF-8");
-                HttpResponse response;
+                HttpPost httpPost = new HttpPost(url);
+                List<NameValuePair> nameValuePairs = new ArrayList<>();
+                nameValuePairs.add(new BasicNameValuePair(GetUpdates.OFFSET_FIELD, "0"));
+                nameValuePairs.add(new BasicNameValuePair(GetUpdates.LIMIT_FIELD, request.getLimit()+""));
+                if (request.getTimeout() != null) {
+                    nameValuePairs.add(new BasicNameValuePair(GetUpdates.TIMEOUT_FIELD, request.getTimeout()+""));
+                }
                 try {
-                    response = httpclient.execute(httpGet);
+                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+                    httpPost.addHeader("Content-type", "application/x-www-form-urlencoded");
+                    httpPost.addHeader("charset", "UTF-8");
+                    HttpResponse response;
+                    log.debug(httpPost.toString());
+                    response = httpclient.execute(httpPost);
                     HttpEntity ht = response.getEntity();
 
                     BufferedHttpEntity buf = new BufferedHttpEntity(ht);
@@ -74,8 +93,9 @@ public class UpdatesThread {
                             throw new InvalidObjectException(jsonObject.toString());
                         }
                         JSONArray jsonArray = jsonObject.getJSONArray("result");
+                        log.debug(jsonArray.toString());
                         if (jsonArray.length() != 0) {
-                            List<Update> updates = new ArrayList<Update>();
+                            List<Update> updates = new ArrayList<>();
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 Update update = new Update(jsonArray.getJSONObject(i));
                                 if (update.getUpdateId() > lastReceivedUpdate) {
@@ -84,8 +104,8 @@ public class UpdatesThread {
                                 updates.add(update);
 
                             }
-                            receivedUpdates.addAll(updates);
                             synchronized (receivedUpdates) {
+                                receivedUpdates.addAll(updates);
                                 receivedUpdates.notifyAll();
                             }
                         } else {
@@ -99,14 +119,7 @@ public class UpdatesThread {
                             }
                         }
                     } catch (JSONException e) {
-                        try {
-                            synchronized (this) {
-                                this.wait(500);
-                            }
-                        } catch (InterruptedException e1) {
-                            e.printStackTrace();
-                            continue;
-                        }
+                        e.printStackTrace();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -118,6 +131,7 @@ public class UpdatesThread {
     private class HandlerThread extends Thread {
         @Override
         public void run() {
+            setPriority(Thread.MIN_PRIORITY);
             while(true) {
                 Update update = receivedUpdates.poll();
                 if (update == null) {

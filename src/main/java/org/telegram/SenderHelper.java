@@ -57,8 +57,8 @@ public class SenderHelper {
                 nameValuePairs.add(new BasicNameValuePair(SendMessage.REPLYTOMESSAGEID_FIELD, message.getReplayToMessageId().toString()));
             }
             httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-            log.warning(httppost.toString());
-            log.warning(nameValuePairs.toString());
+            log.debug(httppost.toString());
+            log.debug(nameValuePairs.toString());
             CloseableHttpResponse response = httpclient.execute(httppost);
             HttpEntity ht = response.getEntity();
 
@@ -72,7 +72,7 @@ public class SenderHelper {
             JSONObject jsonMessage = jsonObject.getJSONObject("result");
             return new Message(jsonMessage);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
             return null;
         }
     }
@@ -114,7 +114,7 @@ public class SenderHelper {
                 fileToDelete.delete();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
     }
 
@@ -135,7 +135,7 @@ public class SenderHelper {
             String responseContent = EntityUtils.toString(buf, "UTF-8");
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
 
     }

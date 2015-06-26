@@ -8,6 +8,7 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.telegram.BuildVars;
+import org.telegram.services.BotLogger;
 import org.telegram.updateshandlers.UpdatesCallback;
 
 import java.io.IOException;
@@ -20,6 +21,8 @@ import java.net.URI;
  * @date 20 of June of 2015
  */
 public class Webhook {
+    private static volatile BotLogger log = BotLogger.getLogger(Webhook.class.getName());
+
     private static final int PORT = 443;
     private static final String KEYSTORE_SERVER_FILE = "./keystore_server";
     private static final String KEYSTORE_SERVER_PWD = "asdfgh";
@@ -48,7 +51,8 @@ public class Webhook {
                 new SSLEngineConfigurator(sslContext).setClientMode(false).setNeedClientAuth(false));
         try {
             grizzlyServer.start();
-        } catch (IOException ignored) {
+        } catch (IOException e) {
+            log.error(e);
         }
     }
 

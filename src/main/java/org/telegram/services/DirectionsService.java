@@ -27,6 +27,8 @@ import java.util.List;
  * @date 20 of June of 2015
  */
 public class DirectionsService {
+    private static volatile BotLogger log = BotLogger.getLogger(DirectionsService.class.getName());
+
     private static final String BASEURL = "https://maps.googleapis.com/maps/api/directions/json"; ///< Base url for REST
     private static final String APIIDEND = "&key=" + BuildVars.DirectionsApiKey;
     private static final String PARAMS = "&language=en&units=metric";
@@ -96,6 +98,7 @@ public class DirectionsService {
                 responseToUser.add("Directions not found between " + origin + " and " + destination);
             }
         } catch (Exception e) {
+            log.warning(e);
             responseToUser.add("Error fetching weather info");
         }
         return responseToUser;

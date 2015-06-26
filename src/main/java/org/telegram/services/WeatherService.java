@@ -32,6 +32,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class WeatherService {
     private static volatile BotLogger log = BotLogger.getLogger(WeatherService.class.getName());
+
     private static final String BASEURL = "http://api.openweathermap.org/data/2.5/"; ///< Base url for REST
     private static final String FORECASTPATH = "forecast/daily";
     private static final String CURRENTPATH = "weather";

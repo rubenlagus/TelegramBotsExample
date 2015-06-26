@@ -114,15 +114,15 @@ public class UpdatesThread {
                                     this.wait(500);
                                 }
                             } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                log.error(e);
                                 continue;
                             }
                         }
                     } catch (JSONException e) {
-                        e.printStackTrace();
+                        log.warning(e);
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    log.warning(e);
                 }
             }
         }
@@ -139,6 +139,7 @@ public class UpdatesThread {
                         try {
                             receivedUpdates.wait();
                         } catch (InterruptedException e) {
+                            log.error(e);
                             continue;
                         }
                         update = receivedUpdates.poll();

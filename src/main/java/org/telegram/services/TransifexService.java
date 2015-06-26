@@ -19,6 +19,8 @@ import java.io.*;
  * @date 21 of June of 2015
  */
 public class TransifexService {
+    private static volatile BotLogger log = BotLogger.getLogger(TransifexService.class.getName());
+
     private static final String BASEURLAndroid = "http://" + BuildVars.TRANSIFEXUSER + ":" + BuildVars.TRANSIFEXPASSWORD + "@www.transifex.com/api/2/project/telegram/resource/stringsxml-48/translation/@language?file";  ///< Base url for REST
     private static final String BASEURLiOS = "http://" + BuildVars.TRANSIFEXUSER + ":" + BuildVars.TRANSIFEXPASSWORD + "@www.transifex.com/api/2/project/iphone-1/resource/localizablestrings/translation/@language?file";  ///< Base url for REST
     private static final String BASEURLOSX = "http://" + BuildVars.TRANSIFEXUSER + ":" + BuildVars.TRANSIFEXPASSWORD + "@www.transifex.com/api/2/project/osx/resource/localizablestrings/translation/@language?file";  ///< Base url for REST
@@ -74,7 +76,7 @@ public class TransifexService {
                 result = responseString;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return result;
     }
@@ -87,7 +89,7 @@ public class TransifexService {
             HttpResponse response = client.execute(request);
             result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return result;
     }
@@ -100,7 +102,7 @@ public class TransifexService {
             HttpResponse response = client.execute(request);
             result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return result;
     }
@@ -113,7 +115,7 @@ public class TransifexService {
             HttpResponse response = client.execute(request);
             result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return result;
     }
@@ -126,7 +128,7 @@ public class TransifexService {
             HttpResponse response = client.execute(request);
             result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return result;
     }
@@ -139,7 +141,7 @@ public class TransifexService {
             HttpResponse response = client.execute(request);
             result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return result;
     }
@@ -152,7 +154,7 @@ public class TransifexService {
             HttpResponse response = client.execute(request);
             result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return result;
     }
@@ -192,11 +194,11 @@ public class TransifexService {
                     sendDocument = new SendDocument();
                     sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
                 } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    log.error(e);
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return sendDocument;
     }
@@ -219,7 +221,7 @@ public class TransifexService {
                     sendDocument = new SendDocument();
                     sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
                 } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    log.error(e);
                 }
             }
         } catch (Exception e) {

@@ -55,7 +55,7 @@ public class BotLogger {
         logger = Logger.getLogger(classname);
         logger.setLevel(Level.WARNING);
         ConsoleHandler handler = new ConsoleHandler();
-        handler.setLevel(Level.ALL);
+        handler.setLevel(Level.WARNING);
         logger.addHandler(handler);
         lastFileDate = new GregorianCalendar();
         if  (currentFileName == null || currentFileName.length() == 0) {

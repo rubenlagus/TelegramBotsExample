@@ -70,7 +70,7 @@ public class UpdatesThread {
                 String url = Constants.BASEURL + token + "/" + GetUpdates.PATH;
                 HttpPost httpPost = new HttpPost(url);
                 List<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new BasicNameValuePair(GetUpdates.OFFSET_FIELD, "0"));
+                nameValuePairs.add(new BasicNameValuePair(GetUpdates.OFFSET_FIELD, request.getOffset()+""));
                 nameValuePairs.add(new BasicNameValuePair(GetUpdates.LIMIT_FIELD, request.getLimit()+""));
                 if (request.getTimeout() != null) {
                     nameValuePairs.add(new BasicNameValuePair(GetUpdates.TIMEOUT_FIELD, request.getTimeout()+""));

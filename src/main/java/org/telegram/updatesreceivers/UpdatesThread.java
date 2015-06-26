@@ -1,11 +1,9 @@
 package org.telegram.updatesreceivers;
 
-import com.sun.corba.se.impl.oa.toa.TOA;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.BufferedHttpEntity;
@@ -16,12 +14,10 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.telegram.BuildVars;
 import org.telegram.api.Update;
 import org.telegram.database.DatabaseManager;
 import org.telegram.methods.Constants;
 import org.telegram.methods.GetUpdates;
-import org.telegram.methods.SendMessage;
 import org.telegram.services.BotLogger;
 import org.telegram.updateshandlers.UpdatesCallback;
 
@@ -29,9 +25,7 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * @author Ruben Bermudez
@@ -47,7 +41,7 @@ public class UpdatesThread {
     private final HandlerThread handlerThread;
     private int lastReceivedUpdate;
     private String token;
-    private final ConcurrentLinkedQueue<Update> receivedUpdates = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedDeque<Update> receivedUpdates = new ConcurrentLinkedDeque<>();
 
     public UpdatesThread(String token, UpdatesCallback callback) {
         this.token = token;
@@ -96,17 +90,14 @@ public class UpdatesThread {
                         JSONArray jsonArray = jsonObject.getJSONArray("result");
                         log.debug(jsonArray.toString());
                         if (jsonArray.length() != 0) {
-                            List<Update> updates = new ArrayList<>();
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 Update update = new Update(jsonArray.getJSONObject(i));
                                 if (update.getUpdateId() > lastReceivedUpdate) {
                                     lastReceivedUpdate = update.getUpdateId();
+                                    receivedUpdates.addFirst(update);
                                 }
-                                updates.add(update);
-
                             }
                             synchronized (receivedUpdates) {
-                                receivedUpdates.addAll(updates);
                                 receivedUpdates.notifyAll();
                             }
                         } else {
@@ -135,7 +126,7 @@ public class UpdatesThread {
             setPriority(Thread.MIN_PRIORITY);
             while(true) {
                 try {
-                    Update update = receivedUpdates.poll();
+                    Update update = receivedUpdates.pollLast();
                     if (update == null) {
                         synchronized (receivedUpdates) {
                             try {
@@ -144,7 +135,7 @@ public class UpdatesThread {
                                 log.error(e);
                                 continue;
                             }
-                            update = receivedUpdates.poll();
+                            update = receivedUpdates.pollLast();
                             if (update == null) {
                                 continue;
                             }

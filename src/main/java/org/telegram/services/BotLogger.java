@@ -1,6 +1,5 @@
 package org.telegram.services;
 
-import com.apple.concurrent.Dispatch;
 import org.telegram.BuildVars;
 
 import javax.validation.constraints.NotNull;

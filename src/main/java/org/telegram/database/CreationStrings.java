@@ -17,7 +17,7 @@ public class CreationStrings {
             "CONSTRAINT unique_cistyuser UNIQUE (userId,cityId))";
     public static final String createDirectionsDatabase = "CREATE TABLE IF NOT EXISTS Directions (userId INTEGER PRIMARY KEY, status INTEGER NOT NULL, " +
             "messageId INTEGER NOT NULL DEFAULT 0, origin VARCHAR(100));";
-    public static final String createLastUpdateDatabase = "CREATE TABLE IF NOT EXISTS LastUpdate (token STRING PRIMARY KEY, updateId INTEGER NOT NULL DEFAULT -1);";
+    public static final String createLastUpdateDatabase = "CREATE TABLE IF NOT EXISTS LastUpdate (token VARCHAR(125) PRIMARY KEY, updateId INTEGER NOT NULL DEFAULT -1);";
 
 
     /*public static final String createOperatingSystemsVersion = "CREATE TABLE IF NOT EXISTS OperatingSystems (operatingSystem VARCHAR(20) PRIMARY KEY);";

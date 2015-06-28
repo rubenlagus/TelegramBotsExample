@@ -37,8 +37,8 @@ public class WeatherService {
     private static final String FORECASTPATH = "forecast/daily";
     private static final String CURRENTPATH = "weather";
     private static final String APIIDEND = "&APPID=" + BuildVars.OPENWEATHERAPIKEY;
-    private static final String FORECASTPARAMS = "&cnt=3&units=metric";
-    private static final String CURRENTPARAMS = "&cnt=1&units=metric";
+    private static final String FORECASTPARAMS = "&cnt=3&units=metric&lang=@language@";
+    private static final String CURRENTPARAMS = "&cnt=1&units=metric&lang=@language@";
     private static final DateTimeFormatter dateFormaterFromDate = DateTimeFormatter.ofPattern("dd/MM/yyyy"); ///< Date to text formater
     private static volatile WeatherService instance; ///< Instance of this class
 
@@ -79,7 +79,8 @@ public class WeatherService {
         String cityFound;
         String responseToUser;
         try {
-            String completURL = BASEURL + FORECASTPATH + "?" + getCityQuery(city) + FORECASTPARAMS + APIIDEND;
+            String completURL = BASEURL + FORECASTPATH + "?" + getCityQuery(city) +
+                    FORECASTPARAMS.replace("@language@", language) + APIIDEND;
             CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
 
@@ -118,7 +119,8 @@ public class WeatherService {
         String cityFound;
         String responseToUser;
         try {
-            String completURL = BASEURL + FORECASTPATH + "?lat=" + URLEncoder.encode(latitude + "", "UTF-8") + "&lon=" + URLEncoder.encode(longitude + "", "UTF-8") + FORECASTPARAMS + APIIDEND;;
+            String completURL = BASEURL + FORECASTPATH + "?lat=" + URLEncoder.encode(latitude + "", "UTF-8") + "&lon="
+                    + URLEncoder.encode(longitude + "", "UTF-8") + FORECASTPARAMS.replace("@language@", language) + APIIDEND;;
             CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
             CloseableHttpResponse response = client.execute(request);
@@ -156,7 +158,8 @@ public class WeatherService {
         String cityFound;
         String responseToUser;
         try {
-            String completURL = BASEURL + CURRENTPATH + "?" + getCityQuery(city) + CURRENTPARAMS + APIIDEND;
+            String completURL = BASEURL + CURRENTPATH + "?" + getCityQuery(city) +
+                    CURRENTPARAMS.replace("@language@", language) + APIIDEND;
             CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
             CloseableHttpResponse response = client.execute(request);
@@ -193,7 +196,8 @@ public class WeatherService {
         String cityFound;
         String responseToUser;
         try {
-            String completURL = BASEURL + CURRENTPATH + "?q=" + URLEncoder.encode("lat=" + latitude + "&lon=" + longitude, "UTF-8") + CURRENTPARAMS + APIIDEND;;
+            String completURL = BASEURL + CURRENTPATH + "?q=" + URLEncoder.encode("lat=" + latitude + "&lon=" +
+                    longitude, "UTF-8") + CURRENTPARAMS.replace("@language@", language) + APIIDEND;;
             CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
             CloseableHttpResponse response = client.execute(request);

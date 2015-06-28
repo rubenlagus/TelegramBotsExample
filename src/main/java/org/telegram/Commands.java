@@ -41,5 +41,5 @@ public class Commands {
     /// Start directions command
     public static final String startDirectionCommand = commandInitChar + "directions";
     /// Set Language command
-    public static final String setLanguageCommand = "language";
+    public static final String setLanguageCommand = commandInitChar + "language";
 }

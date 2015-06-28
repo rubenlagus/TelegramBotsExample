@@ -31,7 +31,7 @@ public class DirectionsService {
 
     private static final String BASEURL = "https://maps.googleapis.com/maps/api/directions/json"; ///< Base url for REST
     private static final String APIIDEND = "&key=" + BuildVars.DirectionsApiKey;
-    private static final String PARAMS = "&language=en&units=metric";
+    private static final String PARAMS = "&language=@language@&units=metric";
     private static final DateTimeFormatter dateFormaterFromDate = DateTimeFormatter.ofPattern("dd/MM/yyyy"); ///< Date to text formater
     private static volatile DirectionsService instance; ///< Instance of this class
 
@@ -71,7 +71,8 @@ public class DirectionsService {
     public List<String> getDirections(String origin, String destination, String language) {
         final List<String> responseToUser = new ArrayList<>();
         try {
-            String completURL = BASEURL + "?origin=" + getQuery(origin) + "&destination=" +  getQuery(destination) + PARAMS + APIIDEND;
+            String completURL = BASEURL + "?origin=" + getQuery(origin) + "&destination=" +
+                    getQuery(destination) + PARAMS.replace("@language@", language) + APIIDEND;
             HttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
             HttpResponse response = client.execute(request);

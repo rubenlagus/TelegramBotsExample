@@ -1,22 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cc3252dd-ba1f-404e-b603-ef880b5c3341" name="Default" comment="1. Several fixes">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/services/LocalisationService.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/localisation/strings.properties" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/CustomMessages.java" afterPath="" />
+    <list default="true" id="cc3252dd-ba1f-404e-b603-ef880b5c3341" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/BotConfig.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/BotConfig.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/BuildVars.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/BuildVars.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/Commands.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/Commands.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/database/CreationStrings.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/database/CreationStrings.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/database/DatabaseManager.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/database/DatabaseManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/services/DirectionsService.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/services/DirectionsService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/Main.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/TransifexHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/TransifexHandlers.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/services/WeatherService.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/services/WeatherService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/localisation/strings.properties" afterPath="$PROJECT_DIR$/src/main/resources/localisation/strings.properties" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="BotAPi.iws" />
@@ -41,34 +33,25 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/Main.java">
+      <file leaf-file-name="DirectionsService.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/services/DirectionsService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="18" column="8" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
+            <state vertical-scroll-proportion="-5.0740743">
+              <caret line="74" column="82" selection-start-line="74" selection-start-column="82" selection-end-line="74" selection-end-column="82" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="WeatherService.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/services/WeatherService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-14.37037">
+              <caret line="280" column="0" selection-start-line="280" selection-start-column="0" selection-end-line="280" selection-end-column="0" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="docComment;method#convertListOfForecastToString#0;class#WeatherService#0" expanded="false" />
+                <element signature="docComment;method#convertInternalInformationToString#0;class#WeatherService#0" expanded="false" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="WeatherHandlers.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="228" column="49" selection-start-line="228" selection-start-column="49" selection-end-line="228" selection-end-column="49" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DirectionsHandlers.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="136" column="121" selection-start-line="136" selection-start-column="121" selection-end-line="136" selection-end-column="121" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -76,21 +59,11 @@
       <file leaf-file-name="UpdatesThread.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/UpdatesThread.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.4579832">
-              <caret line="99" column="0" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.63863635">
+              <caret line="115" column="41" selection-start-line="115" selection-start-column="41" selection-end-line="115" selection-end-column="41" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BotConfig.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/BotConfig.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="15" column="6" selection-start-line="15" selection-start-column="6" selection-end-line="15" selection-end-column="6" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -169,17 +142,17 @@
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/services/LocalisationService.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/database/DatabaseManager.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/database/CreationStrings.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/Commands.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/TransifexHandlers.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/CustomMessages.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/services/DirectionsService.java" />
-        <option value="$PROJECT_DIR$/src/main/resources/localisation/strings.properties" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/services/WeatherService.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/BotConfig.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/Main.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/Commands.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/localisation/strings.properties" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/services/DirectionsService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/services/WeatherService.java" />
       </list>
     </option>
   </component>
@@ -911,7 +884,7 @@
       <workItem from="1435324180717" duration="607000" />
       <workItem from="1435326170366" duration="240000" />
       <workItem from="1435347109974" duration="3390000" />
-      <workItem from="1435513506044" duration="7815000" />
+      <workItem from="1435513506044" duration="8978000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit:&#10;1. Transifex bot&#10;2. Weather bot">
       <created>1434854005227</created>
@@ -1063,11 +1036,17 @@
       <option name="project" value="LOCAL" />
       <updated>1435352969379</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="1. Localization">
+      <created>1435522852368</created>
+      <option name="number" value="00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1435522852368</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="116261000" />
+    <option name="totallyTimeSpent" value="117432000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1093,16 +1072,16 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27793697" sideWeight="0.4939577" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39971346" sideWeight="0.5060423" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3939828" sideWeight="0.4879154" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27793697" sideWeight="0.5120846" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19561933" sideWeight="0.1718377" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295129" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3295129" sideWeight="0.49697885" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295129" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295129" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32930514" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19561933" sideWeight="0.8281623" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19561933" sideWeight="0.8281623" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295129" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1172,52 +1151,71 @@
     <MESSAGE value="1. Fix webhooks, they only allow port 443" />
     <MESSAGE value="1. Fixed loggin levels" />
     <MESSAGE value="1. Several fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="1. Several fixes" />
+    <MESSAGE value="1. Localization" />
+    <option name="LAST_COMMIT_MESSAGE" value="1. Localization" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
+        <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/telegram/services/WeatherService.java</url>
-          <line>129</line>
+          <line>131</line>
           <properties />
           <option name="timeStamp" value="36" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
+        <line-breakpoint type="java-line">
           <url>jar://$MAVEN_REPOSITORY$/org/glassfish/grizzly/grizzly-framework/2.3.19/grizzly-framework-2.3.19-sources.jar!/org/glassfish/grizzly/ssl/SSLContextConfigurator.java</url>
           <line>359</line>
           <properties />
           <option name="timeStamp" value="68" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
+        <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/telegram/services/TransifexService.java</url>
           <line>323</line>
           <properties />
           <option name="timeStamp" value="84" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
+        <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java</url>
           <line>171</line>
           <properties />
           <option name="timeStamp" value="101" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
+        <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/UpdatesThread.java</url>
           <line>105</line>
           <properties />
           <option name="timeStamp" value="134" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
+        <line-breakpoint type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/UpdatesThread.java</url>
           <line>99</line>
           <properties />
           <option name="timeStamp" value="135" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java</url>
+          <line>115</line>
+          <properties />
+          <option name="timeStamp" value="138" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java</url>
+          <line>92</line>
+          <properties />
+          <option name="timeStamp" value="141" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java</url>
+          <line>72</line>
+          <properties />
+          <option name="timeStamp" value="142" />
+        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="137" />
+      <option name="time" value="146" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
@@ -1484,14 +1482,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/database/DatabaseManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4671642">
-          <caret line="75" column="38" selection-start-line="75" selection-start-column="38" selection-end-line="75" selection-end-column="38" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/database/CreationStrings.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.4477612">
@@ -1516,26 +1506,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/Commands.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="43" column="61" selection-start-line="43" selection-start-column="61" selection-end-line="43" selection-end-column="61" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/TransifexHandlers.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="69" column="98" selection-start-line="69" selection-start-column="28" selection-end-line="69" selection-end-column="98" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/services/DirectionsService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="2.5298507">
-          <caret line="131" column="0" selection-start-line="131" selection-start-column="0" selection-end-line="131" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1569,18 +1543,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/services/WeatherService.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/database/DatabaseManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.23880596">
-          <caret line="259" column="27" selection-start-line="259" selection-start-column="27" selection-end-line="259" selection-end-column="27" />
-          <folding>
-            <element signature="docComment;method#fetchWeatherForecast#0;class#WeatherService#0" expanded="false" />
-            <element signature="docComment;method#fetchWeatherForecastByLocation#0;class#WeatherService#0" expanded="false" />
-            <element signature="docComment;method#fetchWeatherCurrent#0;class#WeatherService#0" expanded="false" />
-            <element signature="docComment;method#fetchWeatherCurrentByLocation#0;class#WeatherService#0" expanded="false" />
-            <element signature="docComment;method#convertListOfForecastToString#0;class#WeatherService#0" expanded="false" />
-            <element signature="docComment;method#convertInternalInformationToString#0;class#WeatherService#0" expanded="false" />
-          </folding>
+        <state vertical-scroll-proportion="-0.49367088">
+          <caret line="75" column="38" selection-start-line="75" selection-start-column="38" selection-end-line="75" selection-end-column="38" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1589,23 +1556,34 @@
         <state />
       </provider>
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.16380656">
-          <caret line="7" column="23" selection-start-line="7" selection-start-column="23" selection-end-line="7" selection-end-column="23" />
+        <state vertical-scroll-proportion="0.39240506">
+          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="45" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/BotConfig.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="15" column="6" selection-start-line="15" selection-start-column="6" selection-end-line="15" selection-end-column="6" />
+        <state vertical-scroll-proportion="1.2151898">
+          <caret line="53" column="0" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
+          <folding>
+            <element signature="e#1620#1621#0" expanded="true" />
+            <element signature="e#1660#1661#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5063291">
+          <caret line="228" column="49" selection-start-line="228" selection-start-column="49" selection-end-line="228" selection-end-column="49" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
+        <state vertical-scroll-proportion="0.6835443">
           <caret line="18" column="8" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -1613,26 +1591,45 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/Commands.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="228" column="49" selection-start-line="228" selection-start-column="49" selection-end-line="228" selection-end-column="49" />
+        <state vertical-scroll-proportion="0.6962025">
+          <caret line="43" column="70" selection-start-line="43" selection-start-column="70" selection-end-line="43" selection-end-column="70" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/BotConfig.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="136" column="121" selection-start-line="136" selection-start-column="121" selection-end-line="136" selection-end-column="121" />
+        <state vertical-scroll-proportion="0.56962025">
+          <caret line="15" column="6" selection-start-line="15" selection-start-column="6" selection-end-line="15" selection-end-column="6" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/services/DirectionsService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.0740743">
+          <caret line="74" column="82" selection-start-line="74" selection-start-column="82" selection-end-line="74" selection-end-column="82" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/services/WeatherService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-14.37037">
+          <caret line="280" column="0" selection-start-line="280" selection-start-column="0" selection-end-line="280" selection-end-column="0" />
+          <folding>
+            <element signature="docComment;method#convertListOfForecastToString#0;class#WeatherService#0" expanded="false" />
+            <element signature="docComment;method#convertInternalInformationToString#0;class#WeatherService#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/UpdatesThread.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4579832">
-          <caret line="99" column="0" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.63863635">
+          <caret line="115" column="41" selection-start-line="115" selection-start-column="41" selection-end-line="115" selection-end-column="41" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

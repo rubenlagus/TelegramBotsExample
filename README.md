@@ -1,6 +1,11 @@
 # Telegram Bot Java Library
 A simple to use library to create Telegram Bots in Java (Still Beta Version)
 
+## Contributions
+Feel free to fork this project, work on it and then make a pull request. Most of the times I will accept them if they add something valuable to the code. 
+
+Please, **DO NOT PUSH ANY TOKEN OR API KEY**, I will never accept a pull request with that content.
+
 ## Webhooks vs GetUpdates
 Both ways are supported (but I still didn't tested webhooks). To change between them, just go to *BuildVars.java* and change variable *useWebHook* value.
 

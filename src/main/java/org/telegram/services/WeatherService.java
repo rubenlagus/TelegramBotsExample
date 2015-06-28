@@ -75,7 +75,7 @@ public class WeatherService {
      * @return userHash to be send to use
      * @note Forecast for the following 3 days
      */
-    public String fetchWeatherForecast(String city, Integer userId) {
+    public String fetchWeatherForecast(String city, Integer userId, String language) {
         String cityFound;
         String responseToUser;
         try {
@@ -95,17 +95,15 @@ public class WeatherService {
                 cityFound = jsonObject.getJSONObject("city").getString("name") + " (" +
                         jsonObject.getJSONObject("city").getString("country") + ")";
                 saveRecentWeather(userId, cityFound, jsonObject.getJSONObject("city").getInt("id"));
-                responseToUser = "The weather for " + cityFound + " will be:\n\n";
-                responseToUser += convertListOfForecastToString(jsonObject);
-                responseToUser += "Thank you for using our Weather Bot.\n\n" +
-                        "Your Telegram Team";
+                responseToUser = String.format(LocalisationService.getInstance().getString("weatherForcast", language),
+                        cityFound, convertListOfForecastToString(jsonObject, language));
             } else {
                 log.warning(jsonObject.toString());
-                responseToUser = "City not found";
+                responseToUser = LocalisationService.getInstance().getString("cityNotFound", language);
             }
         } catch (Exception e) {
             log.error(e);
-            responseToUser = "Error fetching weather info";
+            responseToUser = LocalisationService.getInstance().getString("errorFetchingWeather", language);
         }
         return responseToUser;
     }
@@ -116,7 +114,7 @@ public class WeatherService {
      * @return userHash to be send to use
      * @note Forecast for the following 3 days
      */
-    public String fetchWeatherForecastByLocation(Double longitude, Double latitude, Integer userId) {
+    public String fetchWeatherForecastByLocation(Double longitude, Double latitude, Integer userId, String language) {
         String cityFound;
         String responseToUser;
         try {
@@ -134,17 +132,15 @@ public class WeatherService {
                 cityFound = jsonObject.getJSONObject("city").getString("name") + " (" +
                         jsonObject.getJSONObject("city").getString("country") + ")";
                 saveRecentWeather(userId, cityFound, jsonObject.getJSONObject("city").getInt("id"));
-                responseToUser = "The weather for " + cityFound + " will be:\n\n";
-                responseToUser += convertListOfForecastToString(jsonObject);
-                responseToUser += "Thank you for using our Weather Bot.\n\n" +
-                        "Your Telegram Team";
+                responseToUser = String.format(LocalisationService.getInstance().getString("weatherForcast", language),
+                        cityFound, convertListOfForecastToString(jsonObject, language));
             } else {
                 log.warning(jsonObject.toString());
-                responseToUser = "City not found";
+                responseToUser = LocalisationService.getInstance().getString("cityNotFound", language);
             }
         } catch (Exception e) {
             log.error(e);
-            responseToUser = "Error fetching weather info";
+            responseToUser = LocalisationService.getInstance().getString("errorFetchingWeather", language);
         }
         return responseToUser;
     }
@@ -156,7 +152,7 @@ public class WeatherService {
      * @return userHash to be send to use
      * @note Forecast for the following 3 days
      */
-    public String fetchWeatherCurrent(String city, Integer userId) {
+    public String fetchWeatherCurrent(String city, Integer userId, String language) {
         String cityFound;
         String responseToUser;
         try {
@@ -174,17 +170,15 @@ public class WeatherService {
                 cityFound = jsonObject.getString("name") + " (" +
                         jsonObject.getJSONObject("sys").getString("country") + ")";
                 saveRecentWeather(userId, cityFound, jsonObject.getInt("id"));
-                responseToUser = "The weather for " + cityFound + " is:\n\n";
-                responseToUser += convertCurrentWeatherToString(jsonObject);
-                responseToUser += "Thank you for using our Weather Bot.\n\n" +
-                        "Your Telegram Team";
+                responseToUser = String.format(LocalisationService.getInstance().getString("weatherCurrent", language),
+                        cityFound, convertCurrentWeatherToString(jsonObject, language));
             } else {
                 log.warning(jsonObject.toString());
-                responseToUser = "City not found";
+                responseToUser = LocalisationService.getInstance().getString("cityNotFound", language);
             }
         } catch (Exception e) {
             log.error(e);
-            responseToUser = "Error fetching weather info";
+            responseToUser = LocalisationService.getInstance().getString("errorFetchingWeather", language);
         }
         return responseToUser;
     }
@@ -195,7 +189,7 @@ public class WeatherService {
      * @return userHash to be send to use
      * @note Forecast for the following 3 days
      */
-    public String fetchWeatherCurrentByLocation(Double longitude, Double latitude, Integer userId) {
+    public String fetchWeatherCurrentByLocation(Double longitude, Double latitude, Integer userId, String language) {
         String cityFound;
         String responseToUser;
         try {
@@ -213,31 +207,26 @@ public class WeatherService {
                 cityFound = jsonObject.getString("name") + " (" +
                         jsonObject.getJSONObject("sys").getString("country") + ")";
                 saveRecentWeather(userId, cityFound, jsonObject.getInt("id"));
-                responseToUser = "The weather for " + cityFound + " is:\n\n";
-                responseToUser += convertCurrentWeatherToString(jsonObject);
-                responseToUser += "Thank you for using our Weather Bot.\n\n" +
-                        "Your Telegram Team";
+                responseToUser = String.format(LocalisationService.getInstance().getString("weatherCurrent", language),
+                        cityFound, convertCurrentWeatherToString(jsonObject, language));
             } else {
                 log.warning(jsonObject.toString());
-                responseToUser = "City not found";
+                responseToUser = LocalisationService.getInstance().getString("cityNotFound", language);
             }
         } catch (Exception e) {
             log.error(e);
-            responseToUser = "Error fetching weather info";
+            responseToUser = LocalisationService.getInstance().getString("errorFetchingWeather", language);
         }
         return responseToUser;
     }
 
-    private String convertCurrentWeatherToString(JSONObject jsonObject) {
+    private String convertCurrentWeatherToString(JSONObject jsonObject, String language) {
         String temp = jsonObject.getJSONObject("main").getDouble("temp")+"";
         String cloudiness = jsonObject.getJSONObject("clouds").getInt("all") + "%";
         String weatherDesc = jsonObject.getJSONArray("weather").getJSONObject(0).getString("description");
 
-        String responseToUser = "";
-        responseToUser +=
-                "  |-- Weather:  " + weatherDesc + "\n" +
-                        "  |-- Cloudiness: " + cloudiness + "\n" +
-                        "  |-- Temperature: " + temp + "ºC\n\n";
+        String responseToUser = LocalisationService.getInstance().getString("currentWeatherPart", language);
+        responseToUser = String.format(responseToUser, weatherDesc, cloudiness, temp);
 
         return responseToUser;
     }
@@ -248,11 +237,11 @@ public class WeatherService {
      * @param jsonObject JSONObject contining the list
      * @return String to be sent to the user
      */
-    private String convertListOfForecastToString(JSONObject jsonObject) {
+    private String convertListOfForecastToString(JSONObject jsonObject, String language) {
         String responseToUser = "";
         for (int i = 0; i < jsonObject.getJSONArray("list").length(); i++) {
             JSONObject internalJSON = jsonObject.getJSONArray("list").getJSONObject(i);
-            responseToUser += convertInternalInformationToString(internalJSON);
+            responseToUser += convertInternalInformationToString(internalJSON, language);
         }
         return responseToUser;
     }
@@ -263,7 +252,7 @@ public class WeatherService {
      * @param internalJSON JSONObject containing the part to convert
      * @return String to be sent to the user
      */
-    private String convertInternalInformationToString(JSONObject internalJSON) {
+    private String convertInternalInformationToString(JSONObject internalJSON, String language) {
         String responseToUser = "";
         LocalDate date;
         String tempMax;
@@ -275,10 +264,10 @@ public class WeatherService {
         JSONObject weatherObject = internalJSON.getJSONArray("weather").getJSONObject(0);
         weatherDesc = weatherObject.getString("description");
 
-        responseToUser += "*On " + dateFormaterFromDate.format(date) + "\n" +
-                "  |--Forecast:  " + weatherDesc + "\n" +
-                "  |--High temperature: " + tempMax + "ºC\n" +
-                "  |--Low temperature: " + tempMin + "ºC\n\n";
+        responseToUser = LocalisationService.getInstance().getString("forecastWeatherPart", language);
+        responseToUser = String.format(responseToUser, dateFormaterFromDate.format(date), weatherDesc,
+                tempMax, tempMin);
+
         return responseToUser;
     }
 

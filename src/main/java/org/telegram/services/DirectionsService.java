@@ -68,7 +68,7 @@ public class DirectionsService {
      * @param destination Destination address
      * @return Destinations
      */
-    public List<String> getDirections(String origin, String destination) {
+    public List<String> getDirections(String origin, String destination, String language) {
         final List<String> responseToUser = new ArrayList<>();
         try {
             String completURL = BASEURL + "?origin=" + getQuery(origin) + "&destination=" +  getQuery(destination) + PARAMS + APIIDEND;
@@ -83,23 +83,22 @@ public class DirectionsService {
             JSONObject jsonObject = new JSONObject(responseContent);
             if (jsonObject.getString("status").equals("OK")) {
                 JSONObject route = jsonObject.getJSONArray("routes").getJSONObject(0);
-                String partialResponseToUser;
-                partialResponseToUser = route.getJSONArray("legs").getJSONObject(0).getString("start_address");
-                partialResponseToUser += " is ";
-                partialResponseToUser += route.getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text");
-                partialResponseToUser += " away from ";
-                partialResponseToUser += route.getJSONArray("legs").getJSONObject(0).getString("end_address"); // TODO Destination
-                partialResponseToUser += " and it takes ";
-                partialResponseToUser += route.getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text");
-                partialResponseToUser += " to arrive there following these directions:\n\n";
+                String startOfAddress = LocalisationService.getInstance().getString("directionsInit", language);
+                String partialResponseToUser = String.format(startOfAddress,
+                        route.getJSONArray("legs").getJSONObject(0).getString("start_address"),
+                        route.getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text"),
+                        route.getJSONArray("legs").getJSONObject(0).getString("end_address"),
+                        route.getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text")
+                        );
                 responseToUser.add(partialResponseToUser);
-                responseToUser.addAll(getDirectionsSteps(route.getJSONArray("legs").getJSONObject(0).getJSONArray("steps")));
+                responseToUser.addAll(getDirectionsSteps(
+                        route.getJSONArray("legs").getJSONObject(0).getJSONArray("steps"), language));
             } else {
-                responseToUser.add("Directions not found between " + origin + " and " + destination);
+                responseToUser.add(LocalisationService.getInstance().getString("directionsNotFound", language));
             }
         } catch (Exception e) {
             log.warning(e);
-            responseToUser.add("Error fetching weather info");
+            responseToUser.add(LocalisationService.getInstance().getString("errorFetchingDirections", language));
         }
         return responseToUser;
     }
@@ -108,11 +107,11 @@ public class DirectionsService {
         return URLEncoder.encode(address, "UTF-8");
     }
 
-    private List<String> getDirectionsSteps(JSONArray steps) {
+    private List<String> getDirectionsSteps(JSONArray steps, String language) {
         List<String> stepsStringify = new ArrayList<>();
         String partialStepsStringify = "";
         for (int i = 0; i < steps.length(); i++) {
-            String step = getDirectionForStep(steps.getJSONObject(i));
+            String step = getDirectionForStep(steps.getJSONObject(i), language);
             if (partialStepsStringify.length() > 1000) {
                 stepsStringify.add(partialStepsStringify);
                 partialStepsStringify = "";
@@ -125,16 +124,13 @@ public class DirectionsService {
         return stepsStringify;
     }
 
-    private String getDirectionForStep(JSONObject jsonObject) {
-        String direction = "";
+    private String getDirectionForStep(JSONObject jsonObject, String language) {
+        String direction = LocalisationService.getInstance().getString("directionsStep", language);
         String htmlIntructions = Jsoup.parse(jsonObject.getString("html_instructions")).text();
         String duration = jsonObject.getJSONObject("duration").getString("text");
         String distance = jsonObject.getJSONObject("distance").getString("text");
 
-        direction += htmlIntructions + " ";
-        direction += " during ";
-        direction += duration;
-        direction += " (" + distance + ")";
+        direction = String.format(direction, htmlIntructions, duration, distance);
 
         return direction;
     }

@@ -191,7 +191,7 @@ public class WeatherHandlers implements UpdatesCallback {
                             log.error(e);
                         }
                     }
-                } else if (message.isReply() && listOfSentMessages.contains(message.getReplyToMessage().getMessageId())) {
+                } else if (message.isReply() && listOfSentMessages.containsKey(message.getReplyToMessage().getMessageId())) {
                     SendMessage sendMessageRequest = new SendMessage();
                     if (listOfSentMessages.remove(message.getReplyToMessage().getMessageId()) == CURRENTWEATHERID) {
                         String weather = WeatherService.getInstance().fetchWeatherCurrent(message.getText(),

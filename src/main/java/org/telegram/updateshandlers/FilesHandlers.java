@@ -58,140 +58,30 @@ public class FilesHandlers implements UpdatesCallback {
         Message message = update.getMessage();
         if (message != null && message.hasText()) {
             if (languageMessages.contains(message.getFrom().getId())) {
-                String[] parts = message.getText().split("-->", 2);
-                SendMessage sendMessageRequest = new SendMessage();
-                sendMessageRequest.setChatId(message.getChatId());
-                if (LocalisationService.getInstance().supportedLanguages.containsKey(parts[0].trim())) {
-                    DatabaseManager.getInstance().putUserLanguage(message.getFrom().getId(), parts[0].trim());
-                    sendMessageRequest.setText(LocalisationService.getInstance().getString("languageModified", parts[0].trim()));
-                } else {
-                    sendMessageRequest.setText(LocalisationService.getInstance().getString("errorLanguage"));
-                }
-                sendMessageRequest.setReplayToMessageId(message.getMessageId());
-                ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
-                replyKeyboardHide.setHideKeyboard(true);
-                replyKeyboardHide.setSelective(true);
-                sendMessageRequest.setReplayMarkup(replyKeyboardHide);
-                SenderHelper.SendMessage(sendMessageRequest, TOKEN);
-                languageMessages.remove(message.getFrom().getId());
+                onLanguageReceived(message);
             } else {
                 String language = DatabaseManager.getInstance().getUserLanguage(update.getMessage().getFrom().getId());
                 if (message.getText().startsWith(Commands.setLanguageCommand)) {
-                    SendMessage sendMessageRequest = new SendMessage();
-                    sendMessageRequest.setChatId(message.getChatId());
-                    ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-                    HashMap<String, String> languages = LocalisationService.getInstance().supportedLanguages;
-                    List<List<String>> commands = new ArrayList<>();
-                    for (Map.Entry<String, String> entry : languages.entrySet()) {
-                        List<String> commandRow = new ArrayList<>();
-                        commandRow.add(entry.getKey() + " --> " + entry.getValue());
-                        commands.add(commandRow);
-                    }
-                    replyKeyboardMarkup.setResizeKeyboard(true);
-                    replyKeyboardMarkup.setOneTimeKeyboad(true);
-                    replyKeyboardMarkup.setKeyboard(commands);
-                    replyKeyboardMarkup.setSelective(true);
-                    sendMessageRequest.setReplayMarkup(replyKeyboardMarkup);
-                    sendMessageRequest.setText(LocalisationService.getInstance().getString("chooselanguage", language));
-                    SenderHelper.SendMessage(sendMessageRequest, TOKEN);
-                    languageMessages.add(message.getFrom().getId());
+                    onSetLanguageCommand(message, language);
                 } else {
                     String[] parts = message.getText().split(" ", 2);
                     if (parts[0].startsWith(Commands.startCommand)) {
                         if (parts.length == 2) {
-                            if (DatabaseManager.getInstance().doesFileExists(parts[1].trim())) {
-                                SendDocument sendDocumentRequest = new SendDocument();
-                                sendDocumentRequest.setDocument(parts[1].trim());
-                                sendDocumentRequest.setChatId(message.getChatId());
-                                SenderHelper.SendDocument(sendDocumentRequest, TOKEN);
-                            } else {
-                                SendMessage sendMessageRequest = new SendMessage();
-                                sendMessageRequest.setText(LocalisationService.getInstance().getString("wrongFileId", language));
-                                sendMessageRequest.setChatId(message.getChatId());
-                                SenderHelper.SendMessage(sendMessageRequest, TOKEN);
-                            }
+                            onStartWithParameters(message, language, parts[1]);
                         } else {
-                            SendMessage sendMessageRequest = new SendMessage();
-                            String formatedString = String.format(
-                                    LocalisationService.getInstance().getString("helpFiles", language),
-                                    Commands.startCommand, Commands.uploadCommand, Commands.deleteCommand,
-                                    Commands.listCommand);
-                            sendMessageRequest.setText(formatedString);
-                            sendMessageRequest.setChatId(message.getChatId());
-                            SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+                            sendHelpMessage(message, language);
                         }
                     } else if (!message.isGroupMessage()) {
                         if (parts[0].startsWith(Commands.uploadCommand)) { // Open upload for user
-                            DatabaseManager.getInstance().addUserForFile(message.getFrom().getId(), INITIAL_UPLOAD_STATUS);
-                            SendMessage sendMessageRequest = new SendMessage();
-                            sendMessageRequest.setText(LocalisationService.getInstance().getString("sendFileToUpload", language));
-                            sendMessageRequest.setChatId(message.getChatId());
-                            SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+                            onUploadCommand(message, language);
                         } else if (parts[0].startsWith(Commands.cancelCommand)) {
-                            DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
-                            SendMessage sendMessageRequest = new SendMessage();
-                            sendMessageRequest.setText(LocalisationService.getInstance().getString("processFinished", language));
-                            sendMessageRequest.setChatId(message.getChatId());
-                            SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+                            onCancelCommand(message, language);
                         } else if (parts[0].startsWith(Commands.deleteCommand)) {
-                            if (DatabaseManager.getInstance().getUserStatusForFile(message.getFrom().getId()) == DELETE_UPLOADED_STATUS &&
-                                    parts.length == 2) {
-                                String[] innerParts = parts[1].split("-->", 2);
-                                boolean removed = DatabaseManager.getInstance().deleteFile(innerParts[0].trim());
-                                SendMessage sendMessageRequest = new SendMessage();
-                                if (removed) {
-                                    sendMessageRequest.setText(LocalisationService.getInstance().getString("fileDeleted", language));
-                                } else {
-                                    sendMessageRequest.setText(LocalisationService.getInstance().getString("wrongFileId", language));
-                                }
-                                sendMessageRequest.setChatId(message.getChatId());
-                                SenderHelper.SendMessage(sendMessageRequest, TOKEN);
-                                DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
-                            } else {
-                                DatabaseManager.getInstance().addUserForFile(message.getFrom().getId(), DELETE_UPLOADED_STATUS);
-                                SendMessage sendMessageRequest = new SendMessage();
-                                sendMessageRequest.setText(LocalisationService.getInstance().getString("deleteUploadedFile", language));
-                                sendMessageRequest.setChatId(message.getChatId());
-                                HashMap<String, String> files = DatabaseManager.getInstance().getFilesByUser(message.getFrom().getId());
-                                ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-                                if (files.size() > 0) {
-                                    List<List<String>> commands = new ArrayList<>();
-                                    for (Map.Entry<String, String> entry : files.entrySet()) {
-                                        List<String> commandRow = new ArrayList<>();
-                                        commandRow.add(Commands.deleteCommand + " " + entry.getKey() + " --> " + entry.getValue());
-                                        commands.add(commandRow);
-                                    }
-                                    replyKeyboardMarkup.setResizeKeyboard(true);
-                                    replyKeyboardMarkup.setOneTimeKeyboad(true);
-                                    replyKeyboardMarkup.setKeyboard(commands);
-                                }
-                                sendMessageRequest.setReplayMarkup(replyKeyboardMarkup);
-                                SenderHelper.SendMessage(sendMessageRequest, TOKEN);
-                            }
+                            onDeleteCommand(message, language, parts);
                         } else if (parts[0].startsWith(Commands.listCommand)) {
-                            HashMap<String, String> files = DatabaseManager.getInstance().getFilesByUser(message.getFrom().getId());
-                            SendMessage sendMessageRequest = new SendMessage();
-                            if (files.size() > 0) {
-                                String text = LocalisationService.getInstance().getString("listOfFiles", language) + ":\n\n";
-                                for (Map.Entry<String, String> entry : files.entrySet()) {
-                                    text += LocalisationService.getInstance().getString("uploadedFileURL", language)
-                                            + entry.getKey() + " --> " + entry.getValue() + "\n";
-                                }
-                                sendMessageRequest.setText(text);
-                            } else {
-                                sendMessageRequest.setText(LocalisationService.getInstance().getString("noFiles", language));
-                            }
-                            sendMessageRequest.setChatId(message.getChatId());
-                            SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+                            onListCommand(message, language);
                         } else {
-                            SendMessage sendMessageRequest = new SendMessage();
-                            String formatedString = String.format(
-                                    LocalisationService.getInstance().getString("helpFiles", language),
-                                    Commands.startCommand, Commands.uploadCommand, Commands.deleteCommand,
-                                    Commands.listCommand);
-                            sendMessageRequest.setText(formatedString);
-                            sendMessageRequest.setChatId(message.getChatId());
-                            SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+                            sendHelpMessage(message, language);
                         }
                     }
                 }
@@ -206,5 +96,148 @@ public class FilesHandlers implements UpdatesCallback {
             sendMessageRequest.setChatId(message.getChatId());
             SenderHelper.SendMessage(sendMessageRequest, TOKEN);
         }
+    }
+
+    private void onListCommand(Message message, String language) {
+        HashMap<String, String> files = DatabaseManager.getInstance().getFilesByUser(message.getFrom().getId());
+        SendMessage sendMessageRequest = new SendMessage();
+        if (files.size() > 0) {
+            String text = LocalisationService.getInstance().getString("listOfFiles", language) + ":\n\n";
+            for (Map.Entry<String, String> entry : files.entrySet()) {
+                text += LocalisationService.getInstance().getString("uploadedFileURL", language)
+                        + entry.getKey() + " --> " + entry.getValue() + "\n";
+            }
+            sendMessageRequest.setText(text);
+        } else {
+            sendMessageRequest.setText(LocalisationService.getInstance().getString("noFiles", language));
+        }
+        sendMessageRequest.setChatId(message.getChatId());
+        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+    }
+
+    private void onDeleteCommand(Message message, String language, String[] parts) {
+        if (DatabaseManager.getInstance().getUserStatusForFile(message.getFrom().getId()) == DELETE_UPLOADED_STATUS &&
+                parts.length == 2) {
+            onDeleteCommandWithParameters(message, language, parts[1]);
+        } else {
+            onDeleteCommandWithoutParameters(message, language);
+        }
+    }
+
+    private void onDeleteCommandWithoutParameters(Message message, String language) {
+        DatabaseManager.getInstance().addUserForFile(message.getFrom().getId(), DELETE_UPLOADED_STATUS);
+        SendMessage sendMessageRequest = new SendMessage();
+        sendMessageRequest.setText(LocalisationService.getInstance().getString("deleteUploadedFile", language));
+        sendMessageRequest.setChatId(message.getChatId());
+        HashMap<String, String> files = DatabaseManager.getInstance().getFilesByUser(message.getFrom().getId());
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        if (files.size() > 0) {
+            List<List<String>> commands = new ArrayList<>();
+            for (Map.Entry<String, String> entry : files.entrySet()) {
+                List<String> commandRow = new ArrayList<>();
+                commandRow.add(Commands.deleteCommand + " " + entry.getKey() + " --> " + entry.getValue());
+                commands.add(commandRow);
+            }
+            replyKeyboardMarkup.setResizeKeyboard(true);
+            replyKeyboardMarkup.setOneTimeKeyboad(true);
+            replyKeyboardMarkup.setKeyboard(commands);
+        }
+        sendMessageRequest.setReplayMarkup(replyKeyboardMarkup);
+        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+    }
+
+    private void onDeleteCommandWithParameters(Message message, String language, String part) {
+        String[] innerParts = part.split("-->", 2);
+        boolean removed = DatabaseManager.getInstance().deleteFile(innerParts[0].trim());
+        SendMessage sendMessageRequest = new SendMessage();
+        if (removed) {
+            sendMessageRequest.setText(LocalisationService.getInstance().getString("fileDeleted", language));
+        } else {
+            sendMessageRequest.setText(LocalisationService.getInstance().getString("wrongFileId", language));
+        }
+        sendMessageRequest.setChatId(message.getChatId());
+        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+        DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
+    }
+
+    private void onCancelCommand(Message message, String language) {
+        DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
+        SendMessage sendMessageRequest = new SendMessage();
+        sendMessageRequest.setText(LocalisationService.getInstance().getString("processFinished", language));
+        sendMessageRequest.setChatId(message.getChatId());
+        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+    }
+
+    private void onUploadCommand(Message message, String language) {
+        DatabaseManager.getInstance().addUserForFile(message.getFrom().getId(), INITIAL_UPLOAD_STATUS);
+        SendMessage sendMessageRequest = new SendMessage();
+        sendMessageRequest.setText(LocalisationService.getInstance().getString("sendFileToUpload", language));
+        sendMessageRequest.setChatId(message.getChatId());
+        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+    }
+
+    private void sendHelpMessage(Message message, String language) {
+        SendMessage sendMessageRequest = new SendMessage();
+        String formatedString = String.format(
+                LocalisationService.getInstance().getString("helpFiles", language),
+                Commands.startCommand, Commands.uploadCommand, Commands.deleteCommand,
+                Commands.listCommand);
+        sendMessageRequest.setText(formatedString);
+        sendMessageRequest.setChatId(message.getChatId());
+        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+    }
+
+    private void onStartWithParameters(Message message, String language, String part) {
+        if (DatabaseManager.getInstance().doesFileExists(part.trim())) {
+            SendDocument sendDocumentRequest = new SendDocument();
+            sendDocumentRequest.setDocument(part.trim());
+            sendDocumentRequest.setChatId(message.getChatId());
+            SenderHelper.SendDocument(sendDocumentRequest, TOKEN);
+        } else {
+            SendMessage sendMessageRequest = new SendMessage();
+            sendMessageRequest.setText(LocalisationService.getInstance().getString("wrongFileId", language));
+            sendMessageRequest.setChatId(message.getChatId());
+            SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+        }
+    }
+
+    private void onSetLanguageCommand(Message message, String language) {
+        SendMessage sendMessageRequest = new SendMessage();
+        sendMessageRequest.setChatId(message.getChatId());
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        HashMap<String, String> languages = LocalisationService.getInstance().supportedLanguages;
+        List<List<String>> commands = new ArrayList<>();
+        for (Map.Entry<String, String> entry : languages.entrySet()) {
+            List<String> commandRow = new ArrayList<>();
+            commandRow.add(entry.getKey() + " --> " + entry.getValue());
+            commands.add(commandRow);
+        }
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setOneTimeKeyboad(true);
+        replyKeyboardMarkup.setKeyboard(commands);
+        replyKeyboardMarkup.setSelective(true);
+        sendMessageRequest.setReplayMarkup(replyKeyboardMarkup);
+        sendMessageRequest.setText(LocalisationService.getInstance().getString("chooselanguage", language));
+        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+        languageMessages.add(message.getFrom().getId());
+    }
+
+    private void onLanguageReceived(Message message) {
+        String[] parts = message.getText().split("-->", 2);
+        SendMessage sendMessageRequest = new SendMessage();
+        sendMessageRequest.setChatId(message.getChatId());
+        if (LocalisationService.getInstance().supportedLanguages.containsKey(parts[0].trim())) {
+            DatabaseManager.getInstance().putUserLanguage(message.getFrom().getId(), parts[0].trim());
+            sendMessageRequest.setText(LocalisationService.getInstance().getString("languageModified", parts[0].trim()));
+        } else {
+            sendMessageRequest.setText(LocalisationService.getInstance().getString("errorLanguage"));
+        }
+        sendMessageRequest.setReplayToMessageId(message.getMessageId());
+        ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
+        replyKeyboardHide.setHideKeyboard(true);
+        replyKeyboardHide.setSelective(true);
+        sendMessageRequest.setReplayMarkup(replyKeyboardHide);
+        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+        languageMessages.remove(message.getFrom().getId());
     }
 }

@@ -8,7 +8,7 @@ package org.telegram;
  */
 public class BuildVars {
     public static final Boolean debug = true;
-    public static final Boolean useWebHook = true;
+    public static final Boolean useWebHook = false;
     public static final String BASEWEBHOOKURL = "http://YOUREXTERNALADDRES";
     public static final String INTERNALWEBHOOKURL = "http://localhost";
 

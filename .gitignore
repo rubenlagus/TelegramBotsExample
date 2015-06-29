@@ -1,0 +1,15 @@
+# Build
+/target/
+
+# IntelliJ IDEA
+*.iml
+*.ipr
+*.iws
+*.ids
+/.idea/
+
+
+# Logs
+*.log
+*.tlog
+logs

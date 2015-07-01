@@ -1,6 +1,9 @@
 # Telegram Bot Java Library
 A simple to use library to create Telegram Bots in Java (Still Beta Version)
 
+## Translations
+Bots are now supporting multilanguage. If you want to add your own, feel free to translate at [transifex](https://www.transifex.com/projects/p/telegrambots/)
+
 ## Contributions
 Feel free to fork this project, work on it and then make a pull request. Most of the times I will accept them if they add something valuable to the code. 
 

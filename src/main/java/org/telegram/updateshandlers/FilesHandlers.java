@@ -112,6 +112,9 @@ public class FilesHandlers implements UpdatesCallback {
             sendMessageRequest.setText(LocalisationService.getInstance().getString("noFiles", language));
         }
         sendMessageRequest.setChatId(message.getChatId());
+        ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
+        replyKeyboardHide.setHideKeyboard(true);
+        sendMessageRequest.setReplayMarkup(replyKeyboardHide);
         SenderHelper.SendMessage(sendMessageRequest, TOKEN);
     }
 

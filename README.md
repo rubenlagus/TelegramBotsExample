@@ -31,6 +31,10 @@ This library use [Telegram bot API](https://core.telegram.org/bots), you can fin
 ## Questions or Suggestions
 Feel free to create issues [here](https://github.com/rubenlagus/TelegramBots/issues) as you need or contact me at our [Telegram Group](https://telegram.me/joinchat/0039114101b62e7ea87dd357a4139fe1)
 
+## Usage with eclipse
+
+Follow the steps created by Rico [here](https://github.com/rubenlagus/TelegramBots/blob/master/eclipse%20configuration.md)
+
 ## License 
 
 This program is free software: you can redistribute it and/or modify

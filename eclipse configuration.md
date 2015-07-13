@@ -1,4 +1,4 @@
-# How to use TelegramBots by Ruben with Eclipse
+# How to use TelegramBots with Eclipse
 
 
 ### Step 1: Install Maven

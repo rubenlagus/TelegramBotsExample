@@ -29,7 +29,7 @@ https://telegram.me/TGlanguagesbot
 This library use [Telegram bot API](https://core.telegram.org/bots), you can find more information following the link.
 
 ## Questions or Suggestions
-Feel free to create issues [here](https://github.com/rubenlagus/TelegramBots/issues) as you need or contact me at our [Telegram Group](https://telegram.me/joinchat/0039114101b62e7ea87dd357a4139fe1)
+Feel free to create issues [here](https://github.com/rubenlagus/TelegramBots/issues) as you need
 
 ## Usage with eclipse
 

@@ -1,9 +1,11 @@
 package org.telegram.updateshandlers;
 
-import org.telegram.*;
+import org.telegram.BotConfig;
+import org.telegram.BuildVars;
+import org.telegram.Commands;
+import org.telegram.SenderHelper;
 import org.telegram.api.*;
 import org.telegram.database.DatabaseManager;
-import org.telegram.methods.ForwardMessage;
 import org.telegram.methods.SendMessage;
 import org.telegram.services.BotLogger;
 import org.telegram.services.LocalisationService;

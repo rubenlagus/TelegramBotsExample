@@ -26,6 +26,7 @@ import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Ruben Bermudez
@@ -60,8 +61,9 @@ public class UpdatesThread {
             while(true) {
                 GetUpdates request = new GetUpdates();
                 request.setLimit(100);
+                request.setTimeout(20);
                 request.setOffset(lastReceivedUpdate + 1);
-                CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+                CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).setConnectionTimeToLive(20, TimeUnit.SECONDS).build();
                 String url = Constants.BASEURL + token + "/" + GetUpdates.PATH;
                 HttpPost httpPost = new HttpPost(url);
                 List<NameValuePair> nameValuePairs = new ArrayList<>();

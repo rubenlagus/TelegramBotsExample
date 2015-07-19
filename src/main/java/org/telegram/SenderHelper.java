@@ -16,10 +16,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.telegram.api.Message;
-import org.telegram.methods.Constants;
-import org.telegram.methods.SendDocument;
-import org.telegram.methods.SendMessage;
-import org.telegram.methods.SetWebhook;
+import org.telegram.methods.*;
 import org.telegram.services.BotLogger;
 
 import java.io.File;
@@ -134,6 +131,48 @@ public class SenderHelper {
             BufferedHttpEntity buf = new BufferedHttpEntity(ht);
             String responseContent = EntityUtils.toString(buf, "UTF-8");
 
+        } catch (IOException e) {
+            log.error(e);
+        }
+
+    }
+
+    public static void sendSticker(SendSticker sendSticker, String botToken) {
+        try {
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            String url = Constants.BASEURL + botToken + "/" + SendSticker.PATH;
+            HttpPost httppost = new HttpPost(url);
+
+            if (sendSticker.isNewSticker()) {
+                MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+                builder.addTextBody(SendSticker.CHATID_FIELD, sendSticker.getChatId().toString());
+                builder.addBinaryBody(SendSticker.STICKER_FIELD, new File(sendSticker.getSticker()), ContentType.APPLICATION_OCTET_STREAM, sendSticker.getStickerName());
+                if (sendSticker.getReplayMarkup() != null) {
+                    builder.addTextBody(SendSticker.REPLYMARKUP_FIELD, sendSticker.getReplayMarkup().toJson().toString());
+                }
+                if (sendSticker.getReplayToMessageId() != null) {
+                    builder.addTextBody(SendSticker.REPLYTOMESSAGEID_FIELD, sendSticker.getReplayToMessageId().toString());
+                }
+                HttpEntity multipart = builder.build();
+                httppost.setEntity(multipart);
+            } else {
+                List<NameValuePair> nameValuePairs = new ArrayList<>();
+                nameValuePairs.add(new BasicNameValuePair(SendSticker.CHATID_FIELD, sendSticker.getChatId().toString()));
+                nameValuePairs.add(new BasicNameValuePair(SendSticker.STICKER_FIELD, sendSticker.getSticker()));
+                if (sendSticker.getReplayMarkup() != null) {
+                    nameValuePairs.add(new BasicNameValuePair(SendSticker.REPLYMARKUP_FIELD, sendSticker.getReplayMarkup().toString()));
+                }
+                if (sendSticker.getReplayToMessageId() != null) {
+                    nameValuePairs.add(new BasicNameValuePair(SendSticker.REPLYTOMESSAGEID_FIELD, sendSticker.getReplayToMessageId().toString()));
+                }
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+            }
+
+            CloseableHttpResponse response = httpClient.execute(httppost);
+            if (sendSticker.isNewSticker()) {
+                File fileToDelete = new File(sendSticker.getSticker());
+                fileToDelete.delete();
+            }
         } catch (IOException e) {
             log.error(e);
         }

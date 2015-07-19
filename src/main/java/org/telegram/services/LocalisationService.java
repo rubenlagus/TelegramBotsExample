@@ -87,18 +87,18 @@ public class LocalisationService {
         CustomClassLoader loader = new CustomClassLoader(Thread.currentThread().getContextClassLoader());
         english = ResourceBundle.getBundle("localisation.strings", new Locale("en", "US"), loader);
         supportedLanguages.put("en", "English");
-        /*spanish = ResourceBundle.getBundle("localisation.strings", new Locale("es", "ES"), loader);
+        spanish = ResourceBundle.getBundle("localisation.strings", new Locale("es", "ES"), loader);
         supportedLanguages.put("es", "Español");
+        /*german = ResourceBundle.getBundle("localisation.strings", new Locale("de", "DE"), loader);
+        supportedLanguages.put("de", "Deutsch");
+        portuguese = ResourceBundle.getBundle("localisation.strings", new Locale("pt", "PT"), loader);
+        supportedLanguages.put("pt", "Portuguese");
         dutch = ResourceBundle.getBundle("localisation.strings", new Locale("nl", "NL"), loader);
         supportedLanguages.put("nl", "Dutch");
-        german = ResourceBundle.getBundle("localisation.strings", new Locale("de", "DE"), loader);
-        supportedLanguages.put("de", "Deutsch");
         italian = ResourceBundle.getBundle("localisation.strings", new Locale("it", "IT"), loader);
         supportedLanguages.put("it", "Italian");
         french = ResourceBundle.getBundle("localisation.strings", new Locale("fr", "FR"), loader);
         supportedLanguages.put("fr", "French");
-        portuguese = ResourceBundle.getBundle("localisation.strings", new Locale("pt", "PT"), loader);
-        supportedLanguages.put("pt_pt", "Portuguese PT");
         portuguesebr = ResourceBundle.getBundle("localisation.strings", new Locale("pt", "BR"), loader);
         supportedLanguages.put("pt_br", "Portuguese BR");*/
         /**
@@ -143,8 +143,11 @@ public class LocalisationService {
                 case "en":
                     result = english.getString(key);
                     break;
-                /*case "es":
+                case "es":
                     result = spanish.getString(key);
+                    break;
+                /*case "pt":
+                    result = portuguese.getString(key);
                     break;
                 case "nl":
                     result = dutch.getString(key);
@@ -163,9 +166,6 @@ public class LocalisationService {
                     break;
                 case "hi":
                     result = hindi.getString(key);
-                    break;
-                case "pt":
-                    result = portuguese.getString(key);
                     break;
                 case "pt-BR":
                     result = portuguesebr.getString(key);

@@ -250,6 +250,7 @@ public class WeatherHandlers implements UpdatesCallback {
         replyKeyboardMarkup.setKeyboard(commands);
         replyKeyboardMarkup.setSelective(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardMarkup);
+        sendMessageRequest.setReplayToMessageId(message.getMessageId());
         sendMessageRequest.setText(LocalisationService.getInstance().getString("chooselanguage", language));
         SenderHelper.SendMessage(sendMessageRequest, TOKEN);
         languageMessages.add(message.getFrom().getId());

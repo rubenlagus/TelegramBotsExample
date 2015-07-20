@@ -11,6 +11,7 @@ import org.telegram.api.Update;
 import org.telegram.database.DatabaseManager;
 import org.telegram.methods.SendDocument;
 import org.telegram.methods.SendMessage;
+import org.telegram.services.Emoji;
 import org.telegram.services.LocalisationService;
 import org.telegram.updatesreceivers.UpdatesThread;
 import org.telegram.updatesreceivers.Webhook;
@@ -105,7 +106,7 @@ public class FilesHandlers implements UpdatesCallback {
             String text = LocalisationService.getInstance().getString("listOfFiles", language) + ":\n\n";
             for (Map.Entry<String, String> entry : files.entrySet()) {
                 text += LocalisationService.getInstance().getString("uploadedFileURL", language)
-                        + entry.getKey() + " --> " + entry.getValue() + "\n";
+                        + entry.getKey() + " " + Emoji.LEFT_RIGHT_ARROW.toString() + " " + entry.getValue() + "\n";
             }
             sendMessageRequest.setText(text);
         } else {
@@ -138,7 +139,8 @@ public class FilesHandlers implements UpdatesCallback {
             List<List<String>> commands = new ArrayList<>();
             for (Map.Entry<String, String> entry : files.entrySet()) {
                 List<String> commandRow = new ArrayList<>();
-                commandRow.add(Commands.deleteCommand + " " + entry.getKey() + " --> " + entry.getValue());
+                commandRow.add(Commands.deleteCommand + " " + entry.getKey() + " " + Emoji.LEFT_RIGHT_ARROW.toString()
+                        + " " + entry.getValue());
                 commands.add(commandRow);
             }
             replyKeyboardMarkup.setResizeKeyboard(true);
@@ -150,7 +152,7 @@ public class FilesHandlers implements UpdatesCallback {
     }
 
     private void onDeleteCommandWithParameters(Message message, String language, String part) {
-        String[] innerParts = part.split("-->", 2);
+        String[] innerParts = part.split(Emoji.LEFT_RIGHT_ARROW.toString(), 2);
         boolean removed = DatabaseManager.getInstance().deleteFile(innerParts[0].trim());
         SendMessage sendMessageRequest = new SendMessage();
         if (removed) {
@@ -212,7 +214,7 @@ public class FilesHandlers implements UpdatesCallback {
         List<List<String>> commands = new ArrayList<>();
         for (Map.Entry<String, String> entry : languages.entrySet()) {
             List<String> commandRow = new ArrayList<>();
-            commandRow.add(entry.getKey() + " --> " + entry.getValue());
+            commandRow.add(entry.getKey() + " " + Emoji.LEFT_RIGHT_ARROW.toString() + " " + entry.getValue());
             commands.add(commandRow);
         }
         replyKeyboardMarkup.setResizeKeyboard(true);
@@ -226,7 +228,7 @@ public class FilesHandlers implements UpdatesCallback {
     }
 
     private void onLanguageReceived(Message message) {
-        String[] parts = message.getText().split("-->", 2);
+        String[] parts = message.getText().split(Emoji.LEFT_RIGHT_ARROW.toString(), 2);
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setChatId(message.getChatId());
         if (LocalisationService.getInstance().supportedLanguages.containsKey(parts[0].trim())) {

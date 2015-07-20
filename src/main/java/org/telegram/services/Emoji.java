@@ -141,7 +141,10 @@ public enum Emoji {
     CLOSED_UMBRELLA('\uD83C', '\uDF02'),
     SUN_WITH_FACE('\uD83C', '\uDF1E'),
     FOGGY('\uD83C', '\uDF01'),
-    CLOUD(null, '\u2601');
+    CLOUD(null, '\u2601'),
+
+    // Others
+    LEFT_RIGHT_ARROW(null, '\u2194');
 
     Character firstChar;
     Character secondChar;

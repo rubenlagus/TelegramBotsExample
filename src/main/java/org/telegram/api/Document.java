@@ -34,7 +34,7 @@ public class Document {
 
     public Document(JSONObject jsonObject) {
         this.fileId = jsonObject.getString(FILEID_FIELD);
-        if (jsonObject.has(THUMB_FIELD) {
+        if (jsonObject.has(THUMB_FIELD)) {
             this.thumb = new PhotoSize(jsonObject.getJSONObject(THUMB_FIELD));
         }
         else {

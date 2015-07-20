@@ -34,7 +34,12 @@ public class Document {
 
     public Document(JSONObject jsonObject) {
         this.fileId = jsonObject.getString(FILEID_FIELD);
-        this.thumb = new PhotoSize(jsonObject.getJSONObject(THUMB_FIELD));
+        if (jsonObject.has(THUMB_FIELD)) {
+            this.thumb = new PhotoSize(jsonObject.getJSONObject(THUMB_FIELD));
+        }
+        else {
+            this.thumb = null;
+        }
         this.fileName = jsonObject.optString(FILENAME_FIELD, "");
         this.mimeType = jsonObject.optString(MIMETYPE_FIELD, "");
         this.fileSize = jsonObject.optInt(FILESIZE_FIELD, 0);

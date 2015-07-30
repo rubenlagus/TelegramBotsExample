@@ -17,6 +17,10 @@ public class SendVideo {
     private Integer chatId; ///< Unique identifier for the message recepient — User or GroupChat id
     public static final String VIDEO_FIELD = "video";
     private String video; ///< Video to send. file_id as String to resend a video that is already on the Telegram servers
+    public static final String DURATION_FIELD = "duration";
+    private String duration; ///< Optional. Duration of sent video in seconds
+    public static final String CAPTION_FIELD = "caption";
+    private String caption; ///< OptionaL. Video caption (may also be used when resending videos by file_id).
     public static final String REPLYTOMESSAGEID_FIELD = "reply_to_message_id";
     private Integer replayToMessageId; ///< Optional. If the message is a reply, ID of the original message
     public static final String REPLYMARKUP_FIELD = "reply_markup";

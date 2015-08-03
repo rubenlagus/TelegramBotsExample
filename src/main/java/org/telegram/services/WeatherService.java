@@ -269,7 +269,7 @@ public class WeatherService {
     }
 
     private String convertCurrentWeatherToString(JSONObject jsonObject, String language, String units, Emoji emoji) {
-        String temp = jsonObject.getJSONObject("main").getDouble("temp")+"";
+        String temp = ((int)jsonObject.getJSONObject("main").getDouble("temp"))+"";
         String cloudiness = jsonObject.getJSONObject("clouds").getInt("all") + "%";
         String weatherDesc = jsonObject.getJSONArray("weather").getJSONObject(0).getString("description");
 
@@ -312,8 +312,8 @@ public class WeatherService {
         String tempMin;
         String weatherDesc;
         date = Instant.ofEpochSecond(internalJSON.getLong("dt")).atZone(ZoneId.systemDefault()).toLocalDate();
-        tempMax = internalJSON.getJSONObject("temp").getDouble("max") + "";
-        tempMin = internalJSON.getJSONObject("temp").getDouble("min") + "";
+        tempMax = ((int)internalJSON.getJSONObject("temp").getDouble("max")) + "";
+        tempMin = ((int)internalJSON.getJSONObject("temp").getDouble("min")) + "";
         JSONObject weatherObject = internalJSON.getJSONArray("weather").getJSONObject(0);
         Emoji emoji = getEmojiForWeather(internalJSON.getJSONArray("weather").getJSONObject(0));
         weatherDesc = weatherObject.getString("description");

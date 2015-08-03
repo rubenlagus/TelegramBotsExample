@@ -4,76 +4,83 @@ import org.telegram.BuildVars;
 
 import javax.validation.constraints.NotNull;
 import java.io.*;
-import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * @author Ruben Bermudez
- * @version 2.0
- * @brief Logger to file
+ * @version 1.0
+ * @brief Logger
  * @date 21/01/15
  */
 public class BotLogger {
-    private static final Object lockToWrite = new Object();
-    private static volatile PrintWriter logginFile;
-    private static volatile String currentFileName;
-    private static volatile ConcurrentHashMap<String, BotLogger> instances = new ConcurrentHashMap<>();
+    private volatile Object lockToWrite = new Object();
+
     private final Logger logger;
-    private LocalDateTime lastFileDate;
+    private static volatile PrintWriter logginFile;
+    private Calendar lastFileDate;
+    private static volatile String currentFileName;
+    private static LoggerThread loggerThread = new LoggerThread();
+    private static volatile ConcurrentHashMap<String, BotLogger> instances = new ConcurrentHashMap<>();
+    private final static ConcurrentLinkedQueue<String> logsToFile = new ConcurrentLinkedQueue<>();
 
-    private BotLogger(String classname) {
-        this.logger = Logger.getLogger(classname);
-        this.logger.setLevel(Level.ALL);
-        this.lastFileDate = LocalDateTime.now();
-        if (currentFileName == null || currentFileName.compareTo("") == 0) {
-            currentFileName = BuildVars.pathToLogs + dateFormatterForFileName(this.lastFileDate) + ".log";
-            try {
-                File file = new File(currentFileName);
-                if (file.exists()) {
-                    logginFile = new PrintWriter(new BufferedWriter(new FileWriter(currentFileName, true)));
-                } else {
-                    boolean created = file.createNewFile();
-                    if (created) {
-                        logginFile = new PrintWriter(new BufferedWriter(new FileWriter(currentFileName, true)));
-                    } else {
-                        throw new NullPointerException("File for loggin error");
-                    }
-                }
-            } catch (IOException ignored) {
-            }
+    static {
 
-        }
+        loggerThread.start();
     }
 
     public static BotLogger getLogger(@NotNull String className) {
-        BotLogger currentInstance;
-        if (instances.containsKey(className)) {
-            currentInstance = instances.get(className);
-        } else {
+        if (!instances.containsKey(className)) {
             synchronized (BotLogger.class) {
-                if (instances.containsKey(className)) {
-                    currentInstance = instances.get(className);
-                } else {
+                if (!instances.containsKey(className)) {
                     BotLogger instance = new BotLogger(className);
                     instances.put(className, instance);
-                    currentInstance = instance;
+                    return instance;
+                } else {
+                    return instances.get(className);
                 }
             }
+        } else {
+            return instances.get(className);
         }
-
-        return currentInstance;
     }
 
+    private BotLogger(String classname) {
+        logger = Logger.getLogger(classname);
+        logger.setLevel(Level.ALL);
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setLevel(Level.ALL);
+        logger.addHandler(handler);
+        lastFileDate = new GregorianCalendar();
+        if  (currentFileName == null || currentFileName.length() == 0) {
+            currentFileName = BuildVars.pathToLogs + dateFormaterForFileName(lastFileDate) + ".log";
+            try {
+                File file = new File(currentFileName);
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+                logginFile = new PrintWriter(new BufferedWriter(new FileWriter(currentFileName, true)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+
     public void log(@NotNull Level level, String msg) {
-        this.logger.log(level, msg);
+        logger.log(level, msg);
         logToFile(level, msg);
     }
 
 
     public void severe(String msg) {
-        this.logger.severe(msg);
+        logger.severe(msg);
         logToFile(Level.SEVERE, msg);
     }
 
@@ -94,49 +101,49 @@ public class BotLogger {
     }
 
     public void warning(String msg) {
-        this.logger.warning(msg);
+        logger.warning(msg);
         logToFile(Level.WARNING, msg);
     }
 
 
     public void info(String msg) {
-        this.logger.info(msg);
+        logger.info(msg);
         logToFile(Level.INFO, msg);
     }
 
 
     public void config(String msg) {
-        this.logger.config(msg);
+        logger.config(msg);
         logToFile(Level.CONFIG, msg);
     }
 
 
     public void fine(String msg) {
-        this.logger.fine(msg);
+        logger.fine(msg);
         logToFile(Level.FINE, msg);
     }
 
 
     public void finer(String msg) {
-        this.logger.finer(msg);
+        logger.finer(msg);
         logToFile(Level.FINER, msg);
     }
 
 
     public void finest(String msg) {
-        this.logger.finest(msg);
+        logger.finest(msg);
         logToFile(Level.FINEST, msg);
     }
 
 
     public void log(@NotNull Level level, @NotNull Throwable throwable) {
-        this.logger.log(level, "Exception", throwable);
+        throwable.printStackTrace();
         logToFile(level, throwable);
     }
 
     public void log(@NotNull Level level, String msg, Throwable thrown) {
-        this.logger.log(level, msg, thrown);
-        logToFile(level, msg, thrown);
+        logger.log(level, msg, thrown);
+        logToFile(level, msg ,thrown);
     }
 
     public void severe(@NotNull Throwable throwable) {
@@ -227,105 +234,120 @@ public class BotLogger {
         log(Level.FINER, msg, throwable);
     }
 
-    private boolean isCurrentDate(LocalDateTime dateTime) {
-        return dateTime.toLocalDate().isEqual(this.lastFileDate.toLocalDate());
+    private boolean isCurrentDate(Calendar calendar) {
+        if (calendar.get(Calendar.DAY_OF_MONTH) != lastFileDate.get(Calendar.DAY_OF_MONTH)) {
+            return false;
+        }
+        if (calendar.get(Calendar.MONTH) != lastFileDate.get(Calendar.MONTH)) {
+            return false;
+        }
+        if (calendar.get(Calendar.YEAR) != lastFileDate.get(Calendar.YEAR)) {
+            return false;
+        }
+        return true;
     }
 
-    private String dateFormatterForFileName(@NotNull LocalDateTime dateTime) {
+    private String dateFormaterForFileName(@NotNull Calendar calendar) {
         String dateString = "";
-        dateString += dateTime.getDayOfMonth();
-        dateString += dateTime.getMonthValue();
-        dateString += dateTime.getYear();
+        dateString += calendar.get(Calendar.DAY_OF_MONTH);
+        dateString += calendar.get(Calendar.MONTH) + 1;
+        dateString += calendar.get(Calendar.YEAR);
         return dateString;
     }
 
-    private String dateFormatterForLogs(@NotNull LocalDateTime dateTime) {
+    private String dateFormaterForLogs(@NotNull Calendar calendar) {
         String dateString = "[";
-        dateString += dateTime.getDayOfMonth() + "_";
-        dateString += dateTime.getMonthValue() + "_";
-        dateString += dateTime.getYear() + "_";
-        dateString += dateTime.getHour() + ":";
-        dateString += dateTime.getMinute() + ":";
-        dateString += dateTime.getSecond();
+        dateString += calendar.get(Calendar.DAY_OF_MONTH) + "_";
+        dateString += (calendar.get(Calendar.MONTH) + 1) + "_";
+        dateString += calendar.get(Calendar.YEAR) + "_";
+        dateString += calendar.get(Calendar.HOUR_OF_DAY) + "_";
+        dateString += calendar.get(Calendar.MINUTE) + ":";
+        dateString += calendar.get(Calendar.SECOND);
         dateString += "] ";
         return dateString;
     }
 
-    private void updateAndCreateFile(LocalDateTime dateTime) {
-        if (!isCurrentDate(dateTime)) {
-            this.lastFileDate = LocalDateTime.now();
-            currentFileName = BuildVars.pathToLogs + dateFormatterForFileName(this.lastFileDate) + ".log";
-            try {
-                logginFile.flush();
-                logginFile.close();
-                File file = new File(currentFileName);
-                if (file.exists()) {
-                    logginFile = new PrintWriter(new BufferedWriter(new FileWriter(currentFileName, true)));
-                } else {
-                    boolean created = file.createNewFile();
-                    if (created) {
-                        logginFile = new PrintWriter(new BufferedWriter(new FileWriter(currentFileName, true)));
-                    } else {
-                        throw new NullPointerException("Error updating log file");
-                    }
-                }
-            } catch (IOException ignored) {
+    private void updateAndCreateFile(Calendar calendar) {
+        if (isCurrentDate(calendar)) {
+            return;
+        }
+        lastFileDate = new GregorianCalendar();
+        currentFileName = BuildVars.pathToLogs + dateFormaterForFileName(lastFileDate) + ".log";
+        try {
+            logginFile.flush();
+            logginFile.close();
+            File file = new File(currentFileName);
+            if (!file.exists()) {
+                file.createNewFile();
             }
+            logginFile = new PrintWriter(new BufferedWriter(new FileWriter(currentFileName, true)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     private void logToFile(@NotNull Level level, Throwable throwable) {
-        if (isLoggable(level)) {
-            synchronized (lockToWrite) {
-                LocalDateTime currentDate = LocalDateTime.now();
-                String dateForLog = dateFormatterForLogs(currentDate);
-                updateAndCreateFile(currentDate);
-                logThrowableToFile(level, throwable, dateForLog);
-            }
+        if (!isLoggable(level)){
+            return;
+        }
+        synchronized (lockToWrite) {
+            Calendar currentDate = new GregorianCalendar();
+            String dateForLog = dateFormaterForLogs(currentDate);
+            updateAndCreateFile(currentDate);
+            logThrowableToFile(level, throwable, dateForLog);
         }
     }
 
 
+
     private void logToFile(@NotNull Level level, String msg) {
-        if (isLoggable(level)) {
-            synchronized (lockToWrite) {
-                LocalDateTime currentDate = LocalDateTime.now();
-                updateAndCreateFile(currentDate);
-                String dateForLog = dateFormatterForLogs(currentDate);
-                logMsgToFile(level, msg, dateForLog);
-            }
+        if (!isLoggable(level)){
+            return;
+        }
+        synchronized (lockToWrite) {
+            Calendar currentDate = new GregorianCalendar();
+            updateAndCreateFile(currentDate);
+            String dateForLog = dateFormaterForLogs(currentDate);
+            logMsgToFile(level, msg, dateForLog);
         }
     }
 
     private void logToFile(Level level, String msg, Throwable throwable) {
-        if (!isLoggable(level)) {
+        if (!isLoggable(level)){
             return;
         }
         synchronized (lockToWrite) {
-            LocalDateTime currentDate = LocalDateTime.now();
+            Calendar currentDate = new GregorianCalendar();
             updateAndCreateFile(currentDate);
-            String dateForLog = dateFormatterForLogs(currentDate);
+            String dateForLog = dateFormaterForLogs(currentDate);
             logMsgToFile(level, msg, dateForLog);
             logThrowableToFile(level, throwable, dateForLog);
         }
     }
 
     private void logMsgToFile(Level level, String msg, String dateForLog) {
-        dateForLog += level.toString() + " - " + msg;
-        logginFile.println(dateForLog);
-        logginFile.flush();
+        dateForLog += " [" + logger.getName() + "]"  + level.toString() + " - " + msg;
+        logsToFile.add(dateForLog);
+        synchronized (logsToFile) {
+            logsToFile.notifyAll();
+        }
     }
 
     private void logThrowableToFile(Level level, Throwable throwable, String dateForLog) {
-        logginFile.println(dateForLog + level.getName() + " - " + throwable);
+        String throwableLog = dateForLog + level.getName() + " - " + throwable + "\n";
         for (StackTraceElement element : throwable.getStackTrace()) {
-            logginFile.println("\tat " + element);
+            throwableLog += "\tat " + element + "\n";
         }
-        logginFile.flush();
+        logsToFile.add(throwableLog);
+        synchronized (logsToFile) {
+            logsToFile.notifyAll();
+        }
     }
 
     private boolean isLoggable(Level level) {
-        return this.logger.isLoggable(level) && BuildVars.debug;
+        return logger.isLoggable(level) && BuildVars.debug;
     }
 
     @Override
@@ -333,5 +355,34 @@ public class BotLogger {
         logginFile.flush();
         logginFile.close();
         super.finalize();
+    }
+
+    private static class LoggerThread extends Thread {
+        @Override
+        public void run() {
+            setPriority(Thread.MIN_PRIORITY);
+            while(true) {
+                ConcurrentLinkedQueue<String> stringsToLog = new ConcurrentLinkedQueue<>();
+                synchronized (logsToFile) {
+                    if (logsToFile.isEmpty()) {
+                        try {
+                            logsToFile.wait();
+                        } catch (InterruptedException e) {
+                            return;
+                        }
+                        if (logsToFile.isEmpty()) {
+                            continue;
+                        }
+                    }
+                    stringsToLog.addAll(logsToFile);
+                    logsToFile.clear();
+                }
+
+                for (String stringToLog: stringsToLog) {
+                    logginFile.println(stringToLog);
+                }
+                logginFile.flush();
+            }
+        }
     }
 }

@@ -12,5 +12,4 @@ import java.util.List;
  */
 public interface UpdatesCallback {
     void onUpdateReceived(Update update);
-    void onUpdatesReceived(List<Update> updates);
 }

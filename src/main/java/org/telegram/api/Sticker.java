@@ -36,7 +36,11 @@ public class Sticker {
         this.fileId = jsonObject.getString(FILEID_FIELD);
         this.width = jsonObject.getInt(WIDTH_FIELD);
         this.height = jsonObject.getInt(HEIGHT_FIELD);
-        this.thumb = new PhotoSize(jsonObject.getJSONObject(THUMB_FIELD));
+        if (jsonObject.has(THUMB_FIELD)) {
+            this.thumb = new PhotoSize(jsonObject.getJSONObject(THUMB_FIELD));
+        } else {
+            this.thumb = null;
+        }
         this.fileSize = jsonObject.optInt(FILESIZE_FIELD, 0);
     }
 }

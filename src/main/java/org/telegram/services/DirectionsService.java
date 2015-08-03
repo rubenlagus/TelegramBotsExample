@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Ruben Bermudez
@@ -25,9 +27,11 @@ import java.time.format.DateTimeFormatter;
  * @date 20 of June of 2015
  */
 public class DirectionsService {
+    private static volatile BotLogger log = BotLogger.getLogger(DirectionsService.class.getName());
+
     private static final String BASEURL = "https://maps.googleapis.com/maps/api/directions/json"; ///< Base url for REST
     private static final String APIIDEND = "&key=" + BuildVars.DirectionsApiKey;
-    private static final String PARAMS = "&language=en&units=metric";
+    private static final String PARAMS = "&language=@language@&units=metric";
     private static final DateTimeFormatter dateFormaterFromDate = DateTimeFormatter.ofPattern("dd/MM/yyyy"); ///< Date to text formater
     private static volatile DirectionsService instance; ///< Instance of this class
 
@@ -64,10 +68,11 @@ public class DirectionsService {
      * @param destination Destination address
      * @return Destinations
      */
-    public String getDirections(String origin, String destination) {
-        String responseToUser;
+    public List<String> getDirections(String origin, String destination, String language) {
+        final List<String> responseToUser = new ArrayList<>();
         try {
-            String completURL = BASEURL + "?origin=" + getQuery(origin) + "&destination=" +  getQuery(destination) + PARAMS + APIIDEND;
+            String completURL = BASEURL + "?origin=" + getQuery(origin) + "&destination=" +
+                    getQuery(destination) + PARAMS.replace("@language@", language) + APIIDEND;
             HttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
             HttpResponse response = client.execute(request);
@@ -79,20 +84,22 @@ public class DirectionsService {
             JSONObject jsonObject = new JSONObject(responseContent);
             if (jsonObject.getString("status").equals("OK")) {
                 JSONObject route = jsonObject.getJSONArray("routes").getJSONObject(0);
-                responseToUser = route.getJSONArray("legs").getJSONObject(0).getString("start_address");
-                responseToUser += " is ";
-                responseToUser += route.getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text");
-                responseToUser += " away from ";
-                responseToUser += route.getJSONArray("legs").getJSONObject(0).getString("end_address"); // TODO Destination
-                responseToUser += " and it takes ";
-                responseToUser += route.getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text");
-                responseToUser += " to arrive there following these directions:\n\n";
-                responseToUser += getDirectionsSteps(route.getJSONArray("legs").getJSONObject(0).getJSONArray("steps"));
+                String startOfAddress = LocalisationService.getInstance().getString("directionsInit", language);
+                String partialResponseToUser = String.format(startOfAddress,
+                        route.getJSONArray("legs").getJSONObject(0).getString("start_address"),
+                        route.getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text"),
+                        route.getJSONArray("legs").getJSONObject(0).getString("end_address"),
+                        route.getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text")
+                        );
+                responseToUser.add(partialResponseToUser);
+                responseToUser.addAll(getDirectionsSteps(
+                        route.getJSONArray("legs").getJSONObject(0).getJSONArray("steps"), language));
             } else {
-                responseToUser = "Directions not found between " + origin + " and " + destination;
+                responseToUser.add(LocalisationService.getInstance().getString("directionsNotFound", language));
             }
-        } catch (IOException e) {
-            responseToUser = "Error fetching weather info";
+        } catch (Exception e) {
+            log.warning(e);
+            responseToUser.add(LocalisationService.getInstance().getString("errorFetchingDirections", language));
         }
         return responseToUser;
     }
@@ -101,24 +108,30 @@ public class DirectionsService {
         return URLEncoder.encode(address, "UTF-8");
     }
 
-    public String getDirectionsSteps(JSONArray steps) {
-        String stepsStringify = "";
+    private List<String> getDirectionsSteps(JSONArray steps, String language) {
+        List<String> stepsStringify = new ArrayList<>();
+        String partialStepsStringify = "";
         for (int i = 0; i < steps.length(); i++) {
-            stepsStringify += i + ".\t" + getDirectionForStep(steps.getJSONObject(i)) + "\n\n";
+            String step = getDirectionForStep(steps.getJSONObject(i), language);
+            if (partialStepsStringify.length() > 1000) {
+                stepsStringify.add(partialStepsStringify);
+                partialStepsStringify = "";
+            }
+            partialStepsStringify += i + ".\t" + step + "\n\n";
+        }
+        if (!partialStepsStringify.isEmpty()) {
+            stepsStringify.add(partialStepsStringify);
         }
         return stepsStringify;
     }
 
-    private String getDirectionForStep(JSONObject jsonObject) {
-        String direction = "";
+    private String getDirectionForStep(JSONObject jsonObject, String language) {
+        String direction = LocalisationService.getInstance().getString("directionsStep", language);
         String htmlIntructions = Jsoup.parse(jsonObject.getString("html_instructions")).text();
         String duration = jsonObject.getJSONObject("duration").getString("text");
         String distance = jsonObject.getJSONObject("distance").getString("text");
 
-        direction += htmlIntructions + " ";
-        direction += " during ";
-        direction += duration;
-        direction += " (" + distance + ")";
+        direction = String.format(direction, htmlIntructions, duration, distance);
 
         return direction;
     }

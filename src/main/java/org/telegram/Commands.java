@@ -8,10 +8,6 @@ package org.telegram;
  */
 public class Commands {
     public static final String commandInitChar = "/";
-    /// Weather forecast command
-    public static final String WEATHERCOMMAND = commandInitChar + "weather";
-    /// Current wether command
-    public static final String CURRENTWEATHERCOMMAND = commandInitChar + "current";
     /// Transifex iOS command
     public static final String transifexiOSCommand = commandInitChar + "langios";
     /// Transifex android command
@@ -40,4 +36,6 @@ public class Commands {
     public static final String listCommand = commandInitChar + "list";
     /// Start directions command
     public static final String startDirectionCommand = commandInitChar + "directions";
+    /// Set Language command
+    public static final String setLanguageCommand = commandInitChar + "language";
 }

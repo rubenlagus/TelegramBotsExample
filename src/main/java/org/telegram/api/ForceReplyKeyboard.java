@@ -12,7 +12,7 @@ import org.json.JSONObject;
  * interfaces without having to sacrifice privacy mode.
  * @date 22 of June of 2015
  */
-public class ForceReply implements ReplyKeyboard {
+public class ForceReplyKeyboard implements ReplyKeyboard {
 
     public static final String FORCEREPLY_FIELD = "force_reply";
     /**
@@ -30,12 +30,12 @@ public class ForceReply implements ReplyKeyboard {
     @JsonProperty(SELECTIVE_FIELD)
     private Boolean selective;
 
-    public ForceReply() {
+    public ForceReplyKeyboard() {
         super();
         this.forceReply = true;
     }
 
-    public ForceReply(JSONObject jsonObject) {
+    public ForceReplyKeyboard(JSONObject jsonObject) {
         super();
         this.forceReply = jsonObject.optBoolean(FORCEREPLY_FIELD, true);
         this.selective = jsonObject.optBoolean(SELECTIVE_FIELD, false);

@@ -32,9 +32,6 @@ public class Video {
     public static final String FILESIZE_FIELD = "file_size";
     @JsonProperty(FILESIZE_FIELD)
     private Integer fileSize; ///< Optional. File size
-    public static final String CAPTION_FIELD = "caption";
-    @JsonProperty(CAPTION_FIELD)
-    private String caption; ///< Optional. Text description of the video (usually empty)
 
     public Video() {
         super();
@@ -45,10 +42,13 @@ public class Video {
         this.width = jsonObject.getInt(WIDTH_FIELD);
         this.height = jsonObject.getInt(HEIGHT_FIELD);
         this.duration = jsonObject.getInt(DURATION_FIELD);
-        this.thumb = new PhotoSize(jsonObject.getJSONObject(THUMB_FIELD));
+        if (jsonObject.has(THUMB_FIELD)) {
+            this.thumb = new PhotoSize(jsonObject.getJSONObject(THUMB_FIELD));
+        } else {
+            this.thumb = null;
+        }
         this.mimeType = jsonObject.optString(MIMETYPE_FIELD, "");
         this.fileSize = jsonObject.optInt(FILESIZE_FIELD, 0);
-        this.caption = jsonObject.optString(CAPTION_FIELD, "");
     }
 
     public Integer getWidth() {
@@ -105,13 +105,5 @@ public class Video {
 
     public void setFileSize(Integer fileSize) {
         this.fileSize = fileSize;
-    }
-
-    public String getCaption() {
-        return caption;
-    }
-
-    public void setCaption(String caption) {
-        this.caption = caption;
     }
 }

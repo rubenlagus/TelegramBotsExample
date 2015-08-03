@@ -22,7 +22,7 @@ public class Contact {
     private String lastName; ///< Optional. Contact's last name
     public static final String USERID_FIELD = "user_id";
     @JsonProperty(USERID_FIELD)
-    private String userID; ///< Optional. Contact's user identifier in Telegram
+    private Integer userID; ///< Optional. Contact's user identifier in Telegram
 
     public Contact() {
         super();
@@ -33,6 +33,6 @@ public class Contact {
         this.phoneNumber = jsonObject.getString(PHONENUMBER_FIELD);
         this.firstName = jsonObject.getString(FIRSTNAME_FIELD);
         this.lastName = jsonObject.optString(LASTNAME_FIELD, "");
-        this.userID = jsonObject.optString(USERID_FIELD, "");
+        this.userID = jsonObject.optInt(USERID_FIELD, 0);
     }
 }

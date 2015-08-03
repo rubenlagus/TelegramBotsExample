@@ -3,10 +3,7 @@ package org.telegram.services;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * @author Ruben Bermudez
@@ -16,7 +13,7 @@ import java.util.ResourceBundle;
  */
 public class LocalisationService {
     private static LocalisationService instance = null;
-    public HashMap<String, String> supportedLanguages = new HashMap<>();
+    private final HashMap<String, String> supportedLanguages = new HashMap<>();
 
     private ResourceBundle english;
     private ResourceBundle spanish;
@@ -91,11 +88,11 @@ public class LocalisationService {
         supportedLanguages.put("es", "Español");
         portuguese = ResourceBundle.getBundle("localisation.strings", new Locale("pt", "PT"), loader);
         supportedLanguages.put("pt", "Português");
+        dutch = ResourceBundle.getBundle("localisation.strings", new Locale("nl", "NL"), loader);
+        supportedLanguages.put("nl", "Nederlands");
         /*
         german = ResourceBundle.getBundle("localisation.strings", new Locale("de", "DE"), loader);
         supportedLanguages.put("de", "Deutsch");
-        dutch = ResourceBundle.getBundle("localisation.strings", new Locale("nl", "NL"), loader);
-        supportedLanguages.put("nl", "Dutch");
         italian = ResourceBundle.getBundle("localisation.strings", new Locale("it", "IT"), loader);
         supportedLanguages.put("it", "Italian");
         french = ResourceBundle.getBundle("localisation.strings", new Locale("fr", "FR"), loader);
@@ -150,10 +147,10 @@ public class LocalisationService {
                 case "pt":
                     result = portuguese.getString(key);
                     break;
-                /*case "nl":
+                case "nl":
                     result = dutch.getString(key);
                     break;
-                case "de":
+                /*case "de":
                     result = german.getString(key);
                     break;
                 case "it":
@@ -198,5 +195,13 @@ public class LocalisationService {
         }
 
         return result;
+    }
+
+    public HashMap<String, String> getSupportedLanguages() {
+        return supportedLanguages;
+    }
+
+    public String getLanguageCodeByName(String language) {
+        return supportedLanguages.entrySet().stream().filter(x -> x.getValue().equals(language)).findFirst().get().getKey();
     }
 }

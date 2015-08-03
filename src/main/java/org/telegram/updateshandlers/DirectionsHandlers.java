@@ -9,7 +9,6 @@ import org.telegram.services.LocalisationService;
 import org.telegram.updatesreceivers.UpdatesThread;
 import org.telegram.updatesreceivers.Webhook;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -112,9 +111,9 @@ public class DirectionsHandlers implements UpdatesCallback {
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setChatId(message.getChatId());
         sendMessageRequest.setReplayToMessageId(message.getMessageId());
-        ForceReply forceReply = new ForceReply();
-        forceReply.setSelective(true);
-        sendMessageRequest.setReplayMarkup(forceReply);
+        ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
+        forceReplyKeyboard.setSelective(true);
+        sendMessageRequest.setReplayMarkup(forceReplyKeyboard);
         sendMessageRequest.setText(LocalisationService.getInstance().getString("sendDestination", language));
         Message sentMessage = SenderHelper.SendMessage(sendMessageRequest, TOKEN);
         if (sentMessage != null) {
@@ -137,9 +136,9 @@ public class DirectionsHandlers implements UpdatesCallback {
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setChatId(message.getChatId());
         sendMessageRequest.setReplayToMessageId(message.getMessageId());
-        ForceReply forceReply = new ForceReply();
-        forceReply.setSelective(true);
-        sendMessageRequest.setReplayMarkup(forceReply);
+        ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
+        forceReplyKeyboard.setSelective(true);
+        sendMessageRequest.setReplayMarkup(forceReplyKeyboard);
         sendMessageRequest.setText(LocalisationService.getInstance().getString("initDirections", language));
         Message sentMessage = SenderHelper.SendMessage(sendMessageRequest, TOKEN);
         if (sentMessage != null) {
@@ -152,7 +151,7 @@ public class DirectionsHandlers implements UpdatesCallback {
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setChatId(message.getChatId());
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        HashMap<String, String> languages = LocalisationService.getInstance().supportedLanguages;
+        HashMap<String, String> languages = LocalisationService.getInstance().getSupportedLanguages();
         List<List<String>> commands = new ArrayList<>();
         for (Map.Entry<String, String> entry : languages.entrySet()) {
             List<String> commandRow = new ArrayList<>();
@@ -173,7 +172,7 @@ public class DirectionsHandlers implements UpdatesCallback {
         String[] parts = message.getText().split("-->", 2);
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setChatId(message.getChatId());
-        if (LocalisationService.getInstance().supportedLanguages.containsKey(parts[0].trim())) {
+        if (LocalisationService.getInstance().getSupportedLanguages().containsKey(parts[0].trim())) {
             DatabaseManager.getInstance().putUserLanguage(message.getFrom().getId(), parts[0].trim());
             sendMessageRequest.setText(LocalisationService.getInstance().getString("languageModified", parts[0].trim()));
         } else {

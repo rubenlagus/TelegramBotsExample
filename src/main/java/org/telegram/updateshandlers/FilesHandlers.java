@@ -210,7 +210,7 @@ public class FilesHandlers implements UpdatesCallback {
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setChatId(message.getChatId());
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        HashMap<String, String> languages = LocalisationService.getInstance().supportedLanguages;
+        HashMap<String, String> languages = LocalisationService.getInstance().getSupportedLanguages();
         List<List<String>> commands = new ArrayList<>();
         for (Map.Entry<String, String> entry : languages.entrySet()) {
             List<String> commandRow = new ArrayList<>();
@@ -231,7 +231,7 @@ public class FilesHandlers implements UpdatesCallback {
         String[] parts = message.getText().split(Emoji.LEFT_RIGHT_ARROW.toString(), 2);
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setChatId(message.getChatId());
-        if (LocalisationService.getInstance().supportedLanguages.containsKey(parts[0].trim())) {
+        if (LocalisationService.getInstance().getSupportedLanguages().containsKey(parts[0].trim())) {
             DatabaseManager.getInstance().putUserLanguage(message.getFrom().getId(), parts[0].trim());
             sendMessageRequest.setText(LocalisationService.getInstance().getString("languageModified", parts[0].trim()));
         } else {

@@ -8,12 +8,16 @@
 package org.telegram.database;
 
 import org.telegram.services.BotLogger;
+import org.telegram.structure.WeatherAlert;
+import org.telegram.updateshandlers.WeatherHandlers;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Ruben Bermudez
@@ -79,6 +83,9 @@ public class DatabaseManager {
             if (currentVersion == 4) {
                 currentVersion = updateToVersion5();
             }
+            if (currentVersion == 5) {
+                currentVersion = updateToVersion6();
+            }
             connetion.commitTransaction();
         } catch (SQLException e) {
             log.error(e);
@@ -109,6 +116,14 @@ public class DatabaseManager {
         return 5;
     }
 
+    private int updateToVersion6() throws SQLException {
+        connetion.executeQuery(CreationStrings.createWeatherStateTable);
+        connetion.executeQuery(CreationStrings.createUserWeatherOptionDatabase);
+        connetion.executeQuery(CreationStrings.createWeatherAlertTable);
+        connetion.executeQuery(String.format(CreationStrings.insertCurrentVersion, 6));
+        return 6;
+    }
+
     private int createNewTables() throws SQLException {
         connetion.executeQuery(CreationStrings.createVersionTable);
         connetion.executeQuery(CreationStrings.createFilesTable);
@@ -117,6 +132,9 @@ public class DatabaseManager {
         connetion.executeQuery(CreationStrings.createRecentWeatherTable);
         connetion.executeQuery(CreationStrings.createDirectionsDatabase);
         connetion.executeQuery(CreationStrings.createUserLanguageDatabase);
+        connetion.executeQuery(CreationStrings.createWeatherStateTable);
+        connetion.executeQuery(CreationStrings.createUserWeatherOptionDatabase);
+        connetion.executeQuery(CreationStrings.createWeatherAlertTable);
         return CreationStrings.version;
     }
 
@@ -233,14 +251,14 @@ public class DatabaseManager {
         return updatedRows > 0;
     }
 
-    public HashMap<Integer,String> getRecentWeather(Integer userId) {
-        HashMap<Integer,String> recentWeather = new HashMap<>();
+    public List<String> getRecentWeather(Integer userId) {
+        List<String> recentWeather = new ArrayList<>();
         try {
-            final PreparedStatement preparedStatement = connetion.getPreparedStatement("select * FROM RecentWeather WHERE userId=?");
+            final PreparedStatement preparedStatement = connetion.getPreparedStatement("select * FROM RecentWeather WHERE userId=? order by date desc");
             preparedStatement.setInt(1, userId);
             final ResultSet result = preparedStatement.executeQuery();
             while (result.next()) {
-                recentWeather.put(result.getInt("cityId"), result.getString("cityName"));
+                recentWeather.add(result.getString("cityName"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -391,5 +409,171 @@ public class DatabaseManager {
             e.printStackTrace();
         }
         return updatedRows > 0;
+    }
+
+    public int getWeatherState(Integer userId, Integer chatId) {
+        int state = 0;
+        try {
+            final PreparedStatement preparedStatement = connetion.getPreparedStatement("SELECT state FROM WeatherState WHERE userId = ? AND chatId = ?");
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, chatId);
+            final ResultSet result = preparedStatement.executeQuery();
+            if (result.next()) {
+                state = result.getInt("state");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return state;
+    }
+
+    public boolean insertWeatherState(Integer userId, Integer chatId, int state) {
+        int updatedRows = 0;
+        try {
+            final PreparedStatement preparedStatement = connetion.getPreparedStatement("REPLACE INTO WeatherState (userId, chatId, state) VALUES (?, ?, ?)");
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, chatId);
+            preparedStatement.setInt(3, state);
+            updatedRows = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return updatedRows > 0;
+    }
+
+    public Integer getRecentWeatherIdByCity(Integer userId, String city) {
+        Integer cityId = null;
+        try {
+            final PreparedStatement preparedStatement = connetion.getPreparedStatement("select cityId FROM RecentWeather WHERE userId=? AND cityName=?");
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setString(2, city);
+            final ResultSet result = preparedStatement.executeQuery();
+            if (result.next()) {
+                cityId = result.getInt("cityId");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return cityId;
+    }
+
+    public String[] getUserWeatherOptions(Integer userId) {
+        String[] options = new String[] {"en", "metric"};
+        try {
+            final PreparedStatement preparedStatement = connetion.getPreparedStatement("SELECT * FROM UserWeatherOptions WHERE userId = ?");
+            preparedStatement.setInt(1, userId);
+            final ResultSet result = preparedStatement.executeQuery();
+            if (result.next()) {
+                options[0] = result.getString("languageCode");
+                options[1] = result.getString("units");
+            } else {
+                addNewUserWeatherOptions(userId);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return options;
+    }
+
+    private boolean addNewUserWeatherOptions(Integer userId) {
+        int updatedRows = 0;
+        try {
+            final PreparedStatement preparedStatement = connetion.getPreparedStatement("INSERT INTO UserWeatherOptions (userId) VALUES (?)");
+            preparedStatement.setInt(1, userId);
+            updatedRows = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return updatedRows > 0;
+    }
+
+    public boolean putUserWeatherLanguageOption(Integer userId, String language) {
+        int updatedRows = 0;
+        try {
+            final PreparedStatement preparedStatement = connetion.getPreparedStatement("UPDATE UserWeatherOptions SET languageCode = ? WHERE userId = ?");
+            preparedStatement.setString(1, language);
+            preparedStatement.setInt(2, userId);
+            updatedRows = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return updatedRows > 0;
+    }
+
+    public boolean putUserWeatherUnitsOption(Integer userId, String units) {
+        int updatedRows = 0;
+        try {
+            final PreparedStatement preparedStatement = connetion.getPreparedStatement("UPDATE UserWeatherOptions SET units = ? WHERE userId = ?");
+            preparedStatement.setString(1, units);
+            preparedStatement.setInt(2, userId);
+            updatedRows = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return updatedRows > 0;
+    }
+
+    public boolean createNewWeatherAlert(int userId, Integer cityId, String cityName) {
+        int updatedRows = 0;
+        try {
+            final PreparedStatement preparedStatement = connetion.getPreparedStatement("INSERT INTO WeatherAlert (userId, cityId, cityName) VALUES (?,?,?)");
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, cityId);
+            preparedStatement.setString(3, cityName);
+            updatedRows = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return updatedRows > 0;
+    }
+
+    public List<String> getAlertCitiesNameByUser(int userId) {
+        List<String> alertCitiesNames = new ArrayList<>();
+        try {
+            final PreparedStatement preparedStatement = connetion.getPreparedStatement("select cityName FROM WeatherAlert WHERE userId=?");
+            preparedStatement.setInt(1, userId);
+            final ResultSet result = preparedStatement.executeQuery();
+            while (result.next()) {
+                alertCitiesNames.add(result.getString("cityName"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return alertCitiesNames;
+    }
+
+    public boolean deleteAlertCity(Integer userId, String cityName) {
+        int updatedRows = 0;
+        try {
+            final PreparedStatement preparedStatement = connetion.getPreparedStatement("DELETE FROM WeatherAlert WHERE userId=? AND cityName=?;");
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setString(2, cityName);
+            updatedRows = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return updatedRows > 0;
+    }
+
+    public List<WeatherAlert> getAllAlerts() {
+        List<WeatherAlert> allAlerts = new ArrayList<>();
+
+        try {
+            final PreparedStatement preparedStatement = connetion.getPreparedStatement("select * FROM WeatherAlert");
+            final ResultSet result = preparedStatement.executeQuery();
+            while (result.next()) {
+                WeatherAlert weatherAlert = new WeatherAlert();
+                weatherAlert.setId(result.getInt("id"));
+                weatherAlert.setUserId(result.getInt("userId"));
+                weatherAlert.setCityId(result.getInt("cityId"));
+                allAlerts.add(weatherAlert);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return allAlerts;
     }
 }

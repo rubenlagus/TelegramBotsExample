@@ -52,9 +52,9 @@ public class BotLogger {
 
     private BotLogger(String classname) {
         logger = Logger.getLogger(classname);
-        logger.setLevel(Level.WARNING);
+        logger.setLevel(Level.ALL);
         ConsoleHandler handler = new ConsoleHandler();
-        handler.setLevel(Level.WARNING);
+        handler.setLevel(Level.ALL);
         logger.addHandler(handler);
         lastFileDate = new GregorianCalendar();
         if  (currentFileName == null || currentFileName.length() == 0) {

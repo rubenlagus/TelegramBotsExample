@@ -28,21 +28,16 @@ import java.time.format.DateTimeFormatter;
 public class WeatherService {
     private static volatile BotLogger log = BotLogger.getLogger(WeatherService.class.getName());
 
-    private static final String FILEIDSUNNY = "BQADBAADEgoAAnVbtwRqrxn89vjb1wI";
-    private static final String FILEIDFEWCLOUDS = "BQADBAADEwoAAnVbtwT3NZvlhOXiKQI";
-    private static final String FILEIDCLOUDS = "BQADBAADFAoAAnVbtwR8DOcw8SdYbwI";
-    private static final String FILEIDSHOWERRAIN = "BQADBAADFQoAAnVbtwQL2CuuhfiIYgI";
-    private static final String FILEIDRAIN = "BQADBAADFgoAAnVbtwSxZkQoAlHhJAI";
-    private static final String FILEIDTHUNDERSTORM = "BQADBAADGAoAAnVbtwQp1kcPThwm7QI";
-    private static final String FILEIDSNOW = "BQADBAADGAoAAnVbtwRtYBVrEJPQPQI";
-    private static final String FILEIDFOGGY = "BQADBAADFwoAAnVbtwRwJotTvbcb0gI";
+    public static final String METRICSYSTEM = "metric";
+    public static final String IMPERIALSYSTEM = "imperial";
 
     private static final String BASEURL = "http://api.openweathermap.org/data/2.5/"; ///< Base url for REST
     private static final String FORECASTPATH = "forecast/daily";
     private static final String CURRENTPATH = "weather";
     private static final String APIIDEND = "&APPID=" + BuildVars.OPENWEATHERAPIKEY;
-    private static final String FORECASTPARAMS = "&cnt=3&units=metric&lang=@language@";
-    private static final String CURRENTPARAMS = "&cnt=1&units=metric&lang=@language@";
+    private static final String FORECASTPARAMS = "&cnt=3&units=@units@&lang=@language@";
+    private static final String ALERTPARAMS = "&cnt=1&units=@units@&lang=@language@";
+    private static final String CURRENTPARAMS = "&cnt=1&units=@units@&lang=@language@";
     private static final DateTimeFormatter dateFormaterFromDate = DateTimeFormatter.ofPattern("dd/MM/yyyy"); ///< Date to text formater
     private static volatile WeatherService instance; ///< Instance of this class
 
@@ -73,18 +68,59 @@ public class WeatherService {
     }
 
     /**
+     * Fetch the weather of a city for one day
+     *
+     * @param cityId City to get the weather
+     * @return userHash to be send to use
+     * @note Forecast for the day
+     */
+    public String fetchWeatherAlert(int cityId, int userId, String language, String units) {
+        String cityFound;
+        String responseToUser;
+        try {
+            String completURL = BASEURL + FORECASTPATH + "?" + getCityQuery(cityId + "") +
+                    ALERTPARAMS.replace("@language@", language).replace("@units@", units) + APIIDEND;
+            CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+            HttpGet request = new HttpGet(completURL);
+
+            CloseableHttpResponse response = client.execute(request);
+            HttpEntity ht = response.getEntity();
+
+            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
+            String responseString = EntityUtils.toString(buf, "UTF-8");
+
+            JSONObject jsonObject = new JSONObject(responseString);
+            log.warning(jsonObject.toString());
+            if (jsonObject.getInt("cod") == 200) {
+                cityFound = jsonObject.getJSONObject("city").getString("name") + " (" +
+                        jsonObject.getJSONObject("city").getString("country") + ")";
+                saveRecentWeather(userId, cityFound, jsonObject.getJSONObject("city").getInt("id"));
+                responseToUser = String.format(LocalisationService.getInstance().getString("weatherAlert", language),
+                        cityFound, convertListOfForecastToString(jsonObject, language, units, false));
+            } else {
+                log.warning(jsonObject.toString());
+                responseToUser = LocalisationService.getInstance().getString("cityNotFound", language);
+            }
+        } catch (Exception e) {
+            log.error(e);
+            responseToUser = LocalisationService.getInstance().getString("errorFetchingWeather", language);
+        }
+        return responseToUser;
+    }
+
+    /**
      * Fetch the weather of a city
      *
      * @param city City to get the weather
      * @return userHash to be send to use
      * @note Forecast for the following 3 days
      */
-    public String fetchWeatherForecast(String city, Integer userId, String language) {
+    public String fetchWeatherForecast(String city, Integer userId, String language, String units) {
         String cityFound;
         String responseToUser;
         try {
             String completURL = BASEURL + FORECASTPATH + "?" + getCityQuery(city) +
-                    FORECASTPARAMS.replace("@language@", language) + APIIDEND;
+                    FORECASTPARAMS.replace("@language@", language).replace("@units@", units) + APIIDEND;
             CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
 
@@ -101,7 +137,7 @@ public class WeatherService {
                         jsonObject.getJSONObject("city").getString("country") + ")";
                 saveRecentWeather(userId, cityFound, jsonObject.getJSONObject("city").getInt("id"));
                 responseToUser = String.format(LocalisationService.getInstance().getString("weatherForcast", language),
-                        cityFound, convertListOfForecastToString(jsonObject, language));
+                        cityFound, convertListOfForecastToString(jsonObject, language, units, true));
             } else {
                 log.warning(jsonObject.toString());
                 responseToUser = LocalisationService.getInstance().getString("cityNotFound", language);
@@ -119,12 +155,13 @@ public class WeatherService {
      * @return userHash to be send to use
      * @note Forecast for the following 3 days
      */
-    public String fetchWeatherForecastByLocation(Double longitude, Double latitude, Integer userId, String language) {
+    public String fetchWeatherForecastByLocation(Double longitude, Double latitude, Integer userId, String language, String units) {
         String cityFound;
         String responseToUser;
         try {
             String completURL = BASEURL + FORECASTPATH + "?lat=" + URLEncoder.encode(latitude + "", "UTF-8") + "&lon="
-                    + URLEncoder.encode(longitude + "", "UTF-8") + FORECASTPARAMS.replace("@language@", language) + APIIDEND;;
+                    + URLEncoder.encode(longitude + "", "UTF-8") +
+                    FORECASTPARAMS.replace("@language@", language).replace("@units@", units) + APIIDEND;;
             CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
             CloseableHttpResponse response = client.execute(request);
@@ -139,7 +176,7 @@ public class WeatherService {
                         jsonObject.getJSONObject("city").getString("country") + ")";
                 saveRecentWeather(userId, cityFound, jsonObject.getJSONObject("city").getInt("id"));
                 responseToUser = String.format(LocalisationService.getInstance().getString("weatherForcast", language),
-                        cityFound, convertListOfForecastToString(jsonObject, language));
+                        cityFound, convertListOfForecastToString(jsonObject, language, units, true));
             } else {
                 log.warning(jsonObject.toString());
                 responseToUser = LocalisationService.getInstance().getString("cityNotFound", language);
@@ -158,13 +195,13 @@ public class WeatherService {
      * @return userHash to be send to use
      * @note Forecast for the following 3 days
      */
-    public String fetchWeatherCurrent(String city, Integer userId, String language) {
+    public String fetchWeatherCurrent(String city, Integer userId, String language, String units) {
         String cityFound;
         String responseToUser;
         Emoji emoji = null;
         try {
             String completURL = BASEURL + CURRENTPATH + "?" + getCityQuery(city) +
-                    CURRENTPARAMS.replace("@language@", language) + APIIDEND;
+                    CURRENTPARAMS.replace("@language@", language).replace("@units@", units) + APIIDEND;
             CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
             CloseableHttpResponse response = client.execute(request);
@@ -180,7 +217,7 @@ public class WeatherService {
                 saveRecentWeather(userId, cityFound, jsonObject.getInt("id"));
                 emoji = getEmojiForWeather(jsonObject.getJSONArray("weather").getJSONObject(0));
                 responseToUser = String.format(LocalisationService.getInstance().getString("weatherCurrent", language),
-                        cityFound, convertCurrentWeatherToString(jsonObject, language, emoji));
+                        cityFound, convertCurrentWeatherToString(jsonObject, language, units, emoji));
             } else {
                 log.warning(jsonObject.toString());
                 responseToUser = LocalisationService.getInstance().getString("cityNotFound", language);
@@ -198,12 +235,13 @@ public class WeatherService {
      * @return userHash to be send to use
      * @note Forecast for the following 3 days
      */
-    public String fetchWeatherCurrentByLocation(Double longitude, Double latitude, Integer userId, String language) {
+    public String fetchWeatherCurrentByLocation(Double longitude, Double latitude, Integer userId, String language, String units) {
         String cityFound;
         String responseToUser;
         try {
-            String completURL = BASEURL + CURRENTPATH + "?q=" + URLEncoder.encode("lat=" + latitude + "&lon=" +
-                    longitude, "UTF-8") + CURRENTPARAMS.replace("@language@", language) + APIIDEND;;
+            String completURL = BASEURL + CURRENTPATH + "?lat=" + URLEncoder.encode(latitude + "", "UTF-8") + "&lon="
+                    + URLEncoder.encode(longitude + "", "UTF-8") +
+                    CURRENTPARAMS.replace("@language@", language).replace("@units@", units) + APIIDEND;;
             CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
             CloseableHttpResponse response = client.execute(request);
@@ -218,7 +256,7 @@ public class WeatherService {
                         jsonObject.getJSONObject("sys").getString("country") + ")";
                 saveRecentWeather(userId, cityFound, jsonObject.getInt("id"));
                 responseToUser = String.format(LocalisationService.getInstance().getString("weatherCurrent", language),
-                        cityFound, convertCurrentWeatherToString(jsonObject, language, null));
+                        cityFound, convertCurrentWeatherToString(jsonObject, language, units, null));
             } else {
                 log.warning(jsonObject.toString());
                 responseToUser = LocalisationService.getInstance().getString("cityNotFound", language);
@@ -230,12 +268,17 @@ public class WeatherService {
         return responseToUser;
     }
 
-    private String convertCurrentWeatherToString(JSONObject jsonObject, String language, Emoji emoji) {
+    private String convertCurrentWeatherToString(JSONObject jsonObject, String language, String units, Emoji emoji) {
         String temp = jsonObject.getJSONObject("main").getDouble("temp")+"";
         String cloudiness = jsonObject.getJSONObject("clouds").getInt("all") + "%";
         String weatherDesc = jsonObject.getJSONArray("weather").getJSONObject(0).getString("description");
 
-        String responseToUser = LocalisationService.getInstance().getString("currentWeatherPart", language);
+        String responseToUser;
+        if (units.equals(METRICSYSTEM)) {
+            responseToUser = LocalisationService.getInstance().getString("currentWeatherPartMetric", language);
+        } else {
+            responseToUser = LocalisationService.getInstance().getString("currentWeatherPartImperial", language);
+        }
         responseToUser = String.format(responseToUser, emoji == null ? weatherDesc : emoji.toString(), cloudiness, temp);
 
         return responseToUser;
@@ -247,11 +290,11 @@ public class WeatherService {
      * @param jsonObject JSONObject contining the list
      * @return String to be sent to the user
      */
-    private String convertListOfForecastToString(JSONObject jsonObject, String language) {
+    private String convertListOfForecastToString(JSONObject jsonObject, String language, String units, boolean addDate) {
         String responseToUser = "";
         for (int i = 0; i < jsonObject.getJSONArray("list").length(); i++) {
             JSONObject internalJSON = jsonObject.getJSONArray("list").getJSONObject(i);
-            responseToUser += convertInternalInformationToString(internalJSON, language);
+            responseToUser += convertInternalInformationToString(internalJSON, language, units, addDate);
         }
         return responseToUser;
     }
@@ -262,7 +305,7 @@ public class WeatherService {
      * @param internalJSON JSONObject containing the part to convert
      * @return String to be sent to the user
      */
-    private String convertInternalInformationToString(JSONObject internalJSON, String language) {
+    private String convertInternalInformationToString(JSONObject internalJSON, String language, String units, boolean addDate) {
         String responseToUser = "";
         LocalDate date;
         String tempMax;
@@ -275,9 +318,26 @@ public class WeatherService {
         Emoji emoji = getEmojiForWeather(internalJSON.getJSONArray("weather").getJSONObject(0));
         weatherDesc = weatherObject.getString("description");
 
-        responseToUser = LocalisationService.getInstance().getString("forecastWeatherPart", language);
-        responseToUser = String.format(responseToUser, dateFormaterFromDate.format(date),
-                emoji == null ? weatherDesc : emoji.toString(), tempMax, tempMin);
+        if (units.equals(METRICSYSTEM)) {
+            if (addDate) {
+                responseToUser = LocalisationService.getInstance().getString("forecastWeatherPartMetric", language);
+            } else {
+                responseToUser = LocalisationService.getInstance().getString("alertWeatherPartMetric", language);
+            }
+        } else {
+            if (addDate) {
+                responseToUser = LocalisationService.getInstance().getString("forecastWeatherPartImperial", language);
+            } else {
+                responseToUser = LocalisationService.getInstance().getString("alertWeatherPartImperial", language);
+            }
+        }
+        if (addDate) {
+            responseToUser = String.format(responseToUser, Emoji.LARGE_ORANGE_DIAMOND.toString(),
+                    dateFormaterFromDate.format(date), emoji == null ? weatherDesc : emoji.toString(), tempMax, tempMin);
+        } else {
+            responseToUser = String.format(responseToUser, emoji == null ? weatherDesc : emoji.toString(),
+                    tempMax, tempMin);
+        }
 
         return responseToUser;
     }

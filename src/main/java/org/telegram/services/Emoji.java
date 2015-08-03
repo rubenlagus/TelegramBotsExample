@@ -144,7 +144,25 @@ public enum Emoji {
     CLOUD(null, '\u2601'),
 
     // Others
-    LEFT_RIGHT_ARROW(null, '\u2194');
+    LEFT_RIGHT_ARROW(null, '\u2194'),
+    ALARM_CLOCK(null, '\u23F0'),
+    SOON_WITH_RIGHTWARDS_ARROW_ABOVE('\uD83D', '\uDD1C'),
+    EARTH_GLOBE_EUROPE_AFRICA('\uD83C', '\uDF0D'),
+    GLOBE_WITH_MERIDIANS('\uD83C', '\uDF10'),
+    STRAIGHT_RULER('\uD83D', '\uDCCF'),
+    INFORMATION_SOURCE(null, '\u2139'),
+    BLACK_RIGHT_POINTING_DOUBLE_TRIANGLE(null, '\u23E9'),
+    BLACK_RIGHT_POINTING_TRIANGLE(null, '\u25B6'),
+    BACK_WITH_LEFTWARDS_ARROW_ABOVE('\uD83D', '\uDD19'),
+    WRENCH('\uD83D', '\uDD27'),
+    DIGIT_THREE(null, '\u0033'),
+    CLIPBOARD('\uD83D', '\uDCCB'),
+    THUMBS_UP_SIGN('\uD83D', '\uDC4D'),
+    WHITE_RIGHT_POINTING_BACKHAND_INDEX('\uD83D', '\uDC49'),
+    TEAR_OFF_CALENDAR('\uD83D', '\uDCC6'),
+    LARGE_ORANGE_DIAMOND('\uD83D', '\uDD36'),
+    HUNDRED_POINTS_SYMBOL('\uD83D', '\uDCAF'),
+    ROUND_PUSHPIN('\uD83D', '\uDCCD');
 
     Character firstChar;
     Character secondChar;

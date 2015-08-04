@@ -144,7 +144,7 @@ public class WeatherHandlers implements UpdatesCallback {
     private static boolean isCommandForOther(String text) {
         boolean isSimpleCommand = text.equals("/start") || text.equals("/help");
         boolean isCommandForMe = text.equals("/start@weatherbot") || text.equals("/help@weatherbot");
-        return !isSimpleCommand && !isCommandForMe;
+        return text.startWith("/") && !isSimpleCommand && !isCommandForMe;
     }
 
     // endregion Incoming messages handlers

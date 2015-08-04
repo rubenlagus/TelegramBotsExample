@@ -22,8 +22,66 @@ public class SendPhoto {
     public static final String REPLYMARKUP_FIELD = "reply_markup";
     private ReplyKeyboard replayMarkup; ///< Optional. JSON-serialized object for a custom reply keyboard
 
+    private boolean isNewPhoto; ///< True if the photo must be uploaded from a file, file if it is a fileId
+    private String photoName; ///< Name of the photo
+
 
     public SendPhoto() {
         super();
+    }
+
+    public Integer getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(Integer chatId) {
+        this.chatId = chatId;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public String getCaption() {
+        return caption;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    public Integer getReplayToMessageId() {
+        return replayToMessageId;
+    }
+
+    public void setReplayToMessageId(Integer replayToMessageId) {
+        this.replayToMessageId = replayToMessageId;
+    }
+
+    public ReplyKeyboard getReplayMarkup() {
+        return replayMarkup;
+    }
+
+    public void setReplayMarkup(ReplyKeyboard replayMarkup) {
+        this.replayMarkup = replayMarkup;
+    }
+
+    public boolean isNewPhoto() {
+        return isNewPhoto;
+    }
+
+    public String getPhotoName() {
+        return photoName;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+        this.isNewPhoto = false;
+    }
+
+    public void setNewPhoto(String photo, String photoName) {
+        this.photo = photo;
+        this.isNewPhoto = true;
+        this.photoName = photoName;
     }
 }

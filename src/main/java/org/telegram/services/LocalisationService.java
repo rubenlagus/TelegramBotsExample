@@ -90,6 +90,8 @@ public class LocalisationService {
         supportedLanguages.put("pt", "Português");
         dutch = ResourceBundle.getBundle("localisation.strings", new Locale("nl", "NL"), loader);
         supportedLanguages.put("nl", "Nederlands");
+        italian = ResourceBundle.getBundle("localisation.strings", new Locale("it", "IT"), loader);
+        supportedLanguages.put("it", "Italiano");
         /*
         german = ResourceBundle.getBundle("localisation.strings", new Locale("de", "DE"), loader);
         supportedLanguages.put("de", "Deutsch");
@@ -150,11 +152,11 @@ public class LocalisationService {
                 case "nl":
                     result = dutch.getString(key);
                     break;
-                /*case "de":
-                    result = german.getString(key);
-                    break;
                 case "it":
                     result = italian.getString(key);
+                    break;
+                /*case "de":
+                    result = german.getString(key);
                     break;
                 case "fr":
                     result = french.getString(key);

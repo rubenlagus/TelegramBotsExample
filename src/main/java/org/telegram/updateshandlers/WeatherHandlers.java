@@ -2,6 +2,7 @@ package org.telegram.updateshandlers;
 
 import org.telegram.BotConfig;
 import org.telegram.BuildVars;
+import org.telegram.Commands;
 import org.telegram.SenderHelper;
 import org.telegram.api.*;
 import org.telegram.database.DatabaseManager;
@@ -23,6 +24,7 @@ import java.util.List;
  */
 public class WeatherHandlers implements UpdatesCallback {
     private static final String TOKEN = BotConfig.TOKENWEATHER;
+    private static final int STARTSTATE = 0;
     private static final int MAINMENU = 1;
     private static final int CURRENTWEATHER = 2;
     private static final int CURRENTNEWWEATHER = 3;
@@ -104,8 +106,13 @@ public class WeatherHandlers implements UpdatesCallback {
     private static void handleIncomingMessage(Message message) {
         final int state = DatabaseManager.getInstance().getWeatherState(message.getFrom().getId(), message.getChatId());
         final String language = DatabaseManager.getInstance().getUserWeatherOptions(message.getFrom().getId())[0];
-        if (message.isGroupMessage() && message.hasText() && isCommandForOther(message.getText())) {
-            return;
+        if (message.isGroupMessage() && message.hasText()) {
+            if (isCommandForOther(message.getText())) {
+                return;
+            } else if (message.getText().startsWith(Commands.STOPCOMMAND)){
+                sendHideKeyboard(message.getFrom().getId(), message.getChatId(), message.getMessageId());
+                return;
+            }
         }
         switch(state) {
             case MAINMENU:
@@ -141,9 +148,25 @@ public class WeatherHandlers implements UpdatesCallback {
         }
     }
 
+    private static void sendHideKeyboard(Integer userId, Integer chatId, Integer messageId) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(chatId);
+        sendMessage.setReplayToMessageId(messageId);
+        sendMessage.setText(Emoji.WAVING_HAND_SIGN.toString());
+
+        ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
+        replyKeyboardHide.setSelective(true);
+        replyKeyboardHide.setHideKeyboard(true);
+        sendMessage.setReplayMarkup(replyKeyboardHide);
+
+        SenderHelper.SendMessage(sendMessage, TOKEN);
+        DatabaseManager.getInstance().insertWeatherState(userId, chatId, STARTSTATE);
+
+    }
+
     private static boolean isCommandForOther(String text) {
-        boolean isSimpleCommand = text.equals("/start") || text.equals("/help");
-        boolean isCommandForMe = text.equals("/start@weatherbot") || text.equals("/help@weatherbot");
+        boolean isSimpleCommand = text.equals("/start") || text.equals("/help") || text.equals("/stop");
+        boolean isCommandForMe = text.equals("/start@weatherbot") || text.equals("/help@weatherbot") || text.equals("/stop@weatherbot");
         return text.startsWith("/") && !isSimpleCommand && !isCommandForMe;
     }
 

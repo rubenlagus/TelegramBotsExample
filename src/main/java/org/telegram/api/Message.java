@@ -81,6 +81,9 @@ public class Message {
     public static final String REPLYTOMESSAGE_FIELD = "reply_to_message";
     @JsonProperty(REPLYTOMESSAGE_FIELD)
     private Message replyToMessage;
+    public static final String VOICE_FIELD = "voice";
+    @JsonProperty(VOICE_FIELD)
+    private Voice voice; ///< Optional. Message is a voice message, information about the file
 
     public Message() {
         super();
@@ -125,6 +128,9 @@ public class Message {
         }
         if (jsonObject.has(LOCATION_FIELD)) {
             this.location = new Location(jsonObject.getJSONObject(LOCATION_FIELD));
+        }
+        if (jsonObject.has(VOICE_FIELD)) {
+            this.voice = new Voice(jsonObject.getJSONObject(VOICE_FIELD));
         }
         if (jsonObject.has(NEWCHATPARTICIPANT_FIELD)) {
             this.newChatParticipant = new User(jsonObject.getJSONObject(NEWCHATPARTICIPANT_FIELD));
@@ -341,5 +347,13 @@ public class Message {
 
     public boolean hasLocation() {
         return location != null;
+    }
+
+    public Voice getVoice() {
+        return voice;
+    }
+
+    public void setVoice(Voice voice) {
+        this.voice = voice;
     }
 }

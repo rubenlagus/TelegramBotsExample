@@ -104,6 +104,9 @@ public class WeatherHandlers implements UpdatesCallback {
     private static void handleIncomingMessage(Message message) {
         final int state = DatabaseManager.getInstance().getWeatherState(message.getFrom().getId(), message.getChatId());
         final String language = DatabaseManager.getInstance().getUserWeatherOptions(message.getFrom().getId())[0];
+        if (message.isGroupMessage() && message.hasText() && isCommandForOther(message.getText())) {
+            return;
+        }
         switch(state) {
             case MAINMENU:
                 messageOnMainMenu(message, language);
@@ -136,6 +139,12 @@ public class WeatherHandlers implements UpdatesCallback {
                 sendMessageDefault(message, language);
                 break;
         }
+    }
+
+    private static boolean isCommandForOther(String text) {
+        boolean isSimpleCommand = text.equals("/start") || text.equals("/help");
+        boolean isCommandForMe = text.equals("/start@weatherbot") || text.equals("/help@weatherbot");
+        return text.startsWith("/") && !isSimpleCommand && !isCommandForMe;
     }
 
     // endregion Incoming messages handlers

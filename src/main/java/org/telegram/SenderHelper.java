@@ -115,26 +115,96 @@ public class SenderHelper {
         }
     }
 
-    public static void SendWebhook(String webHookURL, String botToken) {
+    public static void SendPhoto(SendPhoto sendPhoto, String botToken) {
         try {
-            CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
-            String url = Constants.BASEURL + botToken + "/" + SetWebhook.PATH;
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            String url = Constants.BASEURL + botToken + "/" + SendPhoto.PATH;
             HttpPost httppost = new HttpPost(url);
-            httppost.addHeader("Content-type", "application/x-www-form-urlencoded");
-            httppost.addHeader("charset", "UTF-8");
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair(SetWebhook.URL_FIELD, webHookURL));
-            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-            CloseableHttpResponse response = httpclient.execute(httppost);
-            HttpEntity ht = response.getEntity();
 
-            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
-            String responseContent = EntityUtils.toString(buf, "UTF-8");
+            if (sendPhoto.isNewPhoto()) {
+                MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+                builder.addTextBody(SendPhoto.CHATID_FIELD, sendPhoto.getChatId().toString());
+                builder.addBinaryBody(SendPhoto.PHOTO_FIELD, new File(sendPhoto.getPhoto()), ContentType.APPLICATION_OCTET_STREAM, sendPhoto.getPhotoName());
+                if (sendPhoto.getReplayMarkup() != null) {
+                    builder.addTextBody(SendPhoto.REPLYMARKUP_FIELD, sendPhoto.getReplayMarkup().toJson().toString());
+                }
+                if (sendPhoto.getReplayToMessageId() != null) {
+                    builder.addTextBody(SendPhoto.REPLYTOMESSAGEID_FIELD, sendPhoto.getReplayToMessageId().toString());
+                }
+                if (sendPhoto.getCaption() != null) {
+                    builder.addTextBody(SendPhoto.CAPTION_FIELD, sendPhoto.getCaption());
+                }
+                HttpEntity multipart = builder.build();
+                httppost.setEntity(multipart);
+            } else {
+                List<NameValuePair> nameValuePairs = new ArrayList<>();
+                nameValuePairs.add(new BasicNameValuePair(SendPhoto.CHATID_FIELD, sendPhoto.getChatId().toString()));
+                nameValuePairs.add(new BasicNameValuePair(SendPhoto.PHOTO_FIELD, sendPhoto.getPhoto()));
+                if (sendPhoto.getReplayMarkup() != null) {
+                    nameValuePairs.add(new BasicNameValuePair(SendPhoto.REPLYMARKUP_FIELD, sendPhoto.getReplayMarkup().toString()));
+                }
+                if (sendPhoto.getReplayToMessageId() != null) {
+                    nameValuePairs.add(new BasicNameValuePair(SendPhoto.REPLYTOMESSAGEID_FIELD, sendPhoto.getReplayToMessageId().toString()));
+                }
+                if (sendPhoto.getCaption() != null) {
+                    nameValuePairs.add(new BasicNameValuePair(SendPhoto.CAPTION_FIELD, sendPhoto.getCaption()));
+                }
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+            }
 
+            CloseableHttpResponse response = httpClient.execute(httppost);
         } catch (IOException e) {
             log.error(e);
         }
+    }
 
+    public static void SendVideo(SendVideo sendVideo, String botToken) {
+        try {
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            String url = Constants.BASEURL + botToken + "/" + SendVideo.PATH;
+            HttpPost httppost = new HttpPost(url);
+
+            if (sendVideo.isNewVideo()) {
+                MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+                builder.addTextBody(SendVideo.CHATID_FIELD, sendVideo.getChatId().toString());
+                builder.addBinaryBody(SendVideo.VIDEO_FIELD, new File(sendVideo.getVideo()), ContentType.APPLICATION_OCTET_STREAM, sendVideo.getVideoName());
+                if (sendVideo.getReplayMarkup() != null) {
+                    builder.addTextBody(SendVideo.REPLYMARKUP_FIELD, sendVideo.getReplayMarkup().toJson().toString());
+                }
+                if (sendVideo.getReplayToMessageId() != null) {
+                    builder.addTextBody(SendVideo.REPLYTOMESSAGEID_FIELD, sendVideo.getReplayToMessageId().toString());
+                }
+                if (sendVideo.getCaption() != null) {
+                    builder.addTextBody(SendVideo.CAPTION_FIELD, sendVideo.getCaption());
+                }
+                if (sendVideo.getDuration() != null) {
+                    builder.addTextBody(SendVideo.DURATION_FIELD, sendVideo.getDuration().toString());
+                }
+                HttpEntity multipart = builder.build();
+                httppost.setEntity(multipart);
+            } else {
+                List<NameValuePair> nameValuePairs = new ArrayList<>();
+                nameValuePairs.add(new BasicNameValuePair(SendVideo.CHATID_FIELD, sendVideo.getChatId().toString()));
+                nameValuePairs.add(new BasicNameValuePair(SendVideo.VIDEO_FIELD, sendVideo.getVideo()));
+                if (sendVideo.getReplayMarkup() != null) {
+                    nameValuePairs.add(new BasicNameValuePair(SendVideo.REPLYMARKUP_FIELD, sendVideo.getReplayMarkup().toString()));
+                }
+                if (sendVideo.getReplayToMessageId() != null) {
+                    nameValuePairs.add(new BasicNameValuePair(SendVideo.REPLYTOMESSAGEID_FIELD, sendVideo.getReplayToMessageId().toString()));
+                }
+                if (sendVideo.getCaption() != null) {
+                    nameValuePairs.add(new BasicNameValuePair(SendVideo.CAPTION_FIELD, sendVideo.getCaption()));
+                }
+                if (sendVideo.getDuration() != null) {
+                    nameValuePairs.add(new BasicNameValuePair(SendVideo.DURATION_FIELD, sendVideo.getDuration().toString()));
+                }
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+            }
+
+            CloseableHttpResponse response = httpClient.execute(httppost);
+        } catch (IOException e) {
+            log.error(e);
+        }
     }
 
     public static void sendSticker(SendSticker sendSticker, String botToken) {
@@ -173,6 +243,28 @@ public class SenderHelper {
                 File fileToDelete = new File(sendSticker.getSticker());
                 fileToDelete.delete();
             }
+        } catch (IOException e) {
+            log.error(e);
+        }
+
+    }
+
+    public static void SendWebhook(String webHookURL, String botToken) {
+        try {
+            CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+            String url = Constants.BASEURL + botToken + "/" + SetWebhook.PATH;
+            HttpPost httppost = new HttpPost(url);
+            httppost.addHeader("Content-type", "application/x-www-form-urlencoded");
+            httppost.addHeader("charset", "UTF-8");
+            List<NameValuePair> nameValuePairs = new ArrayList<>();
+            nameValuePairs.add(new BasicNameValuePair(SetWebhook.URL_FIELD, webHookURL));
+            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+            CloseableHttpResponse response = httpclient.execute(httppost);
+            HttpEntity ht = response.getEntity();
+
+            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
+            String responseContent = EntityUtils.toString(buf, "UTF-8");
+
         } catch (IOException e) {
             log.error(e);
         }

@@ -162,7 +162,8 @@ public enum Emoji {
     TEAR_OFF_CALENDAR('\uD83D', '\uDCC6'),
     LARGE_ORANGE_DIAMOND('\uD83D', '\uDD36'),
     HUNDRED_POINTS_SYMBOL('\uD83D', '\uDCAF'),
-    ROUND_PUSHPIN('\uD83D', '\uDCCD');
+    ROUND_PUSHPIN('\uD83D', '\uDCCD'),
+    WAVING_HAND_SIGN('\uD83D', '\uDC4B');
 
     Character firstChar;
     Character secondChar;

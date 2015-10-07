@@ -1,9 +1,11 @@
 package org.telegram.updateshandlers;
 
+import org.json.JSONObject;
 import org.telegram.*;
-import org.telegram.api.*;
+import org.telegram.api.objects.*;
 import org.telegram.database.DatabaseManager;
-import org.telegram.methods.SendMessage;
+import org.telegram.api.methods.BotApiMethod;
+import org.telegram.api.methods.SendMessage;
 import org.telegram.services.DirectionsService;
 import org.telegram.services.LocalisationService;
 import org.telegram.updatesreceivers.UpdatesThread;
@@ -23,28 +25,32 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class DirectionsHandlers implements UpdatesCallback {
     private static final String TOKEN = BotConfig.TOKENDIRECTIONS;
-    private static final String webhookPath = "directionsBot";
-    private final Webhook webhook;
-    private final UpdatesThread updatesThread;
+    private static final String BOTNAME = BotConfig.USERNAMEDIRECTIONS;
+    private static final boolean USEWEBHOOK = false;
+
     private static final int WATING_ORIGIN_STATUS = 0;
     private static final int WATING_DESTINY_STATUS = 1;
     private final ConcurrentLinkedQueue<Integer> languageMessages = new ConcurrentLinkedQueue<>();
 
-    public DirectionsHandlers() {
-        if (BuildVars.useWebHook) {
-            webhook = new Webhook(this, webhookPath);
-            updatesThread = null;
-            SenderHelper.SendWebhook(webhook.getURL(), TOKEN);
+    public DirectionsHandlers(Webhook webhook) {
+        if (USEWEBHOOK) {
+            webhook.registerWebhook(this, BOTNAME);
+            SenderHelper.SendWebhook(Webhook.getExternalURL(BOTNAME), TOKEN);
         } else {
-            webhook = null;
             SenderHelper.SendWebhook("", TOKEN);
-            updatesThread = new UpdatesThread(TOKEN, this);
+            new UpdatesThread(TOKEN, this);
         }
     }
 
     @Override
     public void onUpdateReceived(Update update) {
         handleDirections(update);
+    }
+
+    @Override
+    public BotApiMethod onWebhookUpdateReceived(Update update) {
+        // Webhook not supported in this example
+        return null;
     }
 
     public void handleDirections(Update update) {
@@ -79,7 +85,7 @@ public class DirectionsHandlers implements UpdatesCallback {
                             SendMessage sendMessageRequest = new SendMessage();
                             sendMessageRequest.setText(LocalisationService.getInstance().getString("youNeedReplyDirections", language));
                             sendMessageRequest.setChatId(message.getChatId());
-                            SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+                            SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
                         }
                     }
                 }
@@ -100,11 +106,21 @@ public class DirectionsHandlers implements UpdatesCallback {
         Message sentMessage = null;
         for (String direction : directions) {
             sendMessageRequest.setText(direction);
-            sentMessage = SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+            SenderHelper.SendApiMethodAsync(sendMessageRequest, TOKEN, new SentCallback<Message>() {
+                @Override
+                public void onResult(BotApiMethod<Message> method, JSONObject jsonObject) {
+                    Message sentMessage = method.deserializeResponse(jsonObject);
+                    if (sentMessage != null) {
+                        DatabaseManager.getInstance().deleteUserForDirections(message.getFrom().getId());
+                    }
+                }
+
+                @Override
+                public void onError(BotApiMethod<Message> method, JSONObject jsonObject) {
+                }
+            });
         }
-        if (sentMessage != null) {
-            DatabaseManager.getInstance().deleteUserForDirections(message.getFrom().getId());
-        }
+
     }
 
     private void onOriginReceived(Message message, String language) {
@@ -115,11 +131,22 @@ public class DirectionsHandlers implements UpdatesCallback {
         forceReplyKeyboard.setSelective(true);
         sendMessageRequest.setReplayMarkup(forceReplyKeyboard);
         sendMessageRequest.setText(LocalisationService.getInstance().getString("sendDestination", language));
-        Message sentMessage = SenderHelper.SendMessage(sendMessageRequest, TOKEN);
-        if (sentMessage != null) {
-            DatabaseManager.getInstance().addUserForDirection(message.getFrom().getId(), WATING_DESTINY_STATUS,
-                    sentMessage.getMessageId(), message.getText());
-        }
+
+        SenderHelper.SendApiMethodAsync(sendMessageRequest, TOKEN, new SentCallback<Message>() {
+            @Override
+            public void onResult(BotApiMethod<Message> method, JSONObject jsonObject) {
+                Message sentMessage = method.deserializeResponse(jsonObject);
+                if (sentMessage != null) {
+                    DatabaseManager.getInstance().addUserForDirection(message.getFrom().getId(), WATING_DESTINY_STATUS,
+                            sentMessage.getMessageId(), message.getText());
+                }
+            }
+
+            @Override
+            public void onError(BotApiMethod<Message> method, JSONObject jsonObject) {
+            }
+        });
+
     }
 
     private void sendHelpMessage(Message message, String language) {
@@ -129,7 +156,7 @@ public class DirectionsHandlers implements UpdatesCallback {
                 Commands.startDirectionCommand);
         sendMessageRequest.setText(helpDirectionsFormated);
         sendMessageRequest.setChatId(message.getChatId());
-        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
     private void onStartdirectionsCommand(Message message, String language) {
@@ -140,11 +167,22 @@ public class DirectionsHandlers implements UpdatesCallback {
         forceReplyKeyboard.setSelective(true);
         sendMessageRequest.setReplayMarkup(forceReplyKeyboard);
         sendMessageRequest.setText(LocalisationService.getInstance().getString("initDirections", language));
-        Message sentMessage = SenderHelper.SendMessage(sendMessageRequest, TOKEN);
-        if (sentMessage != null) {
-            DatabaseManager.getInstance().addUserForDirection(message.getFrom().getId(), WATING_ORIGIN_STATUS,
-                    sentMessage.getMessageId(), null);
-        }
+
+        SenderHelper.SendApiMethodAsync(sendMessageRequest, TOKEN, new SentCallback<Message>() {
+            @Override
+            public void onResult(BotApiMethod<Message> method, JSONObject jsonObject) {
+                Message sentMessage = method.deserializeResponse(jsonObject);
+                if (sentMessage != null) {
+                    DatabaseManager.getInstance().addUserForDirection(message.getFrom().getId(), WATING_ORIGIN_STATUS,
+                            sentMessage.getMessageId(), null);
+                }
+            }
+
+            @Override
+            public void onError(BotApiMethod<Message> method, JSONObject jsonObject) {
+            }
+        });
+
     }
 
     private void onSetLanguageCommand(Message message, String language) {
@@ -164,7 +202,7 @@ public class DirectionsHandlers implements UpdatesCallback {
         replyKeyboardMarkup.setSelective(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardMarkup);
         sendMessageRequest.setText(LocalisationService.getInstance().getString("chooselanguage", language));
-        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
         languageMessages.add(message.getFrom().getId());
     }
 
@@ -183,7 +221,7 @@ public class DirectionsHandlers implements UpdatesCallback {
         replyKeyboardHide.setHideKeyboard(true);
         replyKeyboardHide.setSelective(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardHide);
-        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
         languageMessages.remove(message.getFrom().getId());
     }
 }

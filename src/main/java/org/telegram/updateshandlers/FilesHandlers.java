@@ -4,13 +4,14 @@ import org.telegram.BotConfig;
 import org.telegram.BuildVars;
 import org.telegram.Commands;
 import org.telegram.SenderHelper;
-import org.telegram.api.Message;
-import org.telegram.api.ReplyKeyboardHide;
-import org.telegram.api.ReplyKeyboardMarkup;
-import org.telegram.api.Update;
+import org.telegram.api.objects.Message;
+import org.telegram.api.objects.ReplyKeyboardHide;
+import org.telegram.api.objects.ReplyKeyboardMarkup;
+import org.telegram.api.objects.Update;
 import org.telegram.database.DatabaseManager;
-import org.telegram.methods.SendDocument;
-import org.telegram.methods.SendMessage;
+import org.telegram.api.methods.BotApiMethod;
+import org.telegram.api.methods.SendDocument;
+import org.telegram.api.methods.SendMessage;
 import org.telegram.services.Emoji;
 import org.telegram.services.LocalisationService;
 import org.telegram.updatesreceivers.UpdatesThread;
@@ -26,33 +27,37 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @author Ruben Bermudez
  * @version 1.0
  * @brief Handler for updates to Files Bot
+ * This bot is an example for the use of sendMessage asynchronously
  * @date 24 of June of 2015
  */
 public class FilesHandlers implements UpdatesCallback {
     private static final String TOKEN = BotConfig.TOKENFILES;
-    private static final String webhookPath = "filesBot";
+    private static final String BOTNAME = BotConfig.USERNAMEFILES;
+    private static final boolean USEWEBHOOK = false;
 
     private static final int INITIAL_UPLOAD_STATUS = 0;
     private static final int DELETE_UPLOADED_STATUS = 1;
-    private final Webhook webhook;
-    private final UpdatesThread updatesThread;
     private final ConcurrentLinkedQueue<Integer> languageMessages = new ConcurrentLinkedQueue<>();
 
-    public FilesHandlers() {
-        if (BuildVars.useWebHook) {
-            webhook = new Webhook(this, webhookPath);
-            updatesThread = null;
-            SenderHelper.SendWebhook(webhook.getURL(), TOKEN);
+    public FilesHandlers(Webhook webhook) {
+        if (USEWEBHOOK) {
+            webhook.registerWebhook(this, BOTNAME);
+            SenderHelper.SendWebhook(Webhook.getExternalURL(BOTNAME), TOKEN);
         } else {
-            webhook = null;
             SenderHelper.SendWebhook("", TOKEN);
-            updatesThread = new UpdatesThread(TOKEN, this);
+            new UpdatesThread(TOKEN, this);
         }
     }
 
     @Override
     public void onUpdateReceived(Update update) {
         handleFileUpdate(update);
+    }
+
+    @Override
+    public BotApiMethod onWebhookUpdateReceived(Update update) {
+        // Webhook not supported in this example
+        return null;
     }
 
     public void handleFileUpdate(Update update) {
@@ -95,7 +100,7 @@ public class FilesHandlers implements UpdatesCallback {
             sendMessageRequest.setText(LocalisationService.getInstance().getString("fileUploaded", language) +
                     LocalisationService.getInstance().getString("uploadedFileURL", language) + message.getDocument().getFileId());
             sendMessageRequest.setChatId(message.getChatId());
-            SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+            SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
         }
     }
 
@@ -116,7 +121,7 @@ public class FilesHandlers implements UpdatesCallback {
         ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
         replyKeyboardHide.setHideKeyboard(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardHide);
-        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
     private void onDeleteCommand(Message message, String language, String[] parts) {
@@ -148,7 +153,7 @@ public class FilesHandlers implements UpdatesCallback {
             replyKeyboardMarkup.setKeyboard(commands);
         }
         sendMessageRequest.setReplayMarkup(replyKeyboardMarkup);
-        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
     private void onDeleteCommandWithParameters(Message message, String language, String part) {
@@ -161,7 +166,7 @@ public class FilesHandlers implements UpdatesCallback {
             sendMessageRequest.setText(LocalisationService.getInstance().getString("wrongFileId", language));
         }
         sendMessageRequest.setChatId(message.getChatId());
-        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
         DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
     }
 
@@ -170,7 +175,7 @@ public class FilesHandlers implements UpdatesCallback {
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setText(LocalisationService.getInstance().getString("processFinished", language));
         sendMessageRequest.setChatId(message.getChatId());
-        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
     private void onUploadCommand(Message message, String language) {
@@ -178,7 +183,7 @@ public class FilesHandlers implements UpdatesCallback {
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setText(LocalisationService.getInstance().getString("sendFileToUpload", language));
         sendMessageRequest.setChatId(message.getChatId());
-        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
     private void sendHelpMessage(Message message, String language) {
@@ -189,7 +194,7 @@ public class FilesHandlers implements UpdatesCallback {
                 Commands.listCommand);
         sendMessageRequest.setText(formatedString);
         sendMessageRequest.setChatId(message.getChatId());
-        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
     private void onStartWithParameters(Message message, String language, String part) {
@@ -202,7 +207,7 @@ public class FilesHandlers implements UpdatesCallback {
             SendMessage sendMessageRequest = new SendMessage();
             sendMessageRequest.setText(LocalisationService.getInstance().getString("wrongFileId", language));
             sendMessageRequest.setChatId(message.getChatId());
-            SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+            SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
         }
     }
 
@@ -223,7 +228,7 @@ public class FilesHandlers implements UpdatesCallback {
         replyKeyboardMarkup.setSelective(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardMarkup);
         sendMessageRequest.setText(LocalisationService.getInstance().getString("chooselanguage", language));
-        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
         languageMessages.add(message.getFrom().getId());
     }
 
@@ -242,7 +247,7 @@ public class FilesHandlers implements UpdatesCallback {
         replyKeyboardHide.setHideKeyboard(true);
         replyKeyboardHide.setSelective(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardHide);
-        SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
         languageMessages.remove(message.getFrom().getId());
     }
 }

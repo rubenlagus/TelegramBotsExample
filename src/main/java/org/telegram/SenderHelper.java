@@ -8,6 +8,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -15,15 +16,20 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
-import org.telegram.api.Message;
-import org.telegram.methods.*;
+import org.telegram.api.objects.Message;
+import org.telegram.api.methods.*;
 import org.telegram.services.BotLogger;
+import org.telegram.updateshandlers.SentCallback;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author Ruben Bermudez
@@ -33,46 +39,7 @@ import java.util.List;
  */
 public class SenderHelper {
     private static volatile BotLogger log = BotLogger.getLogger(SenderHelper.class.getName());
-
-    public static Message SendMessage(SendMessage message, String botToken) {
-        try {
-            CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
-            String url = Constants.BASEURL + botToken + "/" + SendMessage.PATH;
-            HttpPost httppost = new HttpPost(url);
-            httppost.addHeader("Content-type", "application/x-www-form-urlencoded");
-            httppost.addHeader("charset", "UTF-8");
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair(SendMessage.CHATID_FIELD, message.getChatId().toString()));
-            nameValuePairs.add(new BasicNameValuePair(SendMessage.TEXT_FIELD, message.getText()));
-            if (message.getDisableWebPagePreview() != null) {
-                nameValuePairs.add(new BasicNameValuePair(SendMessage.DISABLEWEBPAGEPREVIEW_FIELD, message.getDisableWebPagePreview().toString()));
-            }
-            if (message.getReplayMarkup() != null) {
-                nameValuePairs.add(new BasicNameValuePair(SendMessage.REPLYMARKUP_FIELD, message.getReplayMarkup().toJson().toString()));
-            }
-            if (message.getReplayToMessageId() != null) {
-                nameValuePairs.add(new BasicNameValuePair(SendMessage.REPLYTOMESSAGEID_FIELD, message.getReplayToMessageId().toString()));
-            }
-            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-            log.debug(httppost.toString());
-            log.debug(nameValuePairs.toString());
-            CloseableHttpResponse response = httpclient.execute(httppost);
-            HttpEntity ht = response.getEntity();
-
-            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
-            String responseContent = EntityUtils.toString(buf, "UTF-8");
-
-            JSONObject jsonObject = new JSONObject(responseContent);
-            if (!jsonObject.getBoolean("ok")) {
-                throw new InvalidObjectException(jsonObject.toString());
-            }
-            JSONObject jsonMessage = jsonObject.getJSONObject("result");
-            return new Message(jsonMessage);
-        } catch (IOException e) {
-            log.error(e);
-            return null;
-        }
-    }
+    private static final ExecutorService exe = Executors.newSingleThreadExecutor();
 
     public static void SendDocument(SendDocument sendDocument, String botToken) {
         try {
@@ -253,21 +220,68 @@ public class SenderHelper {
         try {
             CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             String url = Constants.BASEURL + botToken + "/" + SetWebhook.PATH;
+
             HttpPost httppost = new HttpPost(url);
-            httppost.addHeader("Content-type", "application/x-www-form-urlencoded");
-            httppost.addHeader("charset", "UTF-8");
-            List<NameValuePair> nameValuePairs = new ArrayList<>();
-            nameValuePairs.add(new BasicNameValuePair(SetWebhook.URL_FIELD, webHookURL));
-            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
+            MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            builder.addTextBody(SetWebhook.URL_FIELD, webHookURL);
+            if (BuildVars.pathToCertificatePublicKey != null) {
+                builder.addBinaryBody(SetWebhook.CERTIFICATE_FIELD, new File(BuildVars.pathToCertificatePublicKey), ContentType.APPLICATION_OCTET_STREAM, BuildVars.certificatePublicKeyFileName);
+            }
+            HttpEntity multipart = builder.build();
+            httppost.setEntity(multipart);
             CloseableHttpResponse response = httpclient.execute(httppost);
             HttpEntity ht = response.getEntity();
-
             BufferedHttpEntity buf = new BufferedHttpEntity(ht);
             String responseContent = EntityUtils.toString(buf, "UTF-8");
-
+            log.debug(responseContent);
         } catch (IOException e) {
             log.error(e);
         }
 
+    }
+
+    public static void SendApiMethod(BotApiMethod method, String botToken) {
+        try {
+            CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+            String url = Constants.BASEURL + botToken + "/" + method.getPath();
+            HttpPost httppost = new HttpPost(url);
+            httppost.addHeader("charset", "UTF-8");
+            httppost.setEntity(new StringEntity(method.toJson().toString(), ContentType.APPLICATION_JSON));
+            CloseableHttpResponse response = httpclient.execute(httppost);
+            HttpEntity ht = response.getEntity();
+            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
+            String responseContent = EntityUtils.toString(buf, "UTF-8");
+
+            JSONObject jsonObject = new JSONObject(responseContent);
+            if (!jsonObject.getBoolean("ok")) {
+                throw new InvalidObjectException(jsonObject.toString());
+            }
+        } catch (IOException e) {
+            log.error(e);
+        }
+    }
+
+    public static void SendApiMethodAsync(BotApiMethod method, String botToken, SentCallback callback) {
+        exe.submit(() -> {
+            try {
+                CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
+                String url = Constants.BASEURL + botToken + "/" + method.getPath();
+                HttpPost httppost = new HttpPost(url);
+                httppost.addHeader("charset", "UTF-8");
+                httppost.setEntity(new StringEntity(method.toJson().toString(), ContentType.APPLICATION_JSON));
+                CloseableHttpResponse response = httpclient.execute(httppost);
+                HttpEntity ht = response.getEntity();
+                BufferedHttpEntity buf = new BufferedHttpEntity(ht);
+                String responseContent = EntityUtils.toString(buf, "UTF-8");
+
+                JSONObject jsonObject = new JSONObject(responseContent);
+                if (!jsonObject.getBoolean("ok")) {
+                    callback.onError(method, jsonObject);
+                }
+                callback.onResult(method, jsonObject);
+            } catch (IOException e) {
+                log.error(e);
+            }
+        });
     }
 }

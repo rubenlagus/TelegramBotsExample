@@ -2,29 +2,26 @@ package org.telegram.updatesreceivers;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.BufferedHttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.telegram.api.Update;
+import org.telegram.api.objects.Update;
 import org.telegram.database.DatabaseManager;
-import org.telegram.methods.Constants;
-import org.telegram.methods.GetUpdates;
+import org.telegram.api.methods.Constants;
+import org.telegram.api.methods.GetUpdates;
 import org.telegram.services.BotLogger;
 import org.telegram.updateshandlers.UpdatesCallback;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 
@@ -66,16 +63,9 @@ public class UpdatesThread {
                 CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).setConnectionTimeToLive(20, TimeUnit.SECONDS).build();
                 String url = Constants.BASEURL + token + "/" + GetUpdates.PATH;
                 HttpPost httpPost = new HttpPost(url);
-                List<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new BasicNameValuePair(GetUpdates.OFFSET_FIELD, request.getOffset()+""));
-                nameValuePairs.add(new BasicNameValuePair(GetUpdates.LIMIT_FIELD, request.getLimit()+""));
-                if (request.getTimeout() != null) {
-                    nameValuePairs.add(new BasicNameValuePair(GetUpdates.TIMEOUT_FIELD, request.getTimeout()+""));
-                }
                 try {
-                    httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "UTF-8"));
-                    httpPost.addHeader("Content-type", "application/x-www-form-urlencoded");
                     httpPost.addHeader("charset", "UTF-8");
+                    httpPost.setEntity(new StringEntity(request.toJson().toString(), ContentType.APPLICATION_JSON));
                     HttpResponse response;
                     log.debug(httpPost.toString());
                     response = httpclient.execute(httpPost);

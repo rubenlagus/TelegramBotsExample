@@ -12,7 +12,7 @@ Please, **DO NOT PUSH ANY TOKEN OR API KEY**, I will never accept a pull request
 ## Webhooks vs GetUpdates
 Both ways are supported (but I still didn't tested webhooks). To change between them, just go to *BuildVars.java* and change variable *useWebHook* value.
 
-I recommend using getUpdates methods. Webhooks only works using a certificated that is not self-signed
+I recommend using getUpdates methods. Webhooks a bit less trustful
 
 ## Example bots
 Open them and send them */help* command to get some information about their capabilities:

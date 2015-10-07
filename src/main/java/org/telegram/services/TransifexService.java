@@ -8,7 +8,7 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.telegram.BuildVars;
-import org.telegram.methods.SendDocument;
+import org.telegram.api.methods.SendDocument;
 
 import java.io.*;
 

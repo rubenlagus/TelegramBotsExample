@@ -1,17 +1,16 @@
 package org.telegram.updateshandlers;
 
 import org.telegram.*;
-import org.telegram.api.Message;
-import org.telegram.api.Update;
+import org.telegram.api.objects.Message;
+import org.telegram.api.objects.Update;
 import org.telegram.database.DatabaseManager;
-import org.telegram.methods.SendDocument;
-import org.telegram.methods.SendMessage;
+import org.telegram.api.methods.BotApiMethod;
+import org.telegram.api.methods.SendDocument;
+import org.telegram.api.methods.SendMessage;
 import org.telegram.services.LocalisationService;
 import org.telegram.services.TransifexService;
 import org.telegram.updatesreceivers.UpdatesThread;
 import org.telegram.updatesreceivers.Webhook;
-
-import java.util.List;
 
 /**
  * @author Ruben Bermudez
@@ -21,25 +20,28 @@ import java.util.List;
  */
 public class TransifexHandlers implements UpdatesCallback {
     private static final String TOKEN = BotConfig.TOKENTRANSIFEX;
-    private static final String webhookPath = "transifexBot";
-    private final Webhook webhook;
-    private final UpdatesThread updatesThread;
+    private static final String BOTNAME = BotConfig.USERNAMETRANSIFEX;
+    private static final boolean USEWEBHOOK = false;
 
-    public TransifexHandlers() {
-        if (BuildVars.useWebHook) {
-            webhook = new Webhook(this, webhookPath);
-            updatesThread = null;
-            SenderHelper.SendWebhook(webhook.getURL(), TOKEN);
+    public TransifexHandlers(Webhook webhook) {
+        if (USEWEBHOOK) {
+            webhook.registerWebhook(this, BOTNAME);
+            SenderHelper.SendWebhook(Webhook.getExternalURL(BOTNAME), TOKEN);
         } else {
-            webhook = null;
             SenderHelper.SendWebhook("", TOKEN);
-            updatesThread = new UpdatesThread(TOKEN, this);
+            new UpdatesThread(TOKEN, this);
         }
     }
 
     @Override
     public void onUpdateReceived(Update update) {
         sendTransifexFile(update);
+    }
+
+    @Override
+    public BotApiMethod onWebhookUpdateReceived(Update update) {
+        // Webhook not supported in this example
+        return null;
     }
 
     public void sendTransifexFile(Update update) {
@@ -73,7 +75,7 @@ public class TransifexHandlers implements UpdatesCallback {
                             Commands.transifexAndroidSupportCommand);
                     sendMessageRequest.setText(helpFormated);
                     sendMessageRequest.setChatId(message.getChatId());
-                    SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+                    SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
                 }
 
                 if (sendDocument != null) {
@@ -90,7 +92,7 @@ public class TransifexHandlers implements UpdatesCallback {
                         Commands.transifexAndroidSupportCommand);
                 sendMessageRequest.setText(helpFormated);
                 sendMessageRequest.setChatId(message.getChatId());
-                SenderHelper.SendMessage(sendMessageRequest, TOKEN);
+                SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
             }
         }
     }

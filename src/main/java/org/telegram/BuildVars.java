@@ -9,8 +9,11 @@ package org.telegram;
 public class BuildVars {
     public static final Boolean debug = true;
     public static final Boolean useWebHook = true;
-    public static final String BASEWEBHOOKURL = "http://YOUREXTERNALADDRES";
-    public static final String INTERNALWEBHOOKURL = "http://localhost";
+    public static final int PORT = 8443;
+    public static final String EXTERNALWEBHOOKURL = "your-external-url:" + PORT;
+    public static final String INTERNALWEBHOOKURL = "your-internal-url:" + PORT;
+    public static final String pathToCertificatePublicKey = "path/to/my/certkey.pem";
+    public static final String certificatePublicKeyFileName = "certkey.pem";
 
     public static final String OPENWEATHERAPIKEY = "<your-api-key>";
 

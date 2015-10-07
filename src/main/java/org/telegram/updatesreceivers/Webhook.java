@@ -23,16 +23,20 @@ import java.net.URI;
 public class Webhook {
     private static volatile BotLogger log = BotLogger.getLogger(Webhook.class.getName());
 
-    private static final int PORT = 443;
     private static final String KEYSTORE_SERVER_FILE = "./keystore_server";
     private static final String KEYSTORE_SERVER_PWD = "asdfgh";
 
-    private final String path;
+    private final RestApi restApi;
 
+    public Webhook() {
+        this.restApi = new RestApi();
+    }
 
-    public Webhook(UpdatesCallback callback, String webhookPath) {
-        this.path = webhookPath;
-        RestApi restApi = new RestApi(callback);
+    public void registerWebhook(UpdatesCallback callback, String botName) {
+        restApi.registerCallback(callback, botName);
+    }
+
+    public void startServer() {
         SSLContextConfigurator sslContext = new SSLContextConfigurator();
 
         // set up security context
@@ -43,7 +47,7 @@ public class Webhook {
         rc.register(restApi);
         rc.register(JacksonFeature.class);
         rc.property(JSONConfiguration.FEATURE_POJO_MAPPING, true);
-
+        log.error("Internal webhook: " + getBaseURI().toString());
         final HttpServer grizzlyServer = GrizzlyHttpServerFactory.createHttpServer(
                 getBaseURI(),
                 rc,
@@ -56,11 +60,19 @@ public class Webhook {
         }
     }
 
-    private URI getBaseURI() {
-        return URI.create(String.format("%s:%d/%s", BuildVars.INTERNALWEBHOOKURL, PORT, this.path));
+    public void startDebugServer() {
+        ResourceConfig rc = new ResourceConfig();
+        rc.register(restApi);
+        rc.register(JacksonFeature.class);
+        rc.property(JSONConfiguration.FEATURE_POJO_MAPPING, true);
+        GrizzlyHttpServerFactory.createHttpServer(getBaseURI(), rc);
     }
 
-    public String getURL() {
-        return String.format("%s/%s/callback", BuildVars.BASEWEBHOOKURL, this.path);
+    public static String getExternalURL(String botName) {
+        return String.format("%s/callback/%s", BuildVars.EXTERNALWEBHOOKURL, botName);
+    }
+
+    private static URI getBaseURI() {
+        return URI.create(BuildVars.INTERNALWEBHOOKURL);
     }
  }

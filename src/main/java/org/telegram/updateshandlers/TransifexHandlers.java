@@ -24,7 +24,7 @@ public class TransifexHandlers implements UpdatesCallback {
     private static final boolean USEWEBHOOK = false;
 
     public TransifexHandlers(Webhook webhook) {
-        if (USEWEBHOOK) {
+        if (USEWEBHOOK && BuildVars.useWebHook) {
             webhook.registerWebhook(this, BOTNAME);
             SenderHelper.SendWebhook(Webhook.getExternalURL(BOTNAME), TOKEN);
         } else {
@@ -74,7 +74,7 @@ public class TransifexHandlers implements UpdatesCallback {
                             Commands.transifexTDesktop, Commands.transifexOSX, Commands.transifexWP,
                             Commands.transifexAndroidSupportCommand);
                     sendMessageRequest.setText(helpFormated);
-                    sendMessageRequest.setChatId(message.getChatId());
+                    sendMessageRequest.setChatId(message.getChatId().toString());
                     SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
                 }
 
@@ -91,7 +91,7 @@ public class TransifexHandlers implements UpdatesCallback {
                         Commands.transifexTDesktop, Commands.transifexOSX, Commands.transifexWP,
                         Commands.transifexAndroidSupportCommand);
                 sendMessageRequest.setText(helpFormated);
-                sendMessageRequest.setChatId(message.getChatId());
+                sendMessageRequest.setChatId(message.getChatId().toString());
                 SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
             }
         }

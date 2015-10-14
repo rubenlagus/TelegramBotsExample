@@ -19,7 +19,7 @@ public class SendMessage extends BotApiMethod<Message> {
     public static final String PATH = "sendmessage";
 
     public static final String CHATID_FIELD = "chat_id";
-    private Integer chatId; ///< Unique identifier for the message recepient — User or GroupChat id
+    private String chatId; ///< Unique identifier for the chat to send the message to (Or username for channels)
     public static final String TEXT_FIELD = "text";
     private String text; ///< Text of the message to be sent
     public static final String PARSEMODE_FIELD = "parse_mode";
@@ -35,11 +35,11 @@ public class SendMessage extends BotApiMethod<Message> {
         super();
     }
 
-    public Integer getChatId() {
+    public String getChatId() {
         return chatId;
     }
 
-    public void setChatId(Integer chatId) {
+    public void setChatId(String chatId) {
         this.chatId = chatId;
     }
 
@@ -86,7 +86,6 @@ public class SendMessage extends BotApiMethod<Message> {
     @Override
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
-
         jsonObject.put(CHATID_FIELD, chatId);
         jsonObject.put(TEXT_FIELD, text);
         if (parseMode != null) {
@@ -122,7 +121,7 @@ public class SendMessage extends BotApiMethod<Message> {
     public void serialize(JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
         gen.writeStringField(METHOD_FIELD, PATH);
-        gen.writeNumberField(CHATID_FIELD, chatId);
+        gen.writeStringField(CHATID_FIELD, chatId);
         gen.writeStringField(TEXT_FIELD, text);
 
         if (parseMode != null) {
@@ -146,7 +145,7 @@ public class SendMessage extends BotApiMethod<Message> {
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
         gen.writeStartObject();
         gen.writeStringField(METHOD_FIELD, PATH);
-        gen.writeNumberField(CHATID_FIELD, chatId);
+        gen.writeStringField(CHATID_FIELD, chatId);
         gen.writeStringField(TEXT_FIELD, text);
 
         if (parseMode != null) {

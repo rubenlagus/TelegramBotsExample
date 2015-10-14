@@ -24,17 +24,13 @@ public class Message implements BotApiObject {
     private Integer messageId; ///< Integer	Unique message identifier
     public static final String FROM_FIELD = "from";
     @JsonProperty(FROM_FIELD)
-    private User from; ///< Sender
+    private User from; ///< Optional. Sender, can be empty for messages sent to channels
     public static final String DATE_FIELD = "date";
     @JsonProperty(DATE_FIELD)
     private Integer date; ///< Date the message was sent in Unix time
     public static final String CHAT_FIELD = "chat";
-    /**
-     * Conversation the message belongs to in case of a private message (@see User)or
-     * Conversation the message belongs to in case of a group (@see GroupChat)
-     */
     @JsonProperty(CHAT_FIELD)
-    private Chat chat; ///< Conversation the message belongs to in case of a private message
+    private Chat chat; ///< Conversation the message belongs to
     public static final String FORWARDFROM_FIELD = "forward_from";
     @JsonProperty(FORWARDFROM_FIELD)
     private User forwardFrom; ///< Optional. For forwarded messages, sender of the original message
@@ -73,13 +69,13 @@ public class Message implements BotApiObject {
     private User leftChatParticipant; ///< Optional. A member was removed from the group, information about them (this member may be bot itself)
     public static final String NEWCHATTITLE_FIELD = "new_chat_title";
     @JsonProperty(NEWCHATTITLE_FIELD)
-    private String newChatTitle; ///< Optional. A group title was changed to this value
+    private String newChatTitle; ///< Optional. A chat title was changed to this value
     public static final String NEWCHATPHOTO_FIELD = "new_chat_photo";
     @JsonProperty(NEWCHATPHOTO_FIELD)
-    private List<PhotoSize> newChatPhoto; ///< Optional. A group photo was change to this value
+    private List<PhotoSize> newChatPhoto; ///< Optional. A chat photo was change to this value
     public static final String DELETECHATPHOTO_FIELD = "delete_chat_photo";
     @JsonProperty(DELETECHATPHOTO_FIELD)
-    private Boolean deleteChatPhoto; ///< Optional. Informs that the group photo was deleted
+    private Boolean deleteChatPhoto; ///< Optional. Informs that the chat photo was deleted
     public static final String GROUPCHATCREATED_FIELD = "group_chat_created";
     @JsonProperty(GROUPCHATCREATED_FIELD)
     private Boolean groupchatCreated; ///< Optional. Informs that the group has been created
@@ -97,7 +93,9 @@ public class Message implements BotApiObject {
     public Message(JSONObject jsonObject) {
         super();
         this.messageId = jsonObject.getInt(MESSAGEID_FIELD);
-        this.from = new User(jsonObject.getJSONObject(FROM_FIELD));
+        if (jsonObject.has(FROM_FIELD)) {
+            this.from = new User(jsonObject.getJSONObject(FROM_FIELD));
+        }
         this.date = jsonObject.getInt(DATE_FIELD);
         this.chat = new Chat(jsonObject.getJSONObject(CHAT_FIELD));
         if (jsonObject.has(FORWARDFROM_FIELD)) {
@@ -190,6 +188,14 @@ public class Message implements BotApiObject {
 
     public boolean isGroupMessage() {
         return chat.isGroupChat();
+    }
+
+    public boolean isUserMessage() {
+        return chat.isUserChat();
+    }
+
+    public boolean isChannelMessage() {
+        return chat.isChannelChat();
     }
 
     public Integer getChatId() {

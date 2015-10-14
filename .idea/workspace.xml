@@ -2,101 +2,28 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cc3252dd-ba1f-404e-b603-ef880b5c3341" name="Default" comment="1. Webhooks&#10;">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_jsoup_jsoup_1_8_3.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/interfaces/BotApiObject.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/interfaces/IToJson.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/BotApiMethod.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/ForwardMessage.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/GetFile.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/GetMe.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/GetUserProfilePhotos.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendMessage.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SetWebhook.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Contact.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/File.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/PhotoSize.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Sticker.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/User.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/UserProfilePhotos.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/SentCallback.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/resources/localisation/strings_de.properties" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_jsoup_jsoup_1_8_2.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/Contact.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/PhotoSize.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/Sticker.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/User.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/UserProfilePhotos.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/methods/ForwardMessage.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/methods/GetMe.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/methods/GetUserProfilePhotos.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/methods/SendMessage.java" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/methods/SetWebhook.java" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_5_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_5_4.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_5_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_5_4.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_5_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_5_4.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_jaxrs_jackson_jaxrs_base_2_5_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_jaxrs_jackson_jaxrs_base_2_5_4.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_jaxrs_jackson_jaxrs_json_provider_2_5_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_jaxrs_jackson_jaxrs_json_provider_2_5_4.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_module_jackson_module_jaxb_annotations_2_5_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_module_jackson_module_jaxb_annotations_2_5_4.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__mysql_mysql_connector_java_5_1_35.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__mysql_mysql_connector_java_5_1_36.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpclient_4_5.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpclient_4_5_1.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpcore_4_4_1.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpcore_4_4_3.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpmime_4_5.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_httpcomponents_httpmime_4_5_1.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_grizzly_grizzly_framework_2_3_19.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_grizzly_grizzly_framework_2_3_22.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_grizzly_grizzly_http_2_3_19.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_grizzly_grizzly_http_2_3_22.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_grizzly_grizzly_http_server_2_3_19.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_grizzly_grizzly_http_server_2_3_22.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_external_aopalliance_repackaged_2_4_0_b12.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_external_aopalliance_repackaged_2_4_0_b31.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_external_javax_inject_2_4_0_b12.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_external_javax_inject_2_4_0_b31.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_hk2_api_2_4_0_b12.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_hk2_api_2_4_0_b31.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_hk2_locator_2_4_0_b12.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_hk2_locator_2_4_0_b31.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_hk2_utils_2_4_0_b12.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_hk2_hk2_utils_2_4_0_b31.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_bundles_repackaged_jersey_guava_2_18.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_bundles_repackaged_jersey_guava_2_21.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_containers_jersey_container_grizzly2_http_2_18.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_containers_jersey_container_grizzly2_http_2_21.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_core_jersey_client_2_18.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_core_jersey_client_2_21.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_core_jersey_common_2_18.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_core_jersey_common_2_21.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_core_jersey_server_2_18.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_core_jersey_server_2_21.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_ext_jersey_entity_filtering_2_18.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_ext_jersey_entity_filtering_2_21.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_media_jersey_media_jaxb_2_18.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_media_jersey_media_jaxb_2_21.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_media_jersey_media_json_jackson_2_18.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jersey_media_jersey_media_json_jackson_2_21.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/Audio.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Audio.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/Chat.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Chat.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/Document.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Document.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/ForceReplyKeyboard.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/ForceReplyKeyboard.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/Location.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Location.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/Message.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Message.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/ReplyKeyboard.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/ReplyKeyboard.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/ReplyKeyboardHide.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/ReplyKeyboardHide.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/ReplyKeyboardMarkup.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/ReplyKeyboardMarkup.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/Update.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Update.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/Video.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Video.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/Voice.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Voice.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/methods/Constants.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/Constants.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/methods/GetUpdates.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/GetUpdates.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/methods/SendAudio.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendAudio.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/methods/SendChatAction.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendChatAction.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/methods/SendDocument.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendDocument.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/methods/SendLocation.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendLocation.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/methods/SendPhoto.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendPhoto.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/methods/SendSticker.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendSticker.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/methods/SendVideo.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendVideo.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/methods/SendVoice.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendVoice.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/BotAPi.iml" afterPath="$PROJECT_DIR$/BotAPi.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/BotConfig.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/BotConfig.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/BuildVars.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/BuildVars.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/Main.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/SenderHelper.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/SenderHelper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/services/TransifexService.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/services/TransifexService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Chat.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Chat.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/ForwardMessage.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/ForwardMessage.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/Main.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/Main.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Message.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Message.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendAudio.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendAudio.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendChatAction.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendChatAction.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendDocument.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendDocument.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendLocation.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendLocation.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendMessage.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendMessage.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendPhoto.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendPhoto.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendSticker.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendSticker.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendVideo.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendVideo.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendVoice.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendVoice.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/SenderHelper.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/SenderHelper.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/TransifexHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/TransifexHandlers.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/UpdatesCallback.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/UpdatesCallback.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/RestApi.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/RestApi.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/UpdatesThread.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/UpdatesThread.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/Webhook.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/Webhook.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/resources/localisation/strings.properties" afterPath="$PROJECT_DIR$/src/main/resources/localisation/strings.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/dataSources.xml" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="BotAPi.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -140,11 +67,102 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
+      <file leaf-file-name="WeatherHandlers.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.21333334">
+              <caret line="123" column="72" selection-start-line="123" selection-start-column="72" selection-end-line="123" selection-end-column="72" />
+              <folding>
+                <element signature="method#getSettingsMessage#0;class#WeatherHandlers#0" expanded="false" />
+                <element signature="method#getHelpMessage#0;class#WeatherHandlers#0" expanded="false" />
+                <element signature="method#getLanguageMessage#0;class#WeatherHandlers#0" expanded="false" />
+                <element signature="method#getUnitsMessage#0;class#WeatherHandlers#0" expanded="false" />
+                <element signature="method#getChooseNewAlertSetMessage#0;class#WeatherHandlers#0" expanded="false" />
+                <element signature="method#getMainMenuKeyboard#0;class#WeatherHandlers#0" expanded="false" />
+                <element signature="method#getLanguagesKeyboard#0;class#WeatherHandlers#0" expanded="false" />
+                <element signature="method#getUnitsKeyboard#0;class#WeatherHandlers#0" expanded="false" />
+                <element signature="method#getSettingsKeyboard#0;class#WeatherHandlers#0" expanded="false" />
+                <element signature="method#getRecentsKeyboard#0;class#WeatherHandlers#0" expanded="false" />
+                <element signature="method#getRecentsKeyboard#1;class#WeatherHandlers#0" expanded="false" />
+                <element signature="method#getAlertsKeyboard#0;class#WeatherHandlers#0" expanded="false" />
+                <element signature="method#getAlertsListKeyboard#0;class#WeatherHandlers#0" expanded="false" />
+                <element signature="method#getForceReply#0;class#WeatherHandlers#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DirectionsHandlers.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="211" column="67" selection-start-line="211" selection-start-column="67" selection-end-line="211" selection-end-column="67" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FilesHandlers.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="237" column="67" selection-start-line="237" selection-start-column="67" selection-end-line="237" selection-end-column="67" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TransifexHandlers.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/TransifexHandlers.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="93" column="75" selection-start-line="93" selection-start-column="75" selection-end-line="93" selection-end-column="75" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SendMessage.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendMessage.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="147" column="45" selection-start-line="147" selection-start-column="45" selection-end-line="147" selection-end-column="45" />
+              <folding>
+                <element signature="e#1831#1832#0" expanded="true" />
+                <element signature="e#1867#1868#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SenderHelper.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/SenderHelper.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="259" column="0" selection-start-line="259" selection-start-column="0" selection-end-line="259" selection-end-column="0" />
+              <folding>
+                <element signature="docComment;class#SenderHelper#0" expanded="false" />
+                <element signature="method#SendApiMethodAsync#0;class#SenderHelper#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="BuildVars.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/BuildVars.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="15" column="74" selection-start-line="15" selection-start-column="74" selection-end-line="15" selection-end-column="74" />
+              <caret line="10" column="50" selection-start-line="10" selection-start-column="50" selection-end-line="10" selection-end-column="50" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/Main.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="32" column="44" selection-start-line="32" selection-start-column="44" selection-end-line="32" selection-end-column="44" />
               <folding />
             </state>
           </provider>
@@ -154,25 +172,18 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/BotConfig.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="15" column="61" selection-start-line="15" selection-start-column="61" selection-end-line="15" selection-end-column="61" />
+              <caret line="15" column="96" selection-start-line="15" selection-start-column="96" selection-end-line="15" selection-end-column="96" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SenderHelper.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/SenderHelper.java">
+      <file leaf-file-name="Webhook.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/Webhook.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5371517">
-              <caret line="272" column="53" selection-start-line="272" selection-start-column="53" selection-end-line="272" selection-end-column="53" />
-              <folding>
-                <element signature="docComment;class#SenderHelper#0" expanded="false" />
-                <element signature="method#SendDocument#0;class#SenderHelper#0" expanded="false" />
-                <element signature="method#SendPhoto#0;class#SenderHelper#0" expanded="false" />
-                <element signature="method#SendVideo#0;class#SenderHelper#0" expanded="false" />
-                <element signature="method#sendSticker#0;class#SenderHelper#0" expanded="false" />
-                <element signature="method#SendWebhook#0;class#SenderHelper#0" expanded="false" />
-              </folding>
+            <state vertical-scroll-proportion="0.0">
+              <caret line="35" column="25" selection-start-line="35" selection-start-column="25" selection-end-line="35" selection-end-column="25" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -201,7 +212,7 @@
       </map>
     </option>
     <push-targets>
-      <push-target-info repo="$PROJECT_DIR$" source="master" target-remote="origin" target-branch="dev" />
+      <push-target-info repo="$PROJECT_DIR$" source="master" target-remote="origin" target-branch="master" />
     </push-targets>
   </component>
   <component name="GradleLocalSettings">
@@ -212,15 +223,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/methods/GetUserProfilePhotos.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/methods/BotApiMethod.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/methods/IToJson.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/methods/GetMe.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/UpdatesThread.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/Webhook.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/Audio.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/Chat.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/Contact.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/Document.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/ForceReplyKeyboard.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/PhotoSize.java" />
@@ -239,11 +241,7 @@
         <option value="$PROJECT_DIR$/src/main/resources/localisation/strings.properties" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/ApiBool.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/UserProfilePhotos.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Message.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendChatAction.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/GetMe.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/ForwardMessage.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendMessage.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/GetUserProfilePhotos.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/UpdatesCallback.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/interfaces/BotApiObject.java" />
@@ -251,18 +249,31 @@
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/BotApiMethod.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/SentCallback.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/Main.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/TransifexHandlers.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendLocation.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/RestApi.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/File.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/GetFile.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/BuildVars.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/BotConfig.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Chat.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/BuildVars.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/Main.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Message.java" />
+        <option value="/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/src.zip!/java/lang/Integer.java" />
+        <option value="/Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/src.zip!/java/lang/Number.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendDocument.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/ForwardMessage.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendAudio.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendChatAction.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendLocation.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendPhoto.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendSticker.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendVideo.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendVoice.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/SenderHelper.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendMessage.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/TransifexHandlers.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java" />
       </list>
     </option>
   </component>
@@ -309,6 +320,9 @@
         </PATH_ELEMENT>
       </PATH>
     </treeState>
+  </component>
+  <component name="NamedScopeManager">
+    <order />
   </component>
   <component name="ProjectFrameBounds">
     <option name="width" value="1366" />
@@ -447,8 +461,6 @@
       <autoscrollToSource />
       <autoscrollFromSource />
       <sortByType />
-      <manualOrder />
-      <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
       <pane id="Scope" />
@@ -568,6 +580,36 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="updatesreceivers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="BotAPi" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="BotAPi" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="telegram" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="updateshandlers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -780,15 +822,6 @@
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
       <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
-      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="0" />
-      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
-      <option name="SELECTED_CLOUD_DEVICE_CONFIGURATION_ID" value="0" />
-      <option name="SELECTED_CLOUD_DEVICE_PROJECT_ID" value="" />
-      <option name="IS_VALID_CLOUD_MATRIX_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_MATRIX_SELECTION_ERROR" value="" />
-      <option name="IS_VALID_CLOUD_DEVICE_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_DEVICE_SELECTION_ERROR" value="" />
-      <option name="CLOUD_DEVICE_SERIAL_NUMBER" value="" />
       <method />
     </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Tests">
@@ -810,15 +843,6 @@
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="true" />
       <option name="FILTER_LOGCAT_AUTOMATICALLY" value="true" />
-      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="0" />
-      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
-      <option name="SELECTED_CLOUD_DEVICE_CONFIGURATION_ID" value="0" />
-      <option name="SELECTED_CLOUD_DEVICE_PROJECT_ID" value="" />
-      <option name="IS_VALID_CLOUD_MATRIX_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_MATRIX_SELECTION_ERROR" value="" />
-      <option name="IS_VALID_CLOUD_DEVICE_SELECTION" value="false" />
-      <option name="INVALID_CLOUD_DEVICE_SELECTION_ERROR" value="" />
-      <option name="CLOUD_DEVICE_SERIAL_NUMBER" value="" />
       <method />
     </configuration>
     <configuration default="true" type="Applet" factoryName="Applet">
@@ -841,65 +865,6 @@
       <option name="PASS_PARENT_ENVS" value="true" />
       <module name="" />
       <envs />
-      <method />
-    </configuration>
-    <configuration default="true" type="ArquillianJUnit" factoryName="">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <module name="" />
-      <option name="arquillianRunConfiguration">
-        <value>
-          <option name="containerStateName" value="" />
-        </value>
-      </option>
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="METHOD_NAME" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="singleModule" />
-      </option>
-      <envs />
-      <patterns />
-      <method />
-    </configuration>
-    <configuration default="true" type="ArquillianTestNG" factoryName="">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <module name="" />
-      <option name="arquillianRunConfiguration">
-        <value>
-          <option name="containerStateName" value="" />
-        </value>
-      </option>
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="SUITE_NAME" />
-      <option name="PACKAGE_NAME" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="METHOD_NAME" />
-      <option name="GROUP_NAME" />
-      <option name="TEST_OBJECT" value="CLASS" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" />
-      <option name="OUTPUT_DIRECTORY" />
-      <option name="ANNOTATION_TYPE" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="singleModule" />
-      </option>
-      <option name="USE_DEFAULT_REPORTERS" value="false" />
-      <option name="PROPERTIES_FILE" />
-      <envs />
-      <properties />
-      <listeners />
       <method />
     </configuration>
     <configuration default="true" type="CucumberJavaRunConfigurationType" factoryName="Cucumber java">
@@ -1017,46 +982,12 @@
       <patterns />
       <method />
     </configuration>
-    <configuration default="true" type="JUnitTestDiscovery" factoryName="JUnit Test Discovery" changeList="All">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <module name="" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PACKAGE_NAME" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="METHOD_NAME" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="singleModule" />
-      </option>
-      <envs />
-      <patterns />
-      <method />
-    </configuration>
     <configuration default="true" type="JarApplication" factoryName="JAR Application">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <envs />
       <method />
     </configuration>
     <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
-      <method />
-    </configuration>
-    <configuration default="true" type="JetRunConfigurationType" factoryName="Kotlin">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="VM_PARAMETERS" />
-      <option name="PROGRAM_PARAMETERS" />
-      <option name="WORKING_DIRECTORY" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="BotAPi" />
-      <envs />
       <method />
     </configuration>
     <configuration default="true" type="MavenRunConfiguration" factoryName="Maven">
@@ -1126,34 +1057,6 @@
       <listeners />
       <method />
     </configuration>
-    <configuration default="true" type="TestNGTestDiscovery" factoryName="TestNG Test Discovery" changeList="All">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <module name="" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <option name="SUITE_NAME" />
-      <option name="PACKAGE_NAME" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="METHOD_NAME" />
-      <option name="GROUP_NAME" />
-      <option name="TEST_OBJECT" value="CLASS" />
-      <option name="VM_PARAMETERS" />
-      <option name="PARAMETERS" />
-      <option name="WORKING_DIRECTORY" />
-      <option name="OUTPUT_DIRECTORY" />
-      <option name="ANNOTATION_TYPE" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="singleModule" />
-      </option>
-      <option name="USE_DEFAULT_REPORTERS" value="false" />
-      <option name="PROPERTIES_FILE" />
-      <envs />
-      <properties />
-      <listeners />
-      <method />
-    </configuration>
     <configuration default="true" type="executeSpecs" factoryName="Gauge Execution">
       <setting name="environment" value="" />
       <setting name="specsToExecute" value="" />
@@ -1176,12 +1079,6 @@
       <envs />
       <method />
     </configuration>
-    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
-      <command value="run-script" />
-      <scripts />
-      <envs />
-      <method />
-    </configuration>
     <configuration default="true" type="mocha-javascript-test-runner" factoryName="Mocha">
       <node-options />
       <working-directory>$PROJECT_DIR$</working-directory>
@@ -1189,7 +1086,6 @@
       <envs />
       <ui>bdd</ui>
       <extra-mocha-options />
-      <test-kind>DIRECTORY</test-kind>
       <test-directory />
       <recursive>false</recursive>
       <method />
@@ -1317,6 +1213,10 @@
       <workItem from="1442509638881" duration="1065000" />
       <workItem from="1444159378099" duration="3286000" />
       <workItem from="1444254325959" duration="288000" />
+      <workItem from="1444255115907" duration="212000" />
+      <workItem from="1444323303608" duration="5644000" />
+      <workItem from="1444501308862" duration="423000" />
+      <workItem from="1444843707388" duration="1293000" />
     </task>
     <task id="LOCAL-00001" summary="First Commit:&#10;1. Transifex bot&#10;2. Weather bot">
       <created>1434854005227</created>
@@ -1604,7 +1504,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="248233000" />
+    <option name="totallyTimeSpent" value="255805000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1619,66 +1519,66 @@
     <frame x="0" y="0" width="1366" height="768" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295129" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27793697" sideWeight="0.5120846" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.16691843" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32344213" sideWeight="0.49697885" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.26283988" sideWeight="0.8281623" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Statistic" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19335347" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19561933" sideWeight="0.1718377" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Dynamic Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4002976" sideWeight="0.4879154" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32886904" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32886904" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32886904" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32589287" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295129" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32886904" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27793697" sideWeight="0.5120846" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.16691843" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32440478" sideWeight="0.49697885" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32886904" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26283988" sideWeight="0.8281623" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Statistic" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19335347" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19561933" sideWeight="0.1718377" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4002976" sideWeight="0.4879154" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Dynamic Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32886904" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32589287" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27793697" sideWeight="0.5120846" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32930514" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Statistic" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19335347" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Dynamic Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39285713" sideWeight="0.4879154" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295129" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32886904" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32857144" sideWeight="0.49697885" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295129" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32886904" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19561933" sideWeight="0.8281623" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3264095" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19561933" sideWeight="0.1718377" order="4" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27793697" sideWeight="0.5120846" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32930514" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Statistic" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19335347" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Dynamic Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39285713" sideWeight="0.4879154" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295129" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32886904" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32857144" sideWeight="0.49697885" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3295129" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32886904" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19561933" sideWeight="0.8281623" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3264095" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19561933" sideWeight="0.1718377" order="4" side_tool="true" content_ui="tabs" />
     </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -1742,34 +1642,10 @@
           <option name="timeStamp" value="84" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java</url>
-          <line>71</line>
-          <properties />
-          <option name="timeStamp" value="138" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java</url>
-          <line>65</line>
-          <properties />
-          <option name="timeStamp" value="141" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java</url>
-          <line>62</line>
-          <properties />
-          <option name="timeStamp" value="142" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/telegram/database/DatabaseManager.java</url>
           <line>119</line>
           <properties />
           <option name="timeStamp" value="178" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/org/telegram/SenderHelper.java</url>
-          <line>95</line>
-          <properties />
-          <option name="timeStamp" value="215" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/Webhook.java</url>
@@ -1777,11 +1653,17 @@
           <properties />
           <option name="timeStamp" value="245" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/org/telegram/SenderHelper.java</url>
+          <line>275</line>
+          <properties />
+          <option name="timeStamp" value="259" />
+        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="256" />
+      <option name="time" value="264" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1790,59 +1672,22 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Document.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/UpdatesThread.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.742236">
-          <caret line="51" column="45" selection-start-line="51" selection-start-column="45" selection-end-line="51" selection-end-column="45" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="84" column="0" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/objects/ForceReplyKeyboard.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/SenderHelper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.51086956">
-          <caret line="50" column="9" selection-start-line="50" selection-start-column="9" selection-end-line="50" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Location.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.371118">
-          <caret line="32" column="39" selection-start-line="32" selection-start-column="39" selection-end-line="32" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/objects/PhotoSize.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.58229816">
-          <caret line="42" column="60" selection-start-line="42" selection-start-column="60" selection-end-line="42" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/objects/ReplyKeyboardMarkup.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.69720495">
-          <caret line="62" column="46" selection-start-line="62" selection-start-column="46" selection-end-line="62" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Update.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6754658">
-          <caret line="38" column="58" selection-start-line="38" selection-start-column="58" selection-end-line="38" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Sticker.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.53571427">
-          <caret line="44" column="42" selection-start-line="44" selection-start-column="42" selection-end-line="44" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Video.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.9565217">
-          <caret line="147" column="9" selection-start-line="147" selection-start-column="9" selection-end-line="147" selection-end-column="9" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="docComment;class#SenderHelper#0" expanded="false" />
+            <element signature="method#SendApiMethodAsync#0;class#SenderHelper#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1850,21 +1695,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-0.39751554">
           <caret line="40" column="45" selection-start-line="40" selection-start-column="45" selection-end-line="40" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SetWebhook.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.44254658">
-          <caret line="25" column="51" selection-start-line="25" selection-start-column="51" selection-end-line="25" selection-end-column="51" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendAudio.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.44254658">
-          <caret line="21" column="23" selection-start-line="21" selection-start-column="23" selection-end-line="21" selection-end-column="23" />
         </state>
       </provider>
     </entry>
@@ -1879,13 +1709,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.25541794">
           <caret line="11" column="62" selection-start-line="11" selection-start-column="62" selection-end-line="11" selection-end-column="62" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/UpdatesThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="85" column="43" selection-start-line="85" selection-start-column="43" selection-end-line="85" selection-end-column="43" />
         </state>
       </provider>
     </entry>
@@ -1910,13 +1733,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/json/json/20141113/json-20141113-sources.jar!/org/json/JSONObject.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="8.247557">
-          <caret line="279" column="11" selection-start-line="279" selection-start-column="11" selection-end-line="279" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-databind/2.5.4/jackson-databind-2.5.4-sources.jar!/com/fasterxml/jackson/databind/ObjectMapper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-15.2443">
@@ -1938,14 +1754,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.14086688">
           <caret line="17" column="42" selection-start-line="17" selection-start-column="30" selection-end-line="17" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Message.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.3804348">
-          <caret line="96" column="11" selection-start-line="96" selection-start-column="11" selection-end-line="96" selection-end-column="11" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1984,13 +1792,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/SentCallback.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.64">
-          <caret line="22" column="81" selection-start-line="22" selection-start-column="81" selection-end-line="22" selection-end-column="81" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.39228296">
@@ -2003,93 +1804,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.3317647">
           <caret line="12" column="22" selection-start-line="12" selection-start-column="22" selection-end-line="12" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendVideo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3317647">
-          <caret line="12" column="13" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendMessage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8117647">
-          <caret line="141" column="20" selection-start-line="122" selection-start-column="8" selection-end-line="141" selection-end-column="20" />
-          <folding>
-            <element signature="method#enableMarkdown#0;class#SendMessage#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/TransifexHandlers.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.28235295">
-          <caret line="42" column="8" selection-start-line="42" selection-start-column="8" selection-end-line="42" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.49411765">
-          <caret line="58" column="10" selection-start-line="58" selection-start-column="10" selection-end-line="58" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7411765">
-          <caret line="57" column="0" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
-          <folding>
-            <element signature="method#getSettingsMessage#0;class#WeatherHandlers#0" expanded="false" />
-            <element signature="method#getHelpMessage#0;class#WeatherHandlers#0" expanded="false" />
-            <element signature="method#getLanguageMessage#0;class#WeatherHandlers#0" expanded="false" />
-            <element signature="method#getUnitsMessage#0;class#WeatherHandlers#0" expanded="false" />
-            <element signature="method#getChooseNewAlertSetMessage#0;class#WeatherHandlers#0" expanded="false" />
-            <element signature="method#getMainMenuKeyboard#0;class#WeatherHandlers#0" expanded="false" />
-            <element signature="method#getLanguagesKeyboard#0;class#WeatherHandlers#0" expanded="false" />
-            <element signature="method#getUnitsKeyboard#0;class#WeatherHandlers#0" expanded="false" />
-            <element signature="method#getSettingsKeyboard#0;class#WeatherHandlers#0" expanded="false" />
-            <element signature="method#getRecentsKeyboard#0;class#WeatherHandlers#0" expanded="false" />
-            <element signature="method#getRecentsKeyboard#1;class#WeatherHandlers#0" expanded="false" />
-            <element signature="method#getAlertsKeyboard#0;class#WeatherHandlers#0" expanded="false" />
-            <element signature="method#getAlertsListKeyboard#0;class#WeatherHandlers#0" expanded="false" />
-            <element signature="method#getForceReply#0;class#WeatherHandlers#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.31764707">
-          <caret line="51" column="48" selection-start-line="51" selection-start-column="48" selection-end-line="51" selection-end-column="48" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.45882353">
-          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/UpdatesCallback.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7411765">
-          <caret line="22" column="29" selection-start-line="22" selection-start-column="29" selection-end-line="22" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/ForwardMessage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.68235296">
-          <caret line="95" column="20" selection-start-line="92" selection-start-column="8" selection-end-line="95" selection-end-column="20" />
         </state>
       </provider>
     </entry>
@@ -2107,60 +1821,192 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/json/json/20141113/json-20141113-sources.jar!/org/json/JSONObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334">
+          <caret line="963" column="18" selection-start-line="963" selection-start-column="18" selection-end-line="963" selection-end-column="18" />
+          <folding>
+            <element signature="e#32339#32340#0" expanded="false" />
+            <element signature="e#32385#32386#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Message.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.41954023">
+          <caret line="192" column="32" selection-start-line="192" selection-start-column="19" selection-end-line="192" selection-end-column="32" />
+          <folding>
+            <element signature="e#8695#8696#0" expanded="false" />
+            <element signature="e#8735#8736#0" expanded="false" />
+            <element signature="e#8776#8777#0" expanded="false" />
+            <element signature="e#8819#8820#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/UpdatesCallback.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.7413333">
+          <caret line="22" column="29" selection-start-line="22" selection-start-column="29" selection-end-line="22" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/src.zip!/java/lang/Number.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334">
+          <caret line="54" column="22" selection-start-line="54" selection-start-column="22" selection-end-line="54" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/src.zip!/java/lang/Number.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33333334">
+          <caret line="54" column="22" selection-start-line="54" selection-start-column="22" selection-end-line="54" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_25.jdk/Contents/Home/src.zip!/java/lang/Integer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.49333334">
+          <caret line="51" column="37" selection-start-line="51" selection-start-column="37" selection-end-line="51" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/GetUserProfilePhotos.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.9764706">
+        <state vertical-scroll-proportion="2.24">
           <caret line="79" column="38" selection-start-line="79" selection-start-column="38" selection-end-line="79" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SetWebhook.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.44266668">
+          <caret line="25" column="5" selection-start-line="25" selection-start-column="5" selection-end-line="25" selection-end-column="5" />
+          <folding>
+            <element signature="e#980#981#0" expanded="false" />
+            <element signature="e#1006#1007#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendDocument.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6">
+          <caret line="15" column="82" selection-start-line="15" selection-start-column="82" selection-end-line="15" selection-end-column="82" />
+          <folding>
+            <element signature="e#1420#1421#0" expanded="false" />
+            <element signature="e#1462#1463#0" expanded="false" />
+            <element signature="e#1498#1499#0" expanded="false" />
+            <element signature="e#1530#1531#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/ForwardMessage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="1.369969">
+          <caret line="79" column="45" selection-start-line="79" selection-start-column="45" selection-end-line="79" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendAudio.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.047987618">
+          <caret line="47" column="5" selection-start-line="47" selection-start-column="5" selection-end-line="47" selection-end-column="5" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendChatAction.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.6588235">
-          <caret line="62" column="20" selection-start-line="59" selection-start-column="8" selection-end-line="62" selection-end-column="20" />
+        <state vertical-scroll-proportion="1.5789474">
+          <caret line="83" column="31" selection-start-line="83" selection-start-column="31" selection-end-line="83" selection-end-column="31" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendLocation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6">
-          <caret line="31" column="32" selection-start-line="31" selection-start-column="32" selection-end-line="31" selection-end-column="32" />
+        <state vertical-scroll-proportion="2.1594427">
+          <caret line="122" column="51" selection-start-line="122" selection-start-column="51" selection-end-line="122" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendPhoto.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.14086688">
+          <caret line="38" column="5" selection-start-line="38" selection-start-column="5" selection-end-line="38" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendSticker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.23374613">
+          <caret line="35" column="5" selection-start-line="35" selection-start-column="5" selection-end-line="35" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendVideo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0015479876">
+          <caret line="35" column="17" selection-start-line="35" selection-start-column="17" selection-end-line="35" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendVoice.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="17" column="105" selection-start-line="17" selection-start-column="105" selection-end-line="17" selection-end-column="105" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Chat.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="127" column="13" selection-start-line="127" selection-start-column="13" selection-end-line="127" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/SentCallback.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="22" column="81" selection-start-line="22" selection-start-column="81" selection-end-line="22" selection-end-column="81" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/RestApi.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.88235295">
+        <state vertical-scroll-proportion="0.0">
           <caret line="31" column="19" selection-start-line="31" selection-start-column="19" selection-end-line="31" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/UpdatesThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="84" column="0" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updatesreceivers/Webhook.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.03529412">
-          <caret line="35" column="25" selection-start-line="35" selection-start-column="25" selection-end-line="35" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/objects/File.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3529412">
-          <caret line="17" column="43" selection-start-line="17" selection-start-column="43" selection-end-line="17" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/GetFile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.45882353">
-          <caret line="20" column="57" selection-start-line="20" selection-start-column="57" selection-end-line="20" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/BuildVars.java">
-      <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="15" column="74" selection-start-line="15" selection-start-column="74" selection-end-line="15" selection-end-column="74" />
+          <caret line="35" column="25" selection-start-line="35" selection-start-column="25" selection-end-line="35" selection-end-column="25" />
           <folding />
         </state>
       </provider>
@@ -2168,22 +2014,92 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/BotConfig.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="15" column="61" selection-start-line="15" selection-start-column="61" selection-end-line="15" selection-end-column="61" />
+          <caret line="15" column="96" selection-start-line="15" selection-start-column="96" selection-end-line="15" selection-end-column="96" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/BuildVars.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="10" column="50" selection-start-line="10" selection-start-column="50" selection-end-line="10" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="211" column="67" selection-start-line="211" selection-start-column="67" selection-end-line="211" selection-end-column="67" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="237" column="67" selection-start-line="237" selection-start-column="67" selection-end-line="237" selection-end-column="67" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/TransifexHandlers.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="93" column="75" selection-start-line="93" selection-start-column="75" selection-end-line="93" selection-end-column="75" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="32" column="44" selection-start-line="32" selection-start-column="44" selection-end-line="32" selection-end-column="44" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/SenderHelper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5371517">
-          <caret line="272" column="53" selection-start-line="272" selection-start-column="53" selection-end-line="272" selection-end-column="53" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="259" column="0" selection-start-line="259" selection-start-column="0" selection-end-line="259" selection-end-column="0" />
           <folding>
             <element signature="docComment;class#SenderHelper#0" expanded="false" />
-            <element signature="method#SendDocument#0;class#SenderHelper#0" expanded="false" />
-            <element signature="method#SendPhoto#0;class#SenderHelper#0" expanded="false" />
-            <element signature="method#SendVideo#0;class#SenderHelper#0" expanded="false" />
-            <element signature="method#sendSticker#0;class#SenderHelper#0" expanded="false" />
-            <element signature="method#SendWebhook#0;class#SenderHelper#0" expanded="false" />
+            <element signature="method#SendApiMethodAsync#0;class#SenderHelper#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendMessage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="147" column="45" selection-start-line="147" selection-start-column="45" selection-end-line="147" selection-end-column="45" />
+          <folding>
+            <element signature="e#1831#1832#0" expanded="true" />
+            <element signature="e#1867#1868#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.21333334">
+          <caret line="123" column="72" selection-start-line="123" selection-start-column="72" selection-end-line="123" selection-end-column="72" />
+          <folding>
+            <element signature="method#getSettingsMessage#0;class#WeatherHandlers#0" expanded="false" />
+            <element signature="method#getHelpMessage#0;class#WeatherHandlers#0" expanded="false" />
+            <element signature="method#getLanguageMessage#0;class#WeatherHandlers#0" expanded="false" />
+            <element signature="method#getUnitsMessage#0;class#WeatherHandlers#0" expanded="false" />
+            <element signature="method#getChooseNewAlertSetMessage#0;class#WeatherHandlers#0" expanded="false" />
+            <element signature="method#getMainMenuKeyboard#0;class#WeatherHandlers#0" expanded="false" />
+            <element signature="method#getLanguagesKeyboard#0;class#WeatherHandlers#0" expanded="false" />
+            <element signature="method#getUnitsKeyboard#0;class#WeatherHandlers#0" expanded="false" />
+            <element signature="method#getSettingsKeyboard#0;class#WeatherHandlers#0" expanded="false" />
+            <element signature="method#getRecentsKeyboard#0;class#WeatherHandlers#0" expanded="false" />
+            <element signature="method#getRecentsKeyboard#1;class#WeatherHandlers#0" expanded="false" />
+            <element signature="method#getAlertsKeyboard#0;class#WeatherHandlers#0" expanded="false" />
+            <element signature="method#getAlertsListKeyboard#0;class#WeatherHandlers#0" expanded="false" />
+            <element signature="method#getForceReply#0;class#WeatherHandlers#0" expanded="false" />
           </folding>
         </state>
       </provider>

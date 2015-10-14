@@ -12,7 +12,7 @@ public class SendSticker {
     public static final String PATH = "sendsticker";
 
     public static final String CHATID_FIELD = "chat_id";
-    private Integer chatId; ///< Unique identifier for the message recepient — User or GroupChat id
+    private String chatId; ///< Unique identifier for the chat to send the message to (Or username for channels)
     public static final String STICKER_FIELD = "sticker";
     private String sticker; ///< Sticker file to send. file_id as String to resend a sticker that is already on the Telegram servers
     public static final String REPLYTOMESSAGEID_FIELD = "reply_to_message_id";
@@ -27,11 +27,11 @@ public class SendSticker {
         super();
     }
 
-    public Integer getChatId() {
+    public String getChatId() {
         return chatId;
     }
 
-    public void setChatId(Integer chatId) {
+    public void setChatId(String chatId) {
         this.chatId = chatId;
     }
 

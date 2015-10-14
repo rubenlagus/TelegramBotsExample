@@ -19,7 +19,7 @@ public class SendLocation extends BotApiMethod<Message> {
     public static final String PATH = "sendlocation";
 
     public static final String CHATID_FIELD = "chat_id";
-    private Integer chatId; ///< Unique identifier for the message recepient — User or GroupChat id
+    private String chatId; ///< Unique identifier for the chat to send the message to (Or username for channels)
     public static final String LATITUDE_FIELD = "latitude";
     private Float latitude; ///< Latitude of location
     public static final String LONGITUDE_FIELD = "longitude";
@@ -29,11 +29,11 @@ public class SendLocation extends BotApiMethod<Message> {
     public static final String REPLYMARKUP_FIELD = "reply_markup";
     private ReplyKeyboard replayMarkup; ///< Optional. JSON-serialized object for a custom reply keyboard
 
-    public Integer getChatId() {
+    public String getChatId() {
         return chatId;
     }
 
-    public void setChatId(Integer chatId) {
+    public void setChatId(String chatId) {
         this.chatId = chatId;
     }
 
@@ -85,7 +85,6 @@ public class SendLocation extends BotApiMethod<Message> {
     @Override
     public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
-
         jsonObject.put(CHATID_FIELD, chatId);
         jsonObject.put(LATITUDE_FIELD, latitude);
         jsonObject.put(LONGITUDE_FIELD, longitude);
@@ -103,7 +102,7 @@ public class SendLocation extends BotApiMethod<Message> {
     public void serialize(JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
         gen.writeStringField(METHOD_FIELD, PATH);
-        gen.writeNumberField(CHATID_FIELD, chatId);
+        gen.writeStringField(CHATID_FIELD, chatId);
         gen.writeNumberField(LATITUDE_FIELD, latitude);
         gen.writeNumberField(LONGITUDE_FIELD, longitude);
         if (replayToMessageId != null) {
@@ -121,7 +120,7 @@ public class SendLocation extends BotApiMethod<Message> {
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
         gen.writeStartObject();
         gen.writeStringField(METHOD_FIELD, PATH);
-        gen.writeNumberField(CHATID_FIELD, chatId);
+        gen.writeStringField(CHATID_FIELD, chatId);
         gen.writeNumberField(LATITUDE_FIELD, latitude);
         gen.writeNumberField(LONGITUDE_FIELD, longitude);
         if (replayToMessageId != null) {

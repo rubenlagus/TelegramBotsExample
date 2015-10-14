@@ -49,7 +49,11 @@ public class SenderHelper {
 
             if (sendDocument.isNewDocument()) {
                 MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                builder.addTextBody(SendDocument.CHATID_FIELD, sendDocument.getChatId().toString());
+                if (sendDocument.getChatId() == null) {
+                    builder.addTextBody(SendDocument.CHATID_FIELD, sendDocument.getChannelId());
+                } else {
+                    builder.addTextBody(SendDocument.CHATID_FIELD, sendDocument.getChatId().toString());
+                }
                 builder.addBinaryBody(SendDocument.DOCUMENT_FIELD, new File(sendDocument.getDocument()), ContentType.APPLICATION_OCTET_STREAM, sendDocument.getDocumentName());
                 if (sendDocument.getReplayMarkup() != null) {
                     builder.addTextBody(SendDocument.REPLYMARKUP_FIELD, sendDocument.getReplayMarkup().toJson().toString());
@@ -90,7 +94,7 @@ public class SenderHelper {
 
             if (sendPhoto.isNewPhoto()) {
                 MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                builder.addTextBody(SendPhoto.CHATID_FIELD, sendPhoto.getChatId().toString());
+                builder.addTextBody(SendPhoto.CHATID_FIELD, sendPhoto.getChatId());
                 builder.addBinaryBody(SendPhoto.PHOTO_FIELD, new File(sendPhoto.getPhoto()), ContentType.APPLICATION_OCTET_STREAM, sendPhoto.getPhotoName());
                 if (sendPhoto.getReplayMarkup() != null) {
                     builder.addTextBody(SendPhoto.REPLYMARKUP_FIELD, sendPhoto.getReplayMarkup().toJson().toString());
@@ -105,7 +109,7 @@ public class SenderHelper {
                 httppost.setEntity(multipart);
             } else {
                 List<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new BasicNameValuePair(SendPhoto.CHATID_FIELD, sendPhoto.getChatId().toString()));
+                nameValuePairs.add(new BasicNameValuePair(SendPhoto.CHATID_FIELD, sendPhoto.getChatId()));
                 nameValuePairs.add(new BasicNameValuePair(SendPhoto.PHOTO_FIELD, sendPhoto.getPhoto()));
                 if (sendPhoto.getReplayMarkup() != null) {
                     nameValuePairs.add(new BasicNameValuePair(SendPhoto.REPLYMARKUP_FIELD, sendPhoto.getReplayMarkup().toString()));
@@ -133,7 +137,7 @@ public class SenderHelper {
 
             if (sendVideo.isNewVideo()) {
                 MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                builder.addTextBody(SendVideo.CHATID_FIELD, sendVideo.getChatId().toString());
+                builder.addTextBody(SendVideo.CHATID_FIELD, sendVideo.getChatId());
                 builder.addBinaryBody(SendVideo.VIDEO_FIELD, new File(sendVideo.getVideo()), ContentType.APPLICATION_OCTET_STREAM, sendVideo.getVideoName());
                 if (sendVideo.getReplayMarkup() != null) {
                     builder.addTextBody(SendVideo.REPLYMARKUP_FIELD, sendVideo.getReplayMarkup().toJson().toString());
@@ -151,7 +155,7 @@ public class SenderHelper {
                 httppost.setEntity(multipart);
             } else {
                 List<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new BasicNameValuePair(SendVideo.CHATID_FIELD, sendVideo.getChatId().toString()));
+                nameValuePairs.add(new BasicNameValuePair(SendVideo.CHATID_FIELD, sendVideo.getChatId()));
                 nameValuePairs.add(new BasicNameValuePair(SendVideo.VIDEO_FIELD, sendVideo.getVideo()));
                 if (sendVideo.getReplayMarkup() != null) {
                     nameValuePairs.add(new BasicNameValuePair(SendVideo.REPLYMARKUP_FIELD, sendVideo.getReplayMarkup().toString()));
@@ -182,7 +186,7 @@ public class SenderHelper {
 
             if (sendSticker.isNewSticker()) {
                 MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                builder.addTextBody(SendSticker.CHATID_FIELD, sendSticker.getChatId().toString());
+                builder.addTextBody(SendSticker.CHATID_FIELD, sendSticker.getChatId());
                 builder.addBinaryBody(SendSticker.STICKER_FIELD, new File(sendSticker.getSticker()), ContentType.APPLICATION_OCTET_STREAM, sendSticker.getStickerName());
                 if (sendSticker.getReplayMarkup() != null) {
                     builder.addTextBody(SendSticker.REPLYMARKUP_FIELD, sendSticker.getReplayMarkup().toJson().toString());
@@ -194,7 +198,7 @@ public class SenderHelper {
                 httppost.setEntity(multipart);
             } else {
                 List<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new BasicNameValuePair(SendSticker.CHATID_FIELD, sendSticker.getChatId().toString()));
+                nameValuePairs.add(new BasicNameValuePair(SendSticker.CHATID_FIELD, sendSticker.getChatId()));
                 nameValuePairs.add(new BasicNameValuePair(SendSticker.STICKER_FIELD, sendSticker.getSticker()));
                 if (sendSticker.getReplayMarkup() != null) {
                     nameValuePairs.add(new BasicNameValuePair(SendSticker.REPLYMARKUP_FIELD, sendSticker.getReplayMarkup().toString()));

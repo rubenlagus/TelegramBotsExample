@@ -14,7 +14,7 @@ public class SendVideo {
     public static final String PATH = "sendvideo";
 
     public static final String CHATID_FIELD = "chat_id";
-    private Integer chatId; ///< Unique identifier for the message recepient — User or GroupChat id
+    private String chatId; ///< Unique identifier for the chat to send the message to (Or username for channels)
     public static final String VIDEO_FIELD = "video";
     private String video; ///< Video to send. file_id as String to resend a video that is already on the Telegram servers
     public static final String DURATION_FIELD = "duration";
@@ -33,11 +33,11 @@ public class SendVideo {
         super();
     }
 
-    public Integer getChatId() {
+    public String getChatId() {
         return chatId;
     }
 
-    public void setChatId(Integer chatId) {
+    public void setChatId(String chatId) {
         this.chatId = chatId;
     }
 

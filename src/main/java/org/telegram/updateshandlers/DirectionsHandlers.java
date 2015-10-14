@@ -33,7 +33,7 @@ public class DirectionsHandlers implements UpdatesCallback {
     private final ConcurrentLinkedQueue<Integer> languageMessages = new ConcurrentLinkedQueue<>();
 
     public DirectionsHandlers(Webhook webhook) {
-        if (USEWEBHOOK) {
+        if (USEWEBHOOK && BuildVars.useWebHook) {
             webhook.registerWebhook(this, BOTNAME);
             SenderHelper.SendWebhook(Webhook.getExternalURL(BOTNAME), TOKEN);
         } else {
@@ -84,7 +84,7 @@ public class DirectionsHandlers implements UpdatesCallback {
                         } else {
                             SendMessage sendMessageRequest = new SendMessage();
                             sendMessageRequest.setText(LocalisationService.getInstance().getString("youNeedReplyDirections", language));
-                            sendMessageRequest.setChatId(message.getChatId());
+                            sendMessageRequest.setChatId(message.getChatId().toString());
                             SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
                         }
                     }
@@ -98,7 +98,7 @@ public class DirectionsHandlers implements UpdatesCallback {
         String destiny = message.getText();
         List<String> directions = DirectionsService.getInstance().getDirections(origin, destiny, language);
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
         replyKeyboardHide.setSelective(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardHide);
@@ -125,7 +125,7 @@ public class DirectionsHandlers implements UpdatesCallback {
 
     private void onOriginReceived(Message message, String language) {
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         sendMessageRequest.setReplayToMessageId(message.getMessageId());
         ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
         forceReplyKeyboard.setSelective(true);
@@ -155,13 +155,13 @@ public class DirectionsHandlers implements UpdatesCallback {
                 LocalisationService.getInstance().getString("helpDirections", language),
                 Commands.startDirectionCommand);
         sendMessageRequest.setText(helpDirectionsFormated);
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
     private void onStartdirectionsCommand(Message message, String language) {
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         sendMessageRequest.setReplayToMessageId(message.getMessageId());
         ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
         forceReplyKeyboard.setSelective(true);
@@ -187,7 +187,7 @@ public class DirectionsHandlers implements UpdatesCallback {
 
     private void onSetLanguageCommand(Message message, String language) {
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         HashMap<String, String> languages = LocalisationService.getInstance().getSupportedLanguages();
         List<List<String>> commands = new ArrayList<>();
@@ -209,7 +209,7 @@ public class DirectionsHandlers implements UpdatesCallback {
     private void onLanguageSelected(Message message) {
         String[] parts = message.getText().split("-->", 2);
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         if (LocalisationService.getInstance().getSupportedLanguages().containsKey(parts[0].trim())) {
             DatabaseManager.getInstance().putUserLanguage(message.getFrom().getId(), parts[0].trim());
             sendMessageRequest.setText(LocalisationService.getInstance().getString("languageModified", parts[0].trim()));

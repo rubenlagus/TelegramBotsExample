@@ -40,7 +40,7 @@ public class FilesHandlers implements UpdatesCallback {
     private final ConcurrentLinkedQueue<Integer> languageMessages = new ConcurrentLinkedQueue<>();
 
     public FilesHandlers(Webhook webhook) {
-        if (USEWEBHOOK) {
+        if (USEWEBHOOK && BuildVars.useWebHook) {
             webhook.registerWebhook(this, BOTNAME);
             SenderHelper.SendWebhook(Webhook.getExternalURL(BOTNAME), TOKEN);
         } else {
@@ -99,7 +99,7 @@ public class FilesHandlers implements UpdatesCallback {
             SendMessage sendMessageRequest = new SendMessage();
             sendMessageRequest.setText(LocalisationService.getInstance().getString("fileUploaded", language) +
                     LocalisationService.getInstance().getString("uploadedFileURL", language) + message.getDocument().getFileId());
-            sendMessageRequest.setChatId(message.getChatId());
+            sendMessageRequest.setChatId(message.getChatId().toString());
             SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
         }
     }
@@ -117,7 +117,7 @@ public class FilesHandlers implements UpdatesCallback {
         } else {
             sendMessageRequest.setText(LocalisationService.getInstance().getString("noFiles", language));
         }
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
         replyKeyboardHide.setHideKeyboard(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardHide);
@@ -137,7 +137,7 @@ public class FilesHandlers implements UpdatesCallback {
         DatabaseManager.getInstance().addUserForFile(message.getFrom().getId(), DELETE_UPLOADED_STATUS);
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setText(LocalisationService.getInstance().getString("deleteUploadedFile", language));
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         HashMap<String, String> files = DatabaseManager.getInstance().getFilesByUser(message.getFrom().getId());
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         if (files.size() > 0) {
@@ -165,7 +165,7 @@ public class FilesHandlers implements UpdatesCallback {
         } else {
             sendMessageRequest.setText(LocalisationService.getInstance().getString("wrongFileId", language));
         }
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
         DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
     }
@@ -174,7 +174,7 @@ public class FilesHandlers implements UpdatesCallback {
         DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setText(LocalisationService.getInstance().getString("processFinished", language));
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
@@ -182,7 +182,7 @@ public class FilesHandlers implements UpdatesCallback {
         DatabaseManager.getInstance().addUserForFile(message.getFrom().getId(), INITIAL_UPLOAD_STATUS);
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setText(LocalisationService.getInstance().getString("sendFileToUpload", language));
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
@@ -193,7 +193,7 @@ public class FilesHandlers implements UpdatesCallback {
                 Commands.startCommand, Commands.uploadCommand, Commands.deleteCommand,
                 Commands.listCommand);
         sendMessageRequest.setText(formatedString);
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
@@ -206,14 +206,14 @@ public class FilesHandlers implements UpdatesCallback {
         } else {
             SendMessage sendMessageRequest = new SendMessage();
             sendMessageRequest.setText(LocalisationService.getInstance().getString("wrongFileId", language));
-            sendMessageRequest.setChatId(message.getChatId());
+            sendMessageRequest.setChatId(message.getChatId().toString());
             SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
         }
     }
 
     private void onSetLanguageCommand(Message message, String language) {
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         HashMap<String, String> languages = LocalisationService.getInstance().getSupportedLanguages();
         List<List<String>> commands = new ArrayList<>();
@@ -235,7 +235,7 @@ public class FilesHandlers implements UpdatesCallback {
     private void onLanguageReceived(Message message) {
         String[] parts = message.getText().split(Emoji.LEFT_RIGHT_ARROW.toString(), 2);
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         if (LocalisationService.getInstance().getSupportedLanguages().containsKey(parts[0].trim())) {
             DatabaseManager.getInstance().putUserLanguage(message.getFrom().getId(), parts[0].trim());
             sendMessageRequest.setText(LocalisationService.getInstance().getString("languageModified", parts[0].trim()));

@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
  * @date 20 of June of 2015
  */
 public class UpdatesThread {
-    private static volatile BotLogger log = BotLogger.getLogger(UpdatesThread.class.getName());
+    private static final String LOGTAG = "UPDATESTHREAD";
 
     private final UpdatesCallback callback;
     private final ReaderThread readerThread;
@@ -67,7 +67,7 @@ public class UpdatesThread {
                     httpPost.addHeader("charset", "UTF-8");
                     httpPost.setEntity(new StringEntity(request.toJson().toString(), ContentType.APPLICATION_JSON));
                     HttpResponse response;
-                    log.debug(httpPost.toString());
+                    BotLogger.debug(LOGTAG, httpPost.toString());
                     response = httpclient.execute(httpPost);
                     HttpEntity ht = response.getEntity();
 
@@ -80,7 +80,7 @@ public class UpdatesThread {
                             throw new InvalidObjectException(jsonObject.toString());
                         }
                         JSONArray jsonArray = jsonObject.getJSONArray("result");
-                        log.debug(jsonArray.toString());
+                        BotLogger.debug(LOGTAG, jsonArray.toString());
                         if (jsonArray.length() != 0) {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 Update update = new Update(jsonArray.getJSONObject(i));
@@ -98,15 +98,15 @@ public class UpdatesThread {
                                     this.wait(500);
                                 }
                             } catch (InterruptedException e) {
-                                log.error(e);
+                                BotLogger.error(LOGTAG, e);
                                 continue;
                             }
                         }
                     } catch (JSONException e) {
-                        log.warning(e);
+                        BotLogger.warn(LOGTAG, e);
                     }
                 } catch (IOException e) {
-                    log.warning(e);
+                    BotLogger.warn(LOGTAG, e);
                 }
             }
         }
@@ -124,7 +124,7 @@ public class UpdatesThread {
                             try {
                                 receivedUpdates.wait();
                             } catch (InterruptedException e) {
-                                log.error(e);
+                                BotLogger.error(LOGTAG, e);
                                 continue;
                             }
                             update = receivedUpdates.pollLast();
@@ -136,7 +136,7 @@ public class UpdatesThread {
                     DatabaseManager.getInstance().putLastUpdate(token, update.getUpdateId());
                     callback.onUpdateReceived(update);
                 } catch (Exception e) {
-                    log.error(e);
+                    BotLogger.error(LOGTAG, e);
                 }
             }
         }

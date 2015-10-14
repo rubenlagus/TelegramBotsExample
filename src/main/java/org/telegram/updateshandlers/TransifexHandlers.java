@@ -7,10 +7,13 @@ import org.telegram.database.DatabaseManager;
 import org.telegram.api.methods.BotApiMethod;
 import org.telegram.api.methods.SendDocument;
 import org.telegram.api.methods.SendMessage;
+import org.telegram.services.BotLogger;
 import org.telegram.services.LocalisationService;
 import org.telegram.services.TransifexService;
 import org.telegram.updatesreceivers.UpdatesThread;
 import org.telegram.updatesreceivers.Webhook;
+
+import java.io.InvalidObjectException;
 
 /**
  * @author Ruben Bermudez
@@ -19,6 +22,7 @@ import org.telegram.updatesreceivers.Webhook;
  * @date 24 of June of 2015
  */
 public class TransifexHandlers implements UpdatesCallback {
+    private static final String LOGTAG = "TRANSIFEXHANDLERS";
     private static final String TOKEN = BotConfig.TOKENTRANSIFEX;
     private static final String BOTNAME = BotConfig.USERNAMETRANSIFEX;
     private static final boolean USEWEBHOOK = false;
@@ -35,7 +39,11 @@ public class TransifexHandlers implements UpdatesCallback {
 
     @Override
     public void onUpdateReceived(Update update) {
-        sendTransifexFile(update);
+        try {
+            sendTransifexFile(update);
+        } catch (InvalidObjectException e) {
+            BotLogger.error(LOGTAG, e);
+        }
     }
 
     @Override
@@ -44,7 +52,7 @@ public class TransifexHandlers implements UpdatesCallback {
         return null;
     }
 
-    public void sendTransifexFile(Update update) {
+    public void sendTransifexFile(Update update) throws InvalidObjectException {
         Message message = update.getMessage();
         if (message != null && message.hasText()) {
             String language = DatabaseManager.getInstance().getUserLanguage(update.getMessage().getFrom().getId());

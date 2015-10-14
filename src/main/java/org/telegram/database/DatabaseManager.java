@@ -26,7 +26,8 @@ import java.util.List;
  * @date 3/12/14
  */
 public class DatabaseManager {
-    private static volatile BotLogger log = BotLogger.getLogger(DatabaseManager.class.getName()); ///< Logger
+    private static final String LOGTAG = "DATABASEMANAGER";
+
     private static volatile DatabaseManager instance;
     private static volatile ConectionDB connetion;
 
@@ -36,7 +37,7 @@ public class DatabaseManager {
     private DatabaseManager() {
         connetion = new ConectionDB();
         final int currentVersion = connetion.checkVersion();
-        log.info("Current db version: " + currentVersion);
+        BotLogger.info(LOGTAG, "Current db version: " + currentVersion);
         if (currentVersion < CreationStrings.version) {
             recreateTable(currentVersion);
         }
@@ -88,7 +89,7 @@ public class DatabaseManager {
             }
             connetion.commitTransaction();
         } catch (SQLException e) {
-            log.error(e);
+            BotLogger.error(LOGTAG, e);
         }
     }
 

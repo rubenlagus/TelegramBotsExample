@@ -27,7 +27,7 @@ import java.util.List;
  * @date 20 of June of 2015
  */
 public class DirectionsService {
-    private static volatile BotLogger log = BotLogger.getLogger(DirectionsService.class.getName());
+    private static final String LOGTAG = "DIRECTIONSSERVICE";
 
     private static final String BASEURL = "https://maps.googleapis.com/maps/api/directions/json"; ///< Base url for REST
     private static final String APIIDEND = "&key=" + BuildVars.DirectionsApiKey;
@@ -98,7 +98,7 @@ public class DirectionsService {
                 responseToUser.add(LocalisationService.getInstance().getString("directionsNotFound", language));
             }
         } catch (Exception e) {
-            log.warning(e);
+            BotLogger.warn(LOGTAG, e);
             responseToUser.add(LocalisationService.getInstance().getString("errorFetchingDirections", language));
         }
         return responseToUser;

@@ -38,7 +38,7 @@ import java.util.concurrent.Executors;
  * @date 20 of June of 2015
  */
 public class SenderHelper {
-    private static volatile BotLogger log = BotLogger.getLogger(SenderHelper.class.getName());
+    private static final  String LOGTAG = "SENDERHELPER";
     private static final ExecutorService exe = Executors.newSingleThreadExecutor();
 
     public static void SendDocument(SendDocument sendDocument, String botToken) {
@@ -77,12 +77,13 @@ public class SenderHelper {
             }
 
             CloseableHttpResponse response = httpClient.execute(httppost);
+        } catch (IOException e) {
+            BotLogger.error(LOGTAG, e);
+        } finally {
             if (sendDocument.isNewDocument()) {
                 File fileToDelete = new File(sendDocument.getDocument());
                 fileToDelete.delete();
             }
-        } catch (IOException e) {
-            log.error(e);
         }
     }
 
@@ -125,7 +126,7 @@ public class SenderHelper {
 
             CloseableHttpResponse response = httpClient.execute(httppost);
         } catch (IOException e) {
-            log.error(e);
+            BotLogger.error(LOGTAG, e);
         }
     }
 
@@ -174,7 +175,7 @@ public class SenderHelper {
 
             CloseableHttpResponse response = httpClient.execute(httppost);
         } catch (IOException e) {
-            log.error(e);
+            BotLogger.error(LOGTAG, e);
         }
     }
 
@@ -210,14 +211,14 @@ public class SenderHelper {
             }
 
             CloseableHttpResponse response = httpClient.execute(httppost);
+        } catch (IOException e) {
+            BotLogger.error(LOGTAG, e);
+        } finally {
             if (sendSticker.isNewSticker()) {
                 File fileToDelete = new File(sendSticker.getSticker());
                 fileToDelete.delete();
             }
-        } catch (IOException e) {
-            log.error(e);
         }
-
     }
 
     public static void SendWebhook(String webHookURL, String botToken) {
@@ -237,14 +238,15 @@ public class SenderHelper {
             HttpEntity ht = response.getEntity();
             BufferedHttpEntity buf = new BufferedHttpEntity(ht);
             String responseContent = EntityUtils.toString(buf, "UTF-8");
-            log.debug(responseContent);
+            BotLogger.debug(LOGTAG, responseContent);
         } catch (IOException e) {
-            log.error(e);
+            BotLogger.error(LOGTAG, e);
         }
 
     }
 
-    public static void SendApiMethod(BotApiMethod method, String botToken) {
+    public static void SendApiMethod(BotApiMethod method, String botToken) throws InvalidObjectException {
+        String responseContent = "{}";
         try {
             CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             String url = Constants.BASEURL + botToken + "/" + method.getPath();
@@ -254,15 +256,16 @@ public class SenderHelper {
             CloseableHttpResponse response = httpclient.execute(httppost);
             HttpEntity ht = response.getEntity();
             BufferedHttpEntity buf = new BufferedHttpEntity(ht);
-            String responseContent = EntityUtils.toString(buf, "UTF-8");
-
-            JSONObject jsonObject = new JSONObject(responseContent);
-            if (!jsonObject.getBoolean("ok")) {
-                throw new InvalidObjectException(jsonObject.toString());
-            }
+            responseContent = EntityUtils.toString(buf, "UTF-8");
         } catch (IOException e) {
-            log.error(e);
+            BotLogger.error(LOGTAG, e);
         }
+
+        JSONObject jsonObject = new JSONObject(responseContent);
+        if (!jsonObject.getBoolean("ok")) {
+            throw new InvalidObjectException(jsonObject.getString("description"));
+        }
+
     }
 
     public static void SendApiMethodAsync(BotApiMethod method, String botToken, SentCallback callback) {
@@ -284,7 +287,7 @@ public class SenderHelper {
                 }
                 callback.onResult(method, jsonObject);
             } catch (IOException e) {
-                log.error(e);
+                BotLogger.error(LOGTAG, e);
             }
         });
     }

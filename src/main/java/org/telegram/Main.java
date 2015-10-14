@@ -31,6 +31,7 @@ public class Main {
 
     private static void initBots() {
         UpdatesCallback weatherBot = new WeatherHandlers(webhook);
+        UpdatesCallback channelBot = new ChannelHandlers(webhook);
         UpdatesCallback transifexBot = new TransifexHandlers(webhook);
         UpdatesCallback filesBot = new FilesHandlers(webhook);
         UpdatesCallback directionsBot = new DirectionsHandlers(webhook);

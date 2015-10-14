@@ -21,7 +21,7 @@ import java.net.URI;
  * @date 20 of June of 2015
  */
 public class Webhook {
-    private static volatile BotLogger log = BotLogger.getLogger(Webhook.class.getName());
+    private static final String LOGTAG = "WEBHOOK";
 
     private static final String KEYSTORE_SERVER_FILE = "./keystore_server";
     private static final String KEYSTORE_SERVER_PWD = "asdfgh";
@@ -47,7 +47,7 @@ public class Webhook {
         rc.register(restApi);
         rc.register(JacksonFeature.class);
         rc.property(JSONConfiguration.FEATURE_POJO_MAPPING, true);
-        log.error("Internal webhook: " + getBaseURI().toString());
+        BotLogger.info(LOGTAG, "Internal webhook: " + getBaseURI().toString());
         final HttpServer grizzlyServer = GrizzlyHttpServerFactory.createHttpServer(
                 getBaseURI(),
                 rc,
@@ -56,7 +56,7 @@ public class Webhook {
         try {
             grizzlyServer.start();
         } catch (IOException e) {
-            log.error(e);
+            BotLogger.error(LOGTAG, e);
         }
     }
 

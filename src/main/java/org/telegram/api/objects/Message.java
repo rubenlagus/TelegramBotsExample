@@ -227,7 +227,7 @@ public class Message implements BotApiObject {
     }
 
     public boolean hasText() {
-        return text != null;
+        return text != null && !text.isEmpty();
     }
 
     public String getText() {

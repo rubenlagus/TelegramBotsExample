@@ -12,11 +12,13 @@ import org.telegram.database.DatabaseManager;
 import org.telegram.api.methods.BotApiMethod;
 import org.telegram.api.methods.SendDocument;
 import org.telegram.api.methods.SendMessage;
+import org.telegram.services.BotLogger;
 import org.telegram.services.Emoji;
 import org.telegram.services.LocalisationService;
 import org.telegram.updatesreceivers.UpdatesThread;
 import org.telegram.updatesreceivers.Webhook;
 
+import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +33,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @date 24 of June of 2015
  */
 public class FilesHandlers implements UpdatesCallback {
+    private static final String LOGTAG = "FILESHANDLERS";
     private static final String TOKEN = BotConfig.TOKENFILES;
     private static final String BOTNAME = BotConfig.USERNAMEFILES;
     private static final boolean USEWEBHOOK = false;
@@ -51,7 +54,11 @@ public class FilesHandlers implements UpdatesCallback {
 
     @Override
     public void onUpdateReceived(Update update) {
-        handleFileUpdate(update);
+        try {
+            handleFileUpdate(update);
+        } catch (InvalidObjectException e) {
+            BotLogger.error(LOGTAG, e);
+        }
     }
 
     @Override
@@ -60,7 +67,7 @@ public class FilesHandlers implements UpdatesCallback {
         return null;
     }
 
-    public void handleFileUpdate(Update update) {
+    public void handleFileUpdate(Update update) throws InvalidObjectException {
         Message message = update.getMessage();
         if (message != null && message.hasText()) {
             if (languageMessages.contains(message.getFrom().getId())) {
@@ -104,7 +111,7 @@ public class FilesHandlers implements UpdatesCallback {
         }
     }
 
-    private void onListCommand(Message message, String language) {
+    private void onListCommand(Message message, String language) throws InvalidObjectException {
         HashMap<String, String> files = DatabaseManager.getInstance().getFilesByUser(message.getFrom().getId());
         SendMessage sendMessageRequest = new SendMessage();
         if (files.size() > 0) {
@@ -124,7 +131,7 @@ public class FilesHandlers implements UpdatesCallback {
         SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
-    private void onDeleteCommand(Message message, String language, String[] parts) {
+    private void onDeleteCommand(Message message, String language, String[] parts) throws InvalidObjectException {
         if (DatabaseManager.getInstance().getUserStatusForFile(message.getFrom().getId()) == DELETE_UPLOADED_STATUS &&
                 parts.length == 2) {
             onDeleteCommandWithParameters(message, language, parts[1]);
@@ -133,7 +140,7 @@ public class FilesHandlers implements UpdatesCallback {
         }
     }
 
-    private void onDeleteCommandWithoutParameters(Message message, String language) {
+    private void onDeleteCommandWithoutParameters(Message message, String language) throws InvalidObjectException {
         DatabaseManager.getInstance().addUserForFile(message.getFrom().getId(), DELETE_UPLOADED_STATUS);
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setText(LocalisationService.getInstance().getString("deleteUploadedFile", language));
@@ -156,7 +163,7 @@ public class FilesHandlers implements UpdatesCallback {
         SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
-    private void onDeleteCommandWithParameters(Message message, String language, String part) {
+    private void onDeleteCommandWithParameters(Message message, String language, String part) throws InvalidObjectException {
         String[] innerParts = part.split(Emoji.LEFT_RIGHT_ARROW.toString(), 2);
         boolean removed = DatabaseManager.getInstance().deleteFile(innerParts[0].trim());
         SendMessage sendMessageRequest = new SendMessage();
@@ -170,7 +177,7 @@ public class FilesHandlers implements UpdatesCallback {
         DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
     }
 
-    private void onCancelCommand(Message message, String language) {
+    private void onCancelCommand(Message message, String language) throws InvalidObjectException {
         DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setText(LocalisationService.getInstance().getString("processFinished", language));
@@ -178,7 +185,7 @@ public class FilesHandlers implements UpdatesCallback {
         SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
-    private void onUploadCommand(Message message, String language) {
+    private void onUploadCommand(Message message, String language) throws InvalidObjectException {
         DatabaseManager.getInstance().addUserForFile(message.getFrom().getId(), INITIAL_UPLOAD_STATUS);
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setText(LocalisationService.getInstance().getString("sendFileToUpload", language));
@@ -186,7 +193,7 @@ public class FilesHandlers implements UpdatesCallback {
         SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
-    private void sendHelpMessage(Message message, String language) {
+    private void sendHelpMessage(Message message, String language) throws InvalidObjectException {
         SendMessage sendMessageRequest = new SendMessage();
         String formatedString = String.format(
                 LocalisationService.getInstance().getString("helpFiles", language),
@@ -197,7 +204,7 @@ public class FilesHandlers implements UpdatesCallback {
         SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
-    private void onStartWithParameters(Message message, String language, String part) {
+    private void onStartWithParameters(Message message, String language, String part) throws InvalidObjectException {
         if (DatabaseManager.getInstance().doesFileExists(part.trim())) {
             SendDocument sendDocumentRequest = new SendDocument();
             sendDocumentRequest.setDocument(part.trim());
@@ -211,7 +218,7 @@ public class FilesHandlers implements UpdatesCallback {
         }
     }
 
-    private void onSetLanguageCommand(Message message, String language) {
+    private void onSetLanguageCommand(Message message, String language) throws InvalidObjectException {
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setChatId(message.getChatId().toString());
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
@@ -232,7 +239,7 @@ public class FilesHandlers implements UpdatesCallback {
         languageMessages.add(message.getFrom().getId());
     }
 
-    private void onLanguageReceived(Message message) {
+    private void onLanguageReceived(Message message) throws InvalidObjectException {
         String[] parts = message.getText().split(Emoji.LEFT_RIGHT_ARROW.toString(), 2);
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setChatId(message.getChatId().toString());

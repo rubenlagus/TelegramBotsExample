@@ -19,7 +19,7 @@ import java.sql.*;
  * @date 3/12/14
  */
 public class ConectionDB {
-    private static volatile BotLogger log = BotLogger.getLogger(ConectionDB.class.getName());
+    private static final String LOGTAG = "CONNECTIONDB";
     private Connection currentConection;
 
     public ConectionDB() {
@@ -32,7 +32,7 @@ public class ConectionDB {
             Class.forName(BuildVars.controllerDB).newInstance();
             connection = DriverManager.getConnection(BuildVars.linkDB, BuildVars.userDB, BuildVars.password);
         } catch (SQLException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-            log.error(e);
+            BotLogger.error(LOGTAG, e);
         }
 
         return connection;
@@ -42,7 +42,7 @@ public class ConectionDB {
         try {
             this.currentConection.close();
         } catch (SQLException e) {
-            log.error(e);
+            BotLogger.error(LOGTAG, e);
         }
 
     }
@@ -81,7 +81,7 @@ public class ConectionDB {
                 }
             }
         } catch (SQLException e) {
-            log.error(e);
+            BotLogger.error(LOGTAG, e);
         }
         return max;
     }

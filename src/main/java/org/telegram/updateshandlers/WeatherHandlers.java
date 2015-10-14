@@ -13,6 +13,7 @@ import org.telegram.structure.WeatherAlert;
 import org.telegram.updatesreceivers.UpdatesThread;
 import org.telegram.updatesreceivers.Webhook;
 
+import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import java.util.List;
  * @date 24 of June of 2015
  */
 public class WeatherHandlers implements UpdatesCallback {
+    private static final String LOGTAG = "WEATHERHANDLERS";
     private static final String TOKEN = BotConfig.TOKENWEATHER;
     private static final String BOTNAME = BotConfig.USERNAMEWEATHER;
     private static final boolean USEWEBHOOK = true;
@@ -91,7 +93,11 @@ public class WeatherHandlers implements UpdatesCallback {
         Message message = update.getMessage();
         if (message != null) {
             BotApiMethod botApiMethod = handleIncomingMessage(message);
-            SenderHelper.SendApiMethod(botApiMethod, TOKEN);
+            try {
+                SenderHelper.SendApiMethod(botApiMethod, TOKEN);
+            } catch (InvalidObjectException e) {
+                BotLogger.error(LOGTAG, e);
+            }
         }
     }
 
@@ -180,8 +186,12 @@ public class WeatherHandlers implements UpdatesCallback {
         replyKeyboardHide.setHideKeyboard(true);
         sendMessage.setReplayMarkup(replyKeyboardHide);
 
-        SenderHelper.SendApiMethod(sendMessage, TOKEN);
-        DatabaseManager.getInstance().insertWeatherState(userId, chatId, STARTSTATE);
+        try {
+            SenderHelper.SendApiMethod(sendMessage, TOKEN);
+            DatabaseManager.getInstance().insertWeatherState(userId, chatId, STARTSTATE);
+        } catch (InvalidObjectException e) {
+            BotLogger.error(LOGTAG, e);
+        }
 
     }
 
@@ -1243,7 +1253,11 @@ public class WeatherHandlers implements UpdatesCallback {
     // region Helper Methods
 
     private static void sendBuiltMessage(SendMessage sendMessage) {
-        SenderHelper.SendApiMethod(sendMessage, TOKEN);
+        try {
+            SenderHelper.SendApiMethod(sendMessage, TOKEN);
+        } catch (InvalidObjectException e) {
+            BotLogger.severe(LOGTAG, e);
+        }
     }
 
     // endregion Helper Methods

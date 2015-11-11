@@ -4,10 +4,10 @@ import org.telegram.BotConfig;
 import org.telegram.BuildVars;
 import org.telegram.Commands;
 import org.telegram.SenderHelper;
-import org.telegram.api.objects.*;
-import org.telegram.database.DatabaseManager;
 import org.telegram.api.methods.BotApiMethod;
 import org.telegram.api.methods.SendMessage;
+import org.telegram.api.objects.*;
+import org.telegram.database.DatabaseManager;
 import org.telegram.services.*;
 import org.telegram.structure.WeatherAlert;
 import org.telegram.updatesreceivers.UpdatesThread;
@@ -77,6 +77,13 @@ public class WeatherHandlers implements UpdatesCallback {
     private static void sendAlerts() {
         List<WeatherAlert> allAlerts = DatabaseManager.getInstance().getAllAlerts();
         for (WeatherAlert weatherAlert : allAlerts) {
+            synchronized (Thread.currentThread()) {
+                try {
+                    Thread.currentThread().wait(35);
+                } catch (InterruptedException e) {
+                    BotLogger.severe(LOGTAG, e);
+                }
+            }
             String[] userOptions = DatabaseManager.getInstance().getUserWeatherOptions(weatherAlert.getUserId());
             String weather = WeatherService.getInstance().fetchWeatherAlert(weatherAlert.getCityId(),
                     weatherAlert.getUserId(), userOptions[0], userOptions[1]);

@@ -22,7 +22,7 @@ public class Chat implements BotApiObject {
 
     public static final String ID_FIELD = "id";
     @JsonProperty(ID_FIELD)
-    private Integer id; ///< Unique identifier for this chat, not exciding 1e13 by absolute value
+    private Long id; ///< Unique identifier for this chat, not exciding 1e13 by absolute value
     public static final String TYPE_FIELD = "type";
     @JsonProperty(TYPE_FIELD)
     private String type; ///< Type of the chat, one of “private”, “group” or “channel”
@@ -45,7 +45,7 @@ public class Chat implements BotApiObject {
 
     public Chat(JSONObject jsonObject) {
         super();
-        this.id = jsonObject.getInt(ID_FIELD);
+        this.id = jsonObject.getLong(ID_FIELD);
         this.type = jsonObject.getString(TYPE_FIELD);
         if (jsonObject.has(TITLE_FIELD)) {
             this.title = jsonObject.getString(TITLE_FIELD);
@@ -61,7 +61,7 @@ public class Chat implements BotApiObject {
         }
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 

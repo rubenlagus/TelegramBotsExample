@@ -1,12 +1,15 @@
 package org.telegram.updateshandlers;
 
-import org.telegram.*;
-import org.telegram.api.objects.Message;
-import org.telegram.api.objects.Update;
-import org.telegram.database.DatabaseManager;
+import org.telegram.BotConfig;
+import org.telegram.BuildVars;
+import org.telegram.Commands;
+import org.telegram.SenderHelper;
 import org.telegram.api.methods.BotApiMethod;
 import org.telegram.api.methods.SendDocument;
 import org.telegram.api.methods.SendMessage;
+import org.telegram.api.objects.Message;
+import org.telegram.api.objects.Update;
+import org.telegram.database.DatabaseManager;
 import org.telegram.services.BotLogger;
 import org.telegram.services.LocalisationService;
 import org.telegram.services.TransifexService;
@@ -87,7 +90,7 @@ public class TransifexHandlers implements UpdatesCallback {
                 }
 
                 if (sendDocument != null) {
-                    sendDocument.setChatId(message.getChatId());
+                    sendDocument.setChatId(message.getChatId().toString());
                     SenderHelper.SendDocument(sendDocument, TOKEN);
                 }
             } else if (parts[0].startsWith(Commands.help) ||

@@ -198,7 +198,7 @@ public class Message implements BotApiObject {
         return chat.isChannelChat();
     }
 
-    public Integer getChatId() {
+    public Long getChatId() {
         return chat.getId();
     }
 

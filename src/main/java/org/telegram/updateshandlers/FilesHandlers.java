@@ -4,14 +4,14 @@ import org.telegram.BotConfig;
 import org.telegram.BuildVars;
 import org.telegram.Commands;
 import org.telegram.SenderHelper;
+import org.telegram.api.methods.BotApiMethod;
+import org.telegram.api.methods.SendDocument;
+import org.telegram.api.methods.SendMessage;
 import org.telegram.api.objects.Message;
 import org.telegram.api.objects.ReplyKeyboardHide;
 import org.telegram.api.objects.ReplyKeyboardMarkup;
 import org.telegram.api.objects.Update;
 import org.telegram.database.DatabaseManager;
-import org.telegram.api.methods.BotApiMethod;
-import org.telegram.api.methods.SendDocument;
-import org.telegram.api.methods.SendMessage;
 import org.telegram.services.BotLogger;
 import org.telegram.services.Emoji;
 import org.telegram.services.LocalisationService;
@@ -208,7 +208,7 @@ public class FilesHandlers implements UpdatesCallback {
         if (DatabaseManager.getInstance().doesFileExists(part.trim())) {
             SendDocument sendDocumentRequest = new SendDocument();
             sendDocumentRequest.setDocument(part.trim());
-            sendDocumentRequest.setChatId(message.getChatId());
+            sendDocumentRequest.setChatId(message.getChatId().toString());
             SenderHelper.SendDocument(sendDocumentRequest, TOKEN);
         } else {
             SendMessage sendMessageRequest = new SendMessage();

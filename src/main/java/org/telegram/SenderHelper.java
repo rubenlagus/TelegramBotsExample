@@ -16,7 +16,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
-import org.telegram.api.objects.Message;
 import org.telegram.api.methods.*;
 import org.telegram.services.BotLogger;
 import org.telegram.updateshandlers.SentCallback;
@@ -24,10 +23,8 @@ import org.telegram.updateshandlers.SentCallback;
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -49,11 +46,7 @@ public class SenderHelper {
 
             if (sendDocument.isNewDocument()) {
                 MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                if (sendDocument.getChatId() == null) {
-                    builder.addTextBody(SendDocument.CHATID_FIELD, sendDocument.getChannelId());
-                } else {
-                    builder.addTextBody(SendDocument.CHATID_FIELD, sendDocument.getChatId().toString());
-                }
+                builder.addTextBody(SendDocument.CHATID_FIELD, sendDocument.getChatId());
                 builder.addBinaryBody(SendDocument.DOCUMENT_FIELD, new File(sendDocument.getDocument()), ContentType.APPLICATION_OCTET_STREAM, sendDocument.getDocumentName());
                 if (sendDocument.getReplayMarkup() != null) {
                     builder.addTextBody(SendDocument.REPLYMARKUP_FIELD, sendDocument.getReplayMarkup().toJson().toString());
@@ -65,7 +58,7 @@ public class SenderHelper {
                 httppost.setEntity(multipart);
             } else {
                 List<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new BasicNameValuePair(SendDocument.CHATID_FIELD, sendDocument.getChatId().toString()));
+                nameValuePairs.add(new BasicNameValuePair(SendDocument.CHATID_FIELD, sendDocument.getChatId()));
                 nameValuePairs.add(new BasicNameValuePair(SendDocument.DOCUMENT_FIELD, sendDocument.getDocument()));
                 if (sendDocument.getReplayMarkup() != null) {
                     nameValuePairs.add(new BasicNameValuePair(SendDocument.REPLYMARKUP_FIELD, sendDocument.getReplayMarkup().toString()));

@@ -9,7 +9,6 @@ package org.telegram.database;
 
 import org.telegram.services.BotLogger;
 import org.telegram.structure.WeatherAlert;
-import org.telegram.updateshandlers.WeatherHandlers;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -87,6 +86,9 @@ public class DatabaseManager {
             if (currentVersion == 5) {
                 currentVersion = updateToVersion6();
             }
+            if (currentVersion == 6) {
+                currentVersion = updateToVersion7();
+            }
             connetion.commitTransaction();
         } catch (SQLException e) {
             BotLogger.error(LOGTAG, e);
@@ -123,6 +125,12 @@ public class DatabaseManager {
         connetion.executeQuery(CreationStrings.createWeatherAlertTable);
         connetion.executeQuery(String.format(CreationStrings.insertCurrentVersion, 6));
         return 6;
+    }
+
+    private int updateToVersion7() throws SQLException {
+        connetion.executeQuery("ALTER TABLE WeatherState MODIFY chatId BIGINT NOT NULL");
+        connetion.executeQuery(String.format(CreationStrings.insertCurrentVersion, 7));
+        return 7;
     }
 
     private int createNewTables() throws SQLException {
@@ -412,12 +420,12 @@ public class DatabaseManager {
         return updatedRows > 0;
     }
 
-    public int getWeatherState(Integer userId, Integer chatId) {
+    public int getWeatherState(Integer userId, Long chatId) {
         int state = 0;
         try {
             final PreparedStatement preparedStatement = connetion.getPreparedStatement("SELECT state FROM WeatherState WHERE userId = ? AND chatId = ?");
             preparedStatement.setInt(1, userId);
-            preparedStatement.setInt(2, chatId);
+            preparedStatement.setLong(2, chatId);
             final ResultSet result = preparedStatement.executeQuery();
             if (result.next()) {
                 state = result.getInt("state");
@@ -428,12 +436,12 @@ public class DatabaseManager {
         return state;
     }
 
-    public boolean insertWeatherState(Integer userId, Integer chatId, int state) {
+    public boolean insertWeatherState(Integer userId, Long chatId, int state) {
         int updatedRows = 0;
         try {
             final PreparedStatement preparedStatement = connetion.getPreparedStatement("REPLACE INTO WeatherState (userId, chatId, state) VALUES (?, ?, ?)");
             preparedStatement.setInt(1, userId);
-            preparedStatement.setInt(2, chatId);
+            preparedStatement.setLong(2, chatId);
             preparedStatement.setInt(3, state);
             updatedRows = preparedStatement.executeUpdate();
         } catch (SQLException e) {

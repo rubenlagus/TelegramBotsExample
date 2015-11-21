@@ -63,12 +63,6 @@ public class Update implements BotApiObject {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeNumberField(UPDATEID_FIELD, updateId);
-        if (message != null) {
-            gen.writeObjectField(MESSAGE_FIELD, message);
-        }
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

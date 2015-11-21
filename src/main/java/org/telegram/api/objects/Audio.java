@@ -129,22 +129,6 @@ public class Audio implements BotApiObject {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField(FILEID_FIELD, fileId);
-        gen.writeNumberField(DURATION_FIELD, duration);
-        if (mimeType != null) {
-            gen.writeStringField(MIMETYPE_FIELD, mimeType);
-        }
-        if (fileSize != null) {
-            gen.writeNumberField(FILESIZE_FIELD, fileSize);
-        }
-        if (title != null) {
-            gen.writeStringField(TITLE_FIELD, title);
-        }
-        if (performer != null) {
-            gen.writeStringField(PERFORMER_FIELD, performer);
-        }
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

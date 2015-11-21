@@ -143,25 +143,6 @@ public class SendMessage extends BotApiMethod<Message> {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField(METHOD_FIELD, PATH);
-        gen.writeStringField(CHATID_FIELD, chatId);
-        gen.writeStringField(TEXT_FIELD, text);
-
-        if (parseMode != null) {
-            gen.writeStringField(PARSEMODE_FIELD, parseMode);
-        }
-        if (disableWebPagePreview != null) {
-            gen.writeBooleanField(DISABLEWEBPAGEPREVIEW_FIELD, disableWebPagePreview);
-        }
-        if (replayToMessageId != null) {
-            gen.writeNumberField(REPLYTOMESSAGEID_FIELD, replayToMessageId);
-        }
-        if (replayMarkup != null) {
-            gen.writeObjectField(REPLYMARKUP_FIELD, replayMarkup);
-        }
-
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

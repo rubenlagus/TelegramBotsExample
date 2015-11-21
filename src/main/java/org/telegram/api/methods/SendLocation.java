@@ -118,19 +118,6 @@ public class SendLocation extends BotApiMethod<Message> {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField(METHOD_FIELD, PATH);
-        gen.writeStringField(CHATID_FIELD, chatId);
-        gen.writeNumberField(LATITUDE_FIELD, latitude);
-        gen.writeNumberField(LONGITUDE_FIELD, longitude);
-        if (replayToMessageId != null) {
-            gen.writeNumberField(REPLYTOMESSAGEID_FIELD, replayToMessageId);
-        }
-        if (replayMarkup != null) {
-            gen.writeObjectField(REPLYMARKUP_FIELD, replayMarkup);
-        }
-
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

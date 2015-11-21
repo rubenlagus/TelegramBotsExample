@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import org.json.JSONObject;
-import org.telegram.api.objects.Message;
 import org.telegram.api.objects.UserProfilePhotos;
 
 import java.io.IOException;
@@ -98,14 +97,6 @@ public class GetUserProfilePhotos extends BotApiMethod<UserProfilePhotos> {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField(METHOD_FIELD, PATH);
-        gen.writeNumberField(USERID_FIELD, userId);
-        gen.writeNumberField(OFFSET_FIELD, offset);
-        if (limit != null) {
-            gen.writeNumberField(LIMIT_FIELD, limit);
-        }
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

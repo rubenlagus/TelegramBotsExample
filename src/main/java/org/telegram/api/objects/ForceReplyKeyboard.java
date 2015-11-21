@@ -89,10 +89,6 @@ public class ForceReplyKeyboard implements ReplyKeyboard {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeBooleanField(FORCEREPLY_FIELD, forceReply);
-        gen.writeBooleanField(SELECTIVE_FIELD, selective);
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

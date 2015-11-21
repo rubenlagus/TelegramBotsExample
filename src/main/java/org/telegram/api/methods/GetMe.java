@@ -45,8 +45,6 @@ public class GetMe extends BotApiMethod<User> {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField(METHOD_FIELD, PATH);
-        gen.writeEndObject();
+        serialize(gen, serializers);
     }
 }

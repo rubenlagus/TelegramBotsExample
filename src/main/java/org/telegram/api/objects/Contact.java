@@ -63,16 +63,6 @@ public class Contact implements BotApiObject {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField(PHONENUMBER_FIELD, phoneNumber);
-        gen.writeStringField(FIRSTNAME_FIELD, firstName);
-        if (lastName != null) {
-            gen.writeStringField(LASTNAME_FIELD, lastName);
-        }
-        if (userID != null) {
-            gen.writeNumberField(USERID_FIELD, userID);
-        }
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

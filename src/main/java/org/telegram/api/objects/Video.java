@@ -137,21 +137,6 @@ public class Video implements BotApiObject {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField(FILEID_FIELD, fileId);
-        gen.writeNumberField(WIDTH_FIELD, width);
-        gen.writeNumberField(HEIGHT_FIELD, height);
-        gen.writeNumberField(DURATION_FIELD, duration);
-        if (thumb != null) {
-            gen.writeObjectField(THUMB_FIELD, thumb);
-        }
-        if (mimeType != null) {
-            gen.writeStringField(MIMETYPE_FIELD, mimeType);
-        }
-        if (fileSize != null) {
-            gen.writeNumberField(FILESIZE_FIELD, fileSize);
-        }
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

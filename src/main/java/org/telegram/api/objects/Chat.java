@@ -19,6 +19,7 @@ public class Chat implements BotApiObject {
     private static final String USERCHATTYPE = "private";
     private static final String GROUPCHATTYPE = "group";
     private static final String CHANNELCHATTYPE = "channel";
+    private static final String SUPERGROUPCHATTYPE  = "supergroup";
 
     public static final String ID_FIELD = "id";
     @JsonProperty(ID_FIELD)
@@ -77,6 +78,10 @@ public class Chat implements BotApiObject {
         return USERCHATTYPE.equals(type);
     }
 
+    public Boolean isSuperGroupChat() {
+        return SUPERGROUPCHATTYPE.equals(type);
+    }
+
     public String getTitle() {
         return title;
     }
@@ -119,25 +124,6 @@ public class Chat implements BotApiObject {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeNumberField(ID_FIELD, id);
-        gen.writeStringField(TYPE_FIELD, type);
-        if (isUserChat()) {
-            if (firstName != null) {
-                gen.writeStringField(FIRSTNAME_FIELD, firstName);
-            }
-            if (lastName != null) {
-                gen.writeStringField(LASTNAME_FIELD, lastName);
-            }
-        } else {
-            if (title != null) {
-                gen.writeStringField(TITLE_FIELD, title);
-            }
-        }
-        if (!isGroupChat() && userName != null) {
-            gen.writeStringField(USERNAME_FIELD, userName);
-        }
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

@@ -81,9 +81,6 @@ public class SendChatAction extends BotApiMethod<Boolean>{
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField(CHATID_FIELD, chatId);
-        gen.writeStringField(ACTION_FIELD, action);
-        gen.writeEndObject();
+        serialize(gen, serializers);
     }
 }

@@ -65,13 +65,7 @@ public class ForwardMessage extends BotApiMethod<Message> {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField(METHOD_FIELD, PATH);
-        gen.writeStringField(CHATID_FIELD, chatId);
-        gen.writeNumberField(FROMCHATID_FIELD, fromChatId);
-        gen.writeNumberField(MESSAGEID_FIELD, messageId);
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 
     @Override

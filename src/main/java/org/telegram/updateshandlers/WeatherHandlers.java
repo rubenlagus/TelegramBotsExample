@@ -98,7 +98,7 @@ public class WeatherHandlers implements UpdatesCallback {
     @Override
     public void onUpdateReceived(Update update) {
         Message message = update.getMessage();
-        if (message != null) {
+        if (message != null && (message.hasText() || message.hasLocation())) {
             BotApiMethod botApiMethod = handleIncomingMessage(message);
             try {
                 SenderHelper.SendApiMethod(botApiMethod, TOKEN);

@@ -83,10 +83,6 @@ public class ReplyKeyboardHide implements ReplyKeyboard {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeBooleanField(HIDEKEYBOARD_FIELD, hideKeyboard);
-        gen.writeBooleanField(SELECTIVE_FIELD, selective);
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

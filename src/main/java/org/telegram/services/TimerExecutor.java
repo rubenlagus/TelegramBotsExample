@@ -1,6 +1,8 @@
 package org.telegram.services;
 
-import java.time.*;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -12,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  * @date 27/01/25
  */
 public class TimerExecutor {
-    private static volatile BotLogger log = BotLogger.getLogger(TimerExecutor.class.getName());
+    private static final String LOGTAG = "TIMEREXECUTOR";
     private static volatile TimerExecutor instance; ///< Instance
     private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1); ///< Thread to execute operations
 
@@ -52,14 +54,14 @@ public class TimerExecutor {
      * @param targetSec  Second to execute it
      */
     public void startExecutionEveryDayAt(CustomTimerTask task, int targetHour, int targetMin, int targetSec) {
-        log.warn("Posting new task" + task.getTaskName());
+        BotLogger.warn(LOGTAG, "Posting new task" + task.getTaskName());
         final Runnable taskWrapper = () -> {
             try {
                 task.execute();
                 task.reduceTimes();
                 startExecutionEveryDayAt(task, targetHour, targetMin, targetSec);
             } catch (Exception e) {
-                log.severe("Bot threw an unexpected exception at TimerExecutor", e);
+                BotLogger.severe(LOGTAG, "Bot threw an unexpected exception at TimerExecutor", e);
             }
         };
         if (task.getTimes() != 0) {
@@ -100,9 +102,9 @@ public class TimerExecutor {
         try {
             executorService.awaitTermination(1, TimeUnit.DAYS);
         } catch (InterruptedException ex) {
-            log.severe(ex);
+            BotLogger.severe(LOGTAG, ex);
         } catch (Exception e) {
-            log.severe("Bot threw an unexpected exception at TimerExecutor", e);
+            BotLogger.severe(LOGTAG, "Bot threw an unexpected exception at TimerExecutor", e);
         }
     }
 }

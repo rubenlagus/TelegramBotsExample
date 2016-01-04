@@ -18,7 +18,7 @@ public class ForwardMessage extends BotApiMethod<Message> {
     public static final String PATH = "forwardmessage";
 
     public static final String CHATID_FIELD = "chat_id";
-    private Integer chatId; ///< Unique identifier for the message recepient — User or GroupChat id
+    private String chatId; ///< Unique identifier for the chat to send the message to (or username for channels)
     public static final String FROMCHATID_FIELD = "from_chat_id";
     private Integer fromChatId; ///< Unique identifier for the chat where the original message was sent — User or GroupChat id
     public static final String MESSAGEID_FIELD = "message_id";
@@ -28,11 +28,11 @@ public class ForwardMessage extends BotApiMethod<Message> {
         super();
     }
 
-    public Integer getChatId() {
+    public String getChatId() {
         return chatId;
     }
 
-    public void setChatId(Integer chatId) {
+    public void setChatId(String chatId) {
         this.chatId = chatId;
     }
 
@@ -56,7 +56,7 @@ public class ForwardMessage extends BotApiMethod<Message> {
     public void serialize(JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
         gen.writeStringField(METHOD_FIELD, PATH);
-        gen.writeNumberField(CHATID_FIELD, chatId);
+        gen.writeStringField(CHATID_FIELD, chatId);
         gen.writeNumberField(FROMCHATID_FIELD, fromChatId);
         gen.writeNumberField(MESSAGEID_FIELD, messageId);
         gen.writeEndObject();
@@ -65,13 +65,7 @@ public class ForwardMessage extends BotApiMethod<Message> {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField(METHOD_FIELD, PATH);
-        gen.writeNumberField(CHATID_FIELD, chatId);
-        gen.writeNumberField(FROMCHATID_FIELD, fromChatId);
-        gen.writeNumberField(MESSAGEID_FIELD, messageId);
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 
     @Override

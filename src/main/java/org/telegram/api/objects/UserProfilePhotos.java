@@ -85,20 +85,6 @@ public class UserProfilePhotos implements BotApiObject {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeNumberField(TOTALCOUNT_FIELD, totalCount);
-        if (totalCount > 0) {
-            gen.writeArrayFieldStart(PHOTOS_FIELD);
-            for (List<PhotoSize> photoSizeList : photos) {
-                gen.writeStartArray();
-                for (PhotoSize photoSize: photoSizeList) {
-                    gen.writeObject(photoSize);
-                }
-                gen.writeEndArray();
-            }
-            gen.writeEndArray();
-        }
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

@@ -4,9 +4,7 @@ import org.telegram.BuildVars;
 
 import javax.validation.constraints.NotNull;
 import java.io.*;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.concurrent.ConcurrentHashMap;
+import java.time.LocalDateTime;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
@@ -14,57 +12,38 @@ import java.util.logging.Logger;
 
 /**
  * @author Ruben Bermudez
- * @version 1.0
- * @brief Logger
+ * @version 2.0
+ * @brief Logger to file
  * @date 21/01/15
  */
 public class BotLogger {
-    private volatile Object lockToWrite = new Object();
-
-    private final Logger logger;
+    private static final Object lockToWrite = new Object();
     private static volatile PrintWriter logginFile;
-    private Calendar lastFileDate;
     private static volatile String currentFileName;
+    private static final Logger logger = Logger.getLogger("Tsupport Bot");
+    private static volatile LocalDateTime lastFileDate;
     private static LoggerThread loggerThread = new LoggerThread();
-    private static volatile ConcurrentHashMap<String, BotLogger> instances = new ConcurrentHashMap<>();
-    private final static ConcurrentLinkedQueue<String> logsToFile = new ConcurrentLinkedQueue<>();
+    private static final ConcurrentLinkedQueue<String> logsToFile = new ConcurrentLinkedQueue<>();
 
     static {
-
-        loggerThread.start();
-    }
-
-    public static BotLogger getLogger(@NotNull String className) {
-        if (!instances.containsKey(className)) {
-            synchronized (BotLogger.class) {
-                if (!instances.containsKey(className)) {
-                    BotLogger instance = new BotLogger(className);
-                    instances.put(className, instance);
-                    return instance;
-                } else {
-                    return instances.get(className);
-                }
-            }
-        } else {
-            return instances.get(className);
-        }
-    }
-
-    private BotLogger(String classname) {
-        logger = Logger.getLogger(classname);
         logger.setLevel(Level.ALL);
-        ConsoleHandler handler = new ConsoleHandler();
-        handler.setLevel(Level.ALL);
-        logger.addHandler(handler);
-        lastFileDate = new GregorianCalendar();
-        if  (currentFileName == null || currentFileName.length() == 0) {
-            currentFileName = BuildVars.pathToLogs + dateFormaterForFileName(lastFileDate) + ".log";
+        logger.addHandler(new ConsoleHandler());
+        loggerThread.start();
+        lastFileDate = LocalDateTime.now();
+        if ((currentFileName == null) || (currentFileName.compareTo("") == 0)) {
+            currentFileName = dateFormatterForFileName(lastFileDate) + ".log";
             try {
-                File file = new File(currentFileName);
-                if (!file.exists()) {
-                    file.createNewFile();
+                final File file = new File(currentFileName);
+                if (file.exists()) {
+                    logginFile = new PrintWriter(new BufferedWriter(new FileWriter(currentFileName, true)));
+                } else {
+                    final boolean created = file.createNewFile();
+                    if (created) {
+                        logginFile = new PrintWriter(new BufferedWriter(new FileWriter(currentFileName, true)));
+                    } else {
+                        throw new NullPointerException("File for logging error");
+                    }
                 }
-                logginFile = new PrintWriter(new BufferedWriter(new FileWriter(currentFileName, true)));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -72,271 +51,261 @@ public class BotLogger {
         }
     }
 
-
-    public void log(@NotNull Level level, String msg) {
-        logger.log(level, msg);
-        logToFile(level, msg);
+    public static void log(@NotNull Level level, String tag, String msg) {
+        logger.log(level, String.format("[%s] %s", tag, msg));
+        logToFile(level, tag, msg);
     }
 
 
-    public void severe(String msg) {
-        logger.severe(msg);
-        logToFile(Level.SEVERE, msg);
+    public static void severe(String tag, String msg) {
+        logger.severe(String.format("[%s] %s", tag, msg));
+        logToFile(Level.SEVERE, tag, msg);
     }
 
-    public void warn(String msg) {
-        warning(msg);
+    public static void warn(String tag, String msg) {
+        warning(tag, msg);
     }
 
-    public void debug(String msg) {
-        fine(msg);
+    public static void debug(String tag, String msg) {
+        fine(tag, msg);
     }
 
-    public void error(String msg) {
-        severe(msg);
+    public static void error(String tag, String msg) {
+        severe(tag, msg);
     }
 
-    public void trace(String msg) {
-        finer(msg);
+    public static void trace(String tag, String msg) {
+        finer(tag, msg);
     }
 
-    public void warning(String msg) {
-        logger.warning(msg);
-        logToFile(Level.WARNING, msg);
-    }
-
-
-    public void info(String msg) {
-        logger.info(msg);
-        logToFile(Level.INFO, msg);
+    public static void warning(String tag, String msg) {
+        logger.warning(String.format("[%s] %s", tag, msg));
+        logToFile(Level.WARNING, tag, msg);
     }
 
 
-    public void config(String msg) {
-        logger.config(msg);
-        logToFile(Level.CONFIG, msg);
+    public static void info(String tag, String msg) {
+        logger.info(String.format("[%s] %s", tag, msg));
+        logToFile(Level.INFO, tag, msg);
     }
 
 
-    public void fine(String msg) {
-        logger.fine(msg);
-        logToFile(Level.FINE, msg);
+    public static void config(String tag, String msg) {
+        logger.config(String.format("[%s] %s", tag, msg));
+        logToFile(Level.CONFIG, tag, msg);
     }
 
 
-    public void finer(String msg) {
-        logger.finer(msg);
-        logToFile(Level.FINER, msg);
+    public static void fine(String tag, String msg) {
+        logger.fine(String.format("[%s] %s", tag, msg));
+        logToFile(Level.FINE, tag, msg);
     }
 
 
-    public void finest(String msg) {
-        logger.finest(msg);
-        logToFile(Level.FINEST, msg);
+    public static void finer(String tag, String msg) {
+        logger.finer(String.format("[%s] %s", tag, msg));
+        logToFile(Level.FINER, tag, msg);
     }
 
 
-    public void log(@NotNull Level level, @NotNull Throwable throwable) {
-        throwable.printStackTrace();
-        logToFile(level, throwable);
+    public static void finest(String tag, String msg) {
+        logger.finest(String.format("[%s] %s", tag, msg));
+        logToFile(Level.FINEST, tag, msg);
     }
 
-    public void log(@NotNull Level level, String msg, Throwable thrown) {
+
+    public static void log(@NotNull Level level, @NotNull String tag, @NotNull Throwable throwable) {
+        logger.log(level, String.format("[%s] Exception", tag), throwable);
+        logToFile(level, tag, throwable);
+    }
+
+    public static void log(@NotNull Level level, @NotNull String tag, @NotNull String msg, @NotNull Throwable thrown) {
         logger.log(level, msg, thrown);
-        logToFile(level, msg ,thrown);
+        logToFile(level, msg, thrown);
     }
 
-    public void severe(@NotNull Throwable throwable) {
-        logToFile(Level.SEVERE, throwable);
+    public static void severe(@NotNull String tag, @NotNull Throwable throwable) {
+        logToFile(Level.SEVERE, tag, throwable);
     }
 
-    public void warning(@NotNull Throwable throwable) {
-        logToFile(Level.WARNING, throwable);
+    public static void warning(@NotNull String tag, @NotNull Throwable throwable) {
+        logToFile(Level.WARNING, tag, throwable);
     }
 
-    public void info(@NotNull Throwable throwable) {
-        logToFile(Level.INFO, throwable);
+    public static void info(@NotNull String tag, @NotNull Throwable throwable) {
+        logToFile(Level.INFO, tag, throwable);
     }
 
-    public void config(@NotNull Throwable throwable) {
-        logToFile(Level.CONFIG, throwable);
+    public static void config(@NotNull String tag, @NotNull Throwable throwable) {
+        logToFile(Level.CONFIG, tag, throwable);
     }
 
-    public void fine(@NotNull Throwable throwable) {
-        logToFile(Level.FINE, throwable);
+    public static void fine(@NotNull String tag, @NotNull Throwable throwable) {
+        logToFile(Level.FINE, tag, throwable);
     }
 
-    public void finer(@NotNull Throwable throwable) {
-        logToFile(Level.FINER, throwable);
+    public static void finer(@NotNull String tag, @NotNull Throwable throwable) {
+        logToFile(Level.FINER, tag, throwable);
     }
 
-    public void finest(@NotNull Throwable throwable) {
-        logToFile(Level.FINEST, throwable);
+    public static void finest(@NotNull String tag, @NotNull Throwable throwable) {
+        logToFile(Level.FINEST, tag, throwable);
     }
 
-    public void warn(Throwable throwable) {
-        warning(throwable);
+    public static void warn(@NotNull String tag, Throwable throwable) {
+        warning(tag, throwable);
     }
 
-    public void debug(Throwable throwable) {
-        fine(throwable);
+    public static void debug(@NotNull String tag, Throwable throwable) {
+        fine(tag, throwable);
     }
 
-    public void error(Throwable throwable) {
-        severe(throwable);
+    public static void error(@NotNull String tag, Throwable throwable) {
+        severe(tag, throwable);
     }
 
-    public void trace(Throwable throwable) {
-        finer(throwable);
+    public static void trace(@NotNull String tag, Throwable throwable) {
+        finer(tag, throwable);
     }
 
-    public void severe(String msg, @NotNull Throwable throwable) {
-        log(Level.SEVERE, msg, throwable);
+    public static void severe(@NotNull String msg, @NotNull String tag, @NotNull Throwable throwable) {
+        log(Level.SEVERE, tag, msg, throwable);
     }
 
-    public void warning(String msg, @NotNull Throwable throwable) {
-        log(Level.WARNING, msg, throwable);
+    public static void warning(@NotNull String msg, @NotNull String tag, @NotNull Throwable throwable) {
+        log(Level.WARNING, tag, msg, throwable);
     }
 
-    public void info(String msg, @NotNull Throwable throwable) {
-        log(Level.INFO, msg, throwable);
+    public static void info(@NotNull String msg, @NotNull String tag, @NotNull Throwable throwable) {
+        log(Level.INFO, tag, msg, throwable);
     }
 
-    public void config(String msg, @NotNull Throwable throwable) {
-        log(Level.CONFIG, msg, throwable);
+    public static void config(@NotNull String msg, @NotNull String tag, @NotNull Throwable throwable) {
+        log(Level.CONFIG, tag, msg, throwable);
     }
 
-    public void fine(String msg, @NotNull Throwable throwable) {
-        log(Level.FINE, msg, throwable);
+    public static void fine(@NotNull String msg, @NotNull String tag, @NotNull Throwable throwable) {
+        log(Level.FINE, tag, msg, throwable);
     }
 
-    public void finer(String msg, @NotNull Throwable throwable) {
-        log(Level.FINER, msg, throwable);
+    public static void finer(@NotNull String msg, @NotNull String tag, @NotNull Throwable throwable) {
+        log(Level.FINER, tag, msg, throwable);
     }
 
-    public void finest(String msg, @NotNull Throwable throwable) {
+    public static void finest(@NotNull String msg, @NotNull String tag, @NotNull Throwable throwable) {
         log(Level.FINEST, msg, throwable);
     }
 
-    public void warn(String msg, @NotNull Throwable throwable) {
-        log(Level.WARNING, msg, throwable);
+    public static void warn(@NotNull String msg, @NotNull String tag, @NotNull Throwable throwable) {
+        log(Level.WARNING, tag, msg, throwable);
     }
 
-    public void debug(String msg, @NotNull Throwable throwable) {
-        log(Level.FINE, msg, throwable);
+    public static void debug(@NotNull String msg, @NotNull String tag, @NotNull Throwable throwable) {
+        log(Level.FINE, tag, msg, throwable);
     }
 
-    public void error(String msg, @NotNull Throwable throwable) {
-        log(Level.SEVERE, msg, throwable);
+    public static void error(@NotNull String msg, @NotNull String tag, @NotNull Throwable throwable) {
+        log(Level.SEVERE, tag, msg, throwable);
     }
 
-    public void trace(String msg, @NotNull Throwable throwable) {
-        log(Level.FINER, msg, throwable);
+    public static void trace(@NotNull String msg, @NotNull String tag, @NotNull Throwable throwable) {
+        log(Level.FINER, tag, msg, throwable);
     }
 
-    private boolean isCurrentDate(Calendar calendar) {
-        if (calendar.get(Calendar.DAY_OF_MONTH) != lastFileDate.get(Calendar.DAY_OF_MONTH)) {
-            return false;
-        }
-        if (calendar.get(Calendar.MONTH) != lastFileDate.get(Calendar.MONTH)) {
-            return false;
-        }
-        if (calendar.get(Calendar.YEAR) != lastFileDate.get(Calendar.YEAR)) {
-            return false;
-        }
-        return true;
+    private static boolean isCurrentDate(LocalDateTime dateTime) {
+        return dateTime.toLocalDate().isEqual(lastFileDate.toLocalDate());
     }
 
-    private String dateFormaterForFileName(@NotNull Calendar calendar) {
+    private static String dateFormatterForFileName(@NotNull LocalDateTime dateTime) {
         String dateString = "";
-        dateString += calendar.get(Calendar.DAY_OF_MONTH);
-        dateString += calendar.get(Calendar.MONTH) + 1;
-        dateString += calendar.get(Calendar.YEAR);
+        dateString += dateTime.getDayOfMonth();
+        dateString += dateTime.getMonthValue();
+        dateString += dateTime.getYear();
         return dateString;
     }
 
-    private String dateFormaterForLogs(@NotNull Calendar calendar) {
+    private static String dateFormatterForLogs(@NotNull LocalDateTime dateTime) {
         String dateString = "[";
-        dateString += calendar.get(Calendar.DAY_OF_MONTH) + "_";
-        dateString += (calendar.get(Calendar.MONTH) + 1) + "_";
-        dateString += calendar.get(Calendar.YEAR) + "_";
-        dateString += calendar.get(Calendar.HOUR_OF_DAY) + "_";
-        dateString += calendar.get(Calendar.MINUTE) + ":";
-        dateString += calendar.get(Calendar.SECOND);
+        dateString += dateTime.getDayOfMonth() + "_";
+        dateString += dateTime.getMonthValue() + "_";
+        dateString += dateTime.getYear() + "_";
+        dateString += dateTime.getHour() + ":";
+        dateString += dateTime.getMinute() + ":";
+        dateString += dateTime.getSecond();
         dateString += "] ";
         return dateString;
     }
 
-    private void updateAndCreateFile(Calendar calendar) {
-        if (isCurrentDate(calendar)) {
-            return;
-        }
-        lastFileDate = new GregorianCalendar();
-        currentFileName = BuildVars.pathToLogs + dateFormaterForFileName(lastFileDate) + ".log";
-        try {
-            logginFile.flush();
-            logginFile.close();
-            File file = new File(currentFileName);
-            if (!file.exists()) {
-                file.createNewFile();
+    private static void updateAndCreateFile(LocalDateTime dateTime) {
+        if (!isCurrentDate(dateTime)) {
+            lastFileDate = LocalDateTime.now();
+            currentFileName = BuildVars.pathToLogs + dateFormatterForFileName(lastFileDate) + ".log";
+            try {
+                logginFile.flush();
+                logginFile.close();
+                final File file = new File(currentFileName);
+                if (file.exists()) {
+                    logginFile = new PrintWriter(new BufferedWriter(new FileWriter(currentFileName, true)));
+                } else {
+                    final boolean created = file.createNewFile();
+                    if (created) {
+                        logginFile = new PrintWriter(new BufferedWriter(new FileWriter(currentFileName, true)));
+                    } else {
+                        throw new NullPointerException("Error updating log file");
+                    }
+                }
+            } catch (IOException ignored) {
             }
-            logginFile = new PrintWriter(new BufferedWriter(new FileWriter(currentFileName, true)));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
-    private void logToFile(@NotNull Level level, Throwable throwable) {
-        if (!isLoggable(level)){
-            return;
-        }
-        synchronized (lockToWrite) {
-            Calendar currentDate = new GregorianCalendar();
-            String dateForLog = dateFormaterForLogs(currentDate);
-            updateAndCreateFile(currentDate);
-            logThrowableToFile(level, throwable, dateForLog);
+
+    private static void logToFile(@NotNull Level level, @NotNull String tag, @NotNull Throwable throwable) {
+        if (isLoggable(level)) {
+            synchronized (lockToWrite) {
+                final LocalDateTime currentDate = LocalDateTime.now();
+                final String dateForLog = dateFormatterForLogs(currentDate);
+                updateAndCreateFile(currentDate);
+                logThrowableToFile(level, tag, throwable, dateForLog);
+            }
         }
     }
 
 
 
-    private void logToFile(@NotNull Level level, String msg) {
-        if (!isLoggable(level)){
-            return;
-        }
-        synchronized (lockToWrite) {
-            Calendar currentDate = new GregorianCalendar();
-            updateAndCreateFile(currentDate);
-            String dateForLog = dateFormaterForLogs(currentDate);
-            logMsgToFile(level, msg, dateForLog);
-        }
-    }
-
-    private void logToFile(Level level, String msg, Throwable throwable) {
-        if (!isLoggable(level)){
-            return;
-        }
-        synchronized (lockToWrite) {
-            Calendar currentDate = new GregorianCalendar();
-            updateAndCreateFile(currentDate);
-            String dateForLog = dateFormaterForLogs(currentDate);
-            logMsgToFile(level, msg, dateForLog);
-            logThrowableToFile(level, throwable, dateForLog);
+    private static void logToFile(@NotNull Level level, @NotNull String tag, @NotNull String msg) {
+        if (isLoggable(level)) {
+            synchronized (lockToWrite) {
+                final LocalDateTime currentDate = LocalDateTime.now();
+                updateAndCreateFile(currentDate);
+                final String dateForLog = dateFormatterForLogs(currentDate);
+                logMsgToFile(level, tag, msg, dateForLog);
+            }
         }
     }
 
-    private void logMsgToFile(Level level, String msg, String dateForLog) {
-        dateForLog += " [" + logger.getName() + "]"  + level.toString() + " - " + msg;
-        logsToFile.add(dateForLog);
+    private static void logToFile(Level level, @NotNull String tag, @NotNull String msg, @NotNull Throwable throwable) {
+        if (isLoggable(level)) {
+            synchronized (lockToWrite) {
+                final LocalDateTime currentDate = LocalDateTime.now();
+                updateAndCreateFile(currentDate);
+                final String dateForLog = dateFormatterForLogs(currentDate);
+                logMsgToFile(level, tag, msg, dateForLog);
+                logThrowableToFile(level, tag, throwable, dateForLog);
+            }
+        }
+    }
+
+    private static void logMsgToFile(@NotNull Level level, @NotNull String tag, @NotNull String msg, @NotNull String dateForLog) {
+        final String logMessage = String.format("%s{%s} %s - %s", dateForLog, level.toString(), tag, msg);
+        logsToFile.add(logMessage);
         synchronized (logsToFile) {
             logsToFile.notifyAll();
         }
     }
 
-    private void logThrowableToFile(Level level, Throwable throwable, String dateForLog) {
-        String throwableLog = dateForLog + level.getName() + " - " + throwable + "\n";
+    private static void logThrowableToFile(@NotNull Level level, @NotNull String tag, @NotNull Throwable throwable, @NotNull String dateForLog) {
+        String throwableLog = String.format("%s{%s} %s - %s", dateForLog, level.toString(), tag, throwable.toString());
         for (StackTraceElement element : throwable.getStackTrace()) {
             throwableLog += "\tat " + element + "\n";
         }
@@ -346,23 +315,16 @@ public class BotLogger {
         }
     }
 
-    private boolean isLoggable(Level level) {
+    private static boolean isLoggable(Level level) {
         return logger.isLoggable(level) && BuildVars.debug;
     }
 
-    @Override
-    protected void finalize() throws Throwable {
-        logginFile.flush();
-        logginFile.close();
-        super.finalize();
-    }
-
     private static class LoggerThread extends Thread {
+
         @Override
         public void run() {
-            setPriority(Thread.MIN_PRIORITY);
             while(true) {
-                ConcurrentLinkedQueue<String> stringsToLog = new ConcurrentLinkedQueue<>();
+                final ConcurrentLinkedQueue<String> stringsToLog = new ConcurrentLinkedQueue<>();
                 synchronized (logsToFile) {
                     if (logsToFile.isEmpty()) {
                         try {
@@ -378,9 +340,7 @@ public class BotLogger {
                     logsToFile.clear();
                 }
 
-                for (String stringToLog: stringsToLog) {
-                    logginFile.println(stringToLog);
-                }
+                stringsToLog.stream().forEach(logginFile::println);
                 logginFile.flush();
             }
         }

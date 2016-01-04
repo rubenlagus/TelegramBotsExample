@@ -1,16 +1,22 @@
 package org.telegram.updateshandlers;
 
-import org.telegram.*;
-import org.telegram.api.objects.Message;
-import org.telegram.api.objects.Update;
-import org.telegram.database.DatabaseManager;
+import org.telegram.BotConfig;
+import org.telegram.BuildVars;
+import org.telegram.Commands;
+import org.telegram.SenderHelper;
 import org.telegram.api.methods.BotApiMethod;
 import org.telegram.api.methods.SendDocument;
 import org.telegram.api.methods.SendMessage;
+import org.telegram.api.objects.Message;
+import org.telegram.api.objects.Update;
+import org.telegram.database.DatabaseManager;
+import org.telegram.services.BotLogger;
 import org.telegram.services.LocalisationService;
 import org.telegram.services.TransifexService;
 import org.telegram.updatesreceivers.UpdatesThread;
 import org.telegram.updatesreceivers.Webhook;
+
+import java.io.InvalidObjectException;
 
 /**
  * @author Ruben Bermudez
@@ -19,12 +25,13 @@ import org.telegram.updatesreceivers.Webhook;
  * @date 24 of June of 2015
  */
 public class TransifexHandlers implements UpdatesCallback {
+    private static final String LOGTAG = "TRANSIFEXHANDLERS";
     private static final String TOKEN = BotConfig.TOKENTRANSIFEX;
     private static final String BOTNAME = BotConfig.USERNAMETRANSIFEX;
     private static final boolean USEWEBHOOK = false;
 
     public TransifexHandlers(Webhook webhook) {
-        if (USEWEBHOOK) {
+        if (USEWEBHOOK && BuildVars.useWebHook) {
             webhook.registerWebhook(this, BOTNAME);
             SenderHelper.SendWebhook(Webhook.getExternalURL(BOTNAME), TOKEN);
         } else {
@@ -35,7 +42,11 @@ public class TransifexHandlers implements UpdatesCallback {
 
     @Override
     public void onUpdateReceived(Update update) {
-        sendTransifexFile(update);
+        try {
+            sendTransifexFile(update);
+        } catch (InvalidObjectException e) {
+            BotLogger.error(LOGTAG, e);
+        }
     }
 
     @Override
@@ -44,7 +55,7 @@ public class TransifexHandlers implements UpdatesCallback {
         return null;
     }
 
-    public void sendTransifexFile(Update update) {
+    public void sendTransifexFile(Update update) throws InvalidObjectException {
         Message message = update.getMessage();
         if (message != null && message.hasText()) {
             String language = DatabaseManager.getInstance().getUserLanguage(update.getMessage().getFrom().getId());
@@ -74,12 +85,12 @@ public class TransifexHandlers implements UpdatesCallback {
                             Commands.transifexTDesktop, Commands.transifexOSX, Commands.transifexWP,
                             Commands.transifexAndroidSupportCommand);
                     sendMessageRequest.setText(helpFormated);
-                    sendMessageRequest.setChatId(message.getChatId());
+                    sendMessageRequest.setChatId(message.getChatId().toString());
                     SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
                 }
 
                 if (sendDocument != null) {
-                    sendDocument.setChatId(message.getChatId());
+                    sendDocument.setChatId(message.getChatId().toString());
                     SenderHelper.SendDocument(sendDocument, TOKEN);
                 }
             } else if (parts[0].startsWith(Commands.help) ||
@@ -91,7 +102,7 @@ public class TransifexHandlers implements UpdatesCallback {
                         Commands.transifexTDesktop, Commands.transifexOSX, Commands.transifexWP,
                         Commands.transifexAndroidSupportCommand);
                 sendMessageRequest.setText(helpFormated);
-                sendMessageRequest.setChatId(message.getChatId());
+                sendMessageRequest.setChatId(message.getChatId().toString());
                 SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
             }
         }

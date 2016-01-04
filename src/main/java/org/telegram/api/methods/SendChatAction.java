@@ -20,7 +20,7 @@ public class SendChatAction extends BotApiMethod<Boolean>{
     public static final String PATH = "sendChatAction";
 
     public static final String CHATID_FIELD = "chat_id";
-    private Integer chatId; ///< Unique identifier for the message recepient — User or GroupChat id
+    private String chatId; ///< Unique identifier for the chat to send the message to (Or username for channels)
     public static final String ACTION_FIELD = "action";
     /**
      * Type of action to broadcast.
@@ -34,11 +34,11 @@ public class SendChatAction extends BotApiMethod<Boolean>{
      */
     private String action;
 
-    public Integer getChatId() {
+    public String getChatId() {
         return chatId;
     }
 
-    public void setChatId(Integer chatId) {
+    public void setChatId(String chatId) {
         this.chatId = chatId;
     }
 
@@ -74,16 +74,13 @@ public class SendChatAction extends BotApiMethod<Boolean>{
     @Override
     public void serialize(JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
-        gen.writeNumberField(CHATID_FIELD, chatId);
+        gen.writeStringField(CHATID_FIELD, chatId);
         gen.writeStringField(ACTION_FIELD, action);
         gen.writeEndObject();
     }
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeNumberField(CHATID_FIELD, chatId);
-        gen.writeStringField(ACTION_FIELD, action);
-        gen.writeEndObject();
+        serialize(gen, serializers);
     }
 }

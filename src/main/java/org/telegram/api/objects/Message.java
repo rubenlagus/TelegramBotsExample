@@ -24,17 +24,13 @@ public class Message implements BotApiObject {
     private Integer messageId; ///< Integer	Unique message identifier
     public static final String FROM_FIELD = "from";
     @JsonProperty(FROM_FIELD)
-    private User from; ///< Sender
+    private User from; ///< Optional. Sender, can be empty for messages sent to channels
     public static final String DATE_FIELD = "date";
     @JsonProperty(DATE_FIELD)
     private Integer date; ///< Date the message was sent in Unix time
     public static final String CHAT_FIELD = "chat";
-    /**
-     * Conversation the message belongs to in case of a private message (@see User)or
-     * Conversation the message belongs to in case of a group (@see GroupChat)
-     */
     @JsonProperty(CHAT_FIELD)
-    private Chat chat; ///< Conversation the message belongs to in case of a private message
+    private Chat chat; ///< Conversation the message belongs to
     public static final String FORWARDFROM_FIELD = "forward_from";
     @JsonProperty(FORWARDFROM_FIELD)
     private User forwardFrom; ///< Optional. For forwarded messages, sender of the original message
@@ -73,13 +69,13 @@ public class Message implements BotApiObject {
     private User leftChatParticipant; ///< Optional. A member was removed from the group, information about them (this member may be bot itself)
     public static final String NEWCHATTITLE_FIELD = "new_chat_title";
     @JsonProperty(NEWCHATTITLE_FIELD)
-    private String newChatTitle; ///< Optional. A group title was changed to this value
+    private String newChatTitle; ///< Optional. A chat title was changed to this value
     public static final String NEWCHATPHOTO_FIELD = "new_chat_photo";
     @JsonProperty(NEWCHATPHOTO_FIELD)
-    private List<PhotoSize> newChatPhoto; ///< Optional. A group photo was change to this value
+    private List<PhotoSize> newChatPhoto; ///< Optional. A chat photo was change to this value
     public static final String DELETECHATPHOTO_FIELD = "delete_chat_photo";
     @JsonProperty(DELETECHATPHOTO_FIELD)
-    private Boolean deleteChatPhoto; ///< Optional. Informs that the group photo was deleted
+    private Boolean deleteChatPhoto; ///< Optional. Informs that the chat photo was deleted
     public static final String GROUPCHATCREATED_FIELD = "group_chat_created";
     @JsonProperty(GROUPCHATCREATED_FIELD)
     private Boolean groupchatCreated; ///< Optional. Informs that the group has been created
@@ -89,6 +85,18 @@ public class Message implements BotApiObject {
     public static final String VOICE_FIELD = "voice";
     @JsonProperty(VOICE_FIELD)
     private Voice voice; ///< Optional. Message is a voice message, information about the file
+    public static final String SUPERGROUPCREATED_FIELD = "supergroup_chat_created";
+    @JsonProperty(SUPERGROUPCREATED_FIELD)
+    private Boolean superGroupCreated; ///< Optional. Informs that the supergroup has been created
+    public static final String CHANNELCHATCREATED_FIELD = "channel_chat_created";
+    @JsonProperty(CHANNELCHATCREATED_FIELD)
+    private Boolean channelChatCreated; ///< Optional. Informs that the channel has been created
+    public static final String MIGRATETOCHAT_FIELD = "migrate_to_chat_id";
+    @JsonProperty(MIGRATETOCHAT_FIELD)
+    private Long migrateToChatId; ///< Optional. The chat has been migrated to a chat with specified identifier, not exceeding 1e13 by absolute value
+    public static final String MIGRATEFROMCHAT_FIELD = "migrate_from_chat_id";
+    @JsonProperty(MIGRATEFROMCHAT_FIELD)
+    private Long migrateFromChatId; ///< Optional. The chat has been migrated from a chat with specified identifier, not exceeding 1e13 by absolute value
 
     public Message() {
         super();
@@ -97,7 +105,9 @@ public class Message implements BotApiObject {
     public Message(JSONObject jsonObject) {
         super();
         this.messageId = jsonObject.getInt(MESSAGEID_FIELD);
-        this.from = new User(jsonObject.getJSONObject(FROM_FIELD));
+        if (jsonObject.has(FROM_FIELD)) {
+            this.from = new User(jsonObject.getJSONObject(FROM_FIELD));
+        }
         this.date = jsonObject.getInt(DATE_FIELD);
         this.chat = new Chat(jsonObject.getJSONObject(CHAT_FIELD));
         if (jsonObject.has(FORWARDFROM_FIELD)) {
@@ -157,10 +167,22 @@ public class Message implements BotApiObject {
             }
         }
         if (jsonObject.has(DELETECHATPHOTO_FIELD)) {
-            this.deleteChatPhoto = jsonObject.getBoolean(DELETECHATPHOTO_FIELD);
+            this.deleteChatPhoto = true;
         }
         if (jsonObject.has(GROUPCHATCREATED_FIELD)) {
-            this.groupchatCreated = jsonObject.getBoolean(GROUPCHATCREATED_FIELD);
+            this.groupchatCreated = true;
+        }
+        if (jsonObject.has(SUPERGROUPCREATED_FIELD)) {
+            this.superGroupCreated = true;
+        }
+        if (jsonObject.has(CHANNELCHATCREATED_FIELD)) {
+            this.channelChatCreated = true;
+        }
+        if (jsonObject.has(MIGRATETOCHAT_FIELD)) {
+            this.migrateToChatId = jsonObject.getLong(MIGRATETOCHAT_FIELD);
+        }
+        if (jsonObject.has(MIGRATEFROMCHAT_FIELD)) {
+            this.migrateFromChatId = jsonObject.getLong(MIGRATEFROMCHAT_FIELD);
         }
     }
 
@@ -192,7 +214,19 @@ public class Message implements BotApiObject {
         return chat.isGroupChat();
     }
 
-    public Integer getChatId() {
+    public boolean isUserMessage() {
+        return chat.isUserChat();
+    }
+
+    public boolean isChannelMessage() {
+        return chat.isChannelChat();
+    }
+
+    public boolean isSuperGroupMessage() {
+        return chat.isSuperGroupChat();
+    }
+
+    public Long getChatId() {
         return chat.getId();
     }
 
@@ -221,7 +255,7 @@ public class Message implements BotApiObject {
     }
 
     public boolean hasText() {
-        return text != null;
+        return text != null && !text.isEmpty();
     }
 
     public String getText() {
@@ -368,6 +402,38 @@ public class Message implements BotApiObject {
         this.voice = voice;
     }
 
+    public Boolean getSuperGroupCreated() {
+        return superGroupCreated;
+    }
+
+    public void setSuperGroupCreated(Boolean superGroupCreated) {
+        this.superGroupCreated = superGroupCreated;
+    }
+
+    public Boolean getChannelChatCreated() {
+        return channelChatCreated;
+    }
+
+    public void setChannelChatCreated(Boolean channelChatCreated) {
+        this.channelChatCreated = channelChatCreated;
+    }
+
+    public Long getMigrateToChatId() {
+        return migrateToChatId;
+    }
+
+    public void setMigrateToChatId(Long migrateToChatId) {
+        this.migrateToChatId = migrateToChatId;
+    }
+
+    public Long getMigrateFromChatId() {
+        return migrateFromChatId;
+    }
+
+    public void setMigrateFromChatId(Long migrateFromChatId) {
+        this.migrateFromChatId = migrateFromChatId;
+    }
+
     @Override
     public void serialize(JsonGenerator gen, SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
@@ -439,76 +505,24 @@ public class Message implements BotApiObject {
         if (groupchatCreated != null) {
             gen.writeBooleanField(GROUPCHATCREATED_FIELD, groupchatCreated);
         }
+        if (superGroupCreated != null) {
+            gen.writeBooleanField(SUPERGROUPCREATED_FIELD, superGroupCreated);
+        }
+        if (channelChatCreated != null) {
+            gen.writeBooleanField(CHANNELCHATCREATED_FIELD, channelChatCreated);
+        }
+        if (migrateToChatId != null) {
+            gen.writeNumberField(MIGRATETOCHAT_FIELD, migrateToChatId);
+        }
+        if (migrateFromChatId != null) {
+            gen.writeNumberField(MIGRATEFROMCHAT_FIELD, migrateFromChatId);
+        }
         gen.writeEndObject();
         gen.flush();
     }
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        if (forwardFrom != null) {
-            gen.writeObjectField(FORWARDFROM_FIELD, forwardFrom);
-        }
-        if (forwardDate != null) {
-            gen.writeNumberField(FORWARDDATE_FIELD, forwardDate);
-        }
-        if (text != null) {
-            gen.writeStringField(TEXT_FIELD, text);
-        }
-        if (audio != null) {
-            gen.writeObjectField(AUDIO_FIELD, audio);
-        }
-        if (document != null) {
-            gen.writeObjectField(DOCUMENT_FIELD, document);
-        }
-        if (photo != null && photo.size() > 0) {
-            gen.writeArrayFieldStart(PHOTO_FIELD);
-            for (PhotoSize photoSize : photo) {
-                gen.writeObject(photoSize);
-            }
-            gen.writeEndArray();
-        }
-        if (sticker != null) {
-            gen.writeObjectField(STICKER_FIELD, sticker);
-        }
-        if (video != null) {
-            gen.writeObjectField(VIDEO_FIELD, video);
-        }
-        if (contact != null) {
-            gen.writeObjectField(CONTACT_FIELD, contact);
-        }
-        if (location != null) {
-            gen.writeObjectField(LOCATION_FIELD, location);
-        }
-        if (voice != null) {
-            gen.writeObjectField(VOICE_FIELD, voice);
-        }
-        if (newChatParticipant != null) {
-            gen.writeObjectField(NEWCHATPARTICIPANT_FIELD, newChatParticipant);
-        }
-        if (leftChatParticipant != null) {
-            gen.writeObjectField(LEFTCHATPARTICIPANT_FIELD, leftChatParticipant);
-        }
-        if (replyToMessage != null) {
-            gen.writeObjectField(REPLYTOMESSAGE_FIELD, replyToMessage);
-        }
-        if (newChatTitle != null) {
-            gen.writeStringField(NEWCHATTITLE_FIELD, newChatTitle);
-        }
-        if (newChatPhoto != null && newChatPhoto.size() > 0) {
-            gen.writeArrayFieldStart(NEWCHATPHOTO_FIELD);
-            for (PhotoSize photoSize: newChatPhoto) {
-                gen.writeObject(photoSize);
-            }
-            gen.writeEndArray();
-        }
-        if (deleteChatPhoto != null) {
-            gen.writeBooleanField(DELETECHATPHOTO_FIELD, deleteChatPhoto);
-        }
-        if (groupchatCreated != null) {
-            gen.writeBooleanField(GROUPCHATCREATED_FIELD, groupchatCreated);
-        }
-        gen.writeEndObject();
-        gen.flush();
-
+        serialize(gen, serializers);
     }
 }

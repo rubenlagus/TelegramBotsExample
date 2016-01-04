@@ -4,15 +4,16 @@ import org.telegram.BotConfig;
 import org.telegram.BuildVars;
 import org.telegram.Commands;
 import org.telegram.SenderHelper;
-import org.telegram.api.objects.*;
-import org.telegram.database.DatabaseManager;
 import org.telegram.api.methods.BotApiMethod;
 import org.telegram.api.methods.SendMessage;
+import org.telegram.api.objects.*;
+import org.telegram.database.DatabaseManager;
 import org.telegram.services.*;
 import org.telegram.structure.WeatherAlert;
 import org.telegram.updatesreceivers.UpdatesThread;
 import org.telegram.updatesreceivers.Webhook;
 
+import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import java.util.List;
  * @date 24 of June of 2015
  */
 public class WeatherHandlers implements UpdatesCallback {
+    private static final String LOGTAG = "WEATHERHANDLERS";
     private static final String TOKEN = BotConfig.TOKENWEATHER;
     private static final String BOTNAME = BotConfig.USERNAMEWEATHER;
     private static final boolean USEWEBHOOK = true;
@@ -46,7 +48,7 @@ public class WeatherHandlers implements UpdatesCallback {
     private final Object webhookLock = new Object();
 
     public WeatherHandlers(Webhook webhook) {
-        if (USEWEBHOOK) {
+        if (USEWEBHOOK && BuildVars.useWebHook) {
             webhook.registerWebhook(this, BOTNAME);
             SenderHelper.SendWebhook(Webhook.getExternalURL(BOTNAME), TOKEN);
         } else {
@@ -75,12 +77,19 @@ public class WeatherHandlers implements UpdatesCallback {
     private static void sendAlerts() {
         List<WeatherAlert> allAlerts = DatabaseManager.getInstance().getAllAlerts();
         for (WeatherAlert weatherAlert : allAlerts) {
+            synchronized (Thread.currentThread()) {
+                try {
+                    Thread.currentThread().wait(35);
+                } catch (InterruptedException e) {
+                    BotLogger.severe(LOGTAG, e);
+                }
+            }
             String[] userOptions = DatabaseManager.getInstance().getUserWeatherOptions(weatherAlert.getUserId());
             String weather = WeatherService.getInstance().fetchWeatherAlert(weatherAlert.getCityId(),
                     weatherAlert.getUserId(), userOptions[0], userOptions[1]);
             SendMessage sendMessage = new SendMessage();
             sendMessage.enableMarkdown(true);
-            sendMessage.setChatId(weatherAlert.getUserId());
+            sendMessage.setChatId(String.valueOf(weatherAlert.getUserId()));
             sendMessage.setText(weather);
             sendBuiltMessage(sendMessage);
         }
@@ -88,17 +97,23 @@ public class WeatherHandlers implements UpdatesCallback {
 
     @Override
     public void onUpdateReceived(Update update) {
-        Message message = update.getMessage();
-        if (message != null) {
-            BotApiMethod botApiMethod = handleIncomingMessage(message);
-            SenderHelper.SendApiMethod(botApiMethod, TOKEN);
+        if (update.hasMessage()) {
+            Message message = update.getMessage();
+            if (message.hasText() || message.hasLocation()) {
+                BotApiMethod botApiMethod = handleIncomingMessage(message);
+                try {
+                    SenderHelper.SendApiMethod(botApiMethod, TOKEN);
+                } catch (InvalidObjectException e) {
+                    BotLogger.error(LOGTAG, e);
+                }
+            }
         }
     }
 
     @Override
     public BotApiMethod onWebhookUpdateReceived(Update update) {
-        Message message = update.getMessage();
-        if (message != null) {
+        if (update.hasMessage()) {
+            Message message = update.getMessage();
             synchronized (webhookLock) {
                 return handleIncomingMessage(message);
             }
@@ -106,9 +121,9 @@ public class WeatherHandlers implements UpdatesCallback {
         return null;
     }
 
-    private static BotApiMethod onCancelCommand(Integer chatId, Integer userId, Integer messageId, ReplyKeyboard replyKeyboard, String language) {
+    private static BotApiMethod onCancelCommand(Long chatId, Integer userId, Integer messageId, ReplyKeyboard replyKeyboard, String language) {
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(chatId);
+        sendMessage.setChatId(chatId.toString());
         sendMessage.enableMarkdown(true);
         sendMessage.setReplayMarkup(getMainMenuKeyboard(language));
         sendMessage.setReplayToMessageId(messageId);
@@ -124,7 +139,7 @@ public class WeatherHandlers implements UpdatesCallback {
     private static BotApiMethod handleIncomingMessage(Message message) {
         final int state = DatabaseManager.getInstance().getWeatherState(message.getFrom().getId(), message.getChatId());
         final String language = DatabaseManager.getInstance().getUserWeatherOptions(message.getFrom().getId())[0];
-        if (message.isGroupMessage() && message.hasText()) {
+        if (!message.isUserMessage() && message.hasText()) {
             if (isCommandForOther(message.getText())) {
                 return null;
             } else if (message.getText().startsWith(Commands.STOPCOMMAND)){
@@ -168,9 +183,9 @@ public class WeatherHandlers implements UpdatesCallback {
         return botApiMethod;
     }
 
-    private static void sendHideKeyboard(Integer userId, Integer chatId, Integer messageId) {
+    private static void sendHideKeyboard(Integer userId, Long chatId, Integer messageId) {
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(chatId);
+        sendMessage.setChatId(chatId.toString());
         sendMessage.enableMarkdown(true);
         sendMessage.setReplayToMessageId(messageId);
         sendMessage.setText(Emoji.WAVING_HAND_SIGN.toString());
@@ -180,8 +195,12 @@ public class WeatherHandlers implements UpdatesCallback {
         replyKeyboardHide.setHideKeyboard(true);
         sendMessage.setReplayMarkup(replyKeyboardHide);
 
-        SenderHelper.SendApiMethod(sendMessage, TOKEN);
-        DatabaseManager.getInstance().insertWeatherState(userId, chatId, STARTSTATE);
+        try {
+            SenderHelper.SendApiMethod(sendMessage, TOKEN);
+            DatabaseManager.getInstance().insertWeatherState(userId, chatId, STARTSTATE);
+        } catch (InvalidObjectException e) {
+            BotLogger.error(LOGTAG, e);
+        }
 
     }
 
@@ -231,7 +250,7 @@ public class WeatherHandlers implements UpdatesCallback {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setReplayToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(message.getChatId().toString());
         sendMessage.setReplayMarkup(getAlertsKeyboard(language));
         sendMessage.setText(LocalisationService.getInstance().getString("alertDeleted", language));
 
@@ -243,7 +262,7 @@ public class WeatherHandlers implements UpdatesCallback {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setReplayToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(message.getChatId().toString());
         sendMessage.setReplayMarkup(getAlertsKeyboard(language));
         sendMessage.setText(LocalisationService.getInstance().getString("alertsMenuMessage", language));
 
@@ -257,7 +276,7 @@ public class WeatherHandlers implements UpdatesCallback {
             if (message.getText().equals(getCancelCommand(language))) {
                 SendMessage sendMessage = new SendMessage();
                 sendMessage.enableMarkdown(true);
-                sendMessage.setChatId(message.getChatId());
+                sendMessage.setChatId(message.getChatId().toString());
                 sendMessage.setReplayToMessageId(message.getMessageId());
                 sendMessage.setReplayMarkup(getAlertsKeyboard(language));
                 sendMessage.setText(LocalisationService.getInstance().getString("alertsMenuMessage", language));
@@ -280,7 +299,7 @@ public class WeatherHandlers implements UpdatesCallback {
             sendMessageRequest.setReplayMarkup(getAlertsKeyboard(language));
             sendMessageRequest.setReplayToMessageId(message.getMessageId());
             sendMessageRequest.setText(getChooseNewAlertSetMessage(message.getText(), language));
-            sendMessageRequest.setChatId(message.getChatId());
+            sendMessageRequest.setChatId(message.getChatId().toString());
 
             DatabaseManager.getInstance().insertWeatherState(userId, message.getChatId(), ALERT);
             return sendMessageRequest;
@@ -316,7 +335,7 @@ public class WeatherHandlers implements UpdatesCallback {
         ReplyKeyboardMarkup replyKeyboardMarkup = getSettingsKeyboard(language);
         sendMessage.setReplayMarkup(replyKeyboardMarkup);
         sendMessage.setReplayToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(message.getChatId().toString());
         sendMessage.setText(getSettingsMessage(language));
 
         DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), SETTINGS);
@@ -327,7 +346,7 @@ public class WeatherHandlers implements UpdatesCallback {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(message.getChatId().toString());
         sendMessage.setReplayToMessageId(message.getMessageId());
         sendMessage.setReplayMarkup(getAlertsKeyboard(language));
         sendMessage.setText(getAlertListMessage(message.getFrom().getId(), language));
@@ -340,7 +359,7 @@ public class WeatherHandlers implements UpdatesCallback {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(message.getChatId().toString());
 
         ReplyKeyboardMarkup replyKeyboardMarkup = getAlertsListKeyboard(message.getFrom().getId(), language);
         if (replyKeyboardMarkup != null) {
@@ -360,7 +379,7 @@ public class WeatherHandlers implements UpdatesCallback {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(message.getChatId().toString());
         sendMessage.setReplayMarkup(getRecentsKeyboard(message.getFrom().getId(), language, false));
         sendMessage.setText(LocalisationService.getInstance().getString("chooseNewAlertCity", language));
         sendMessage.setReplayToMessageId(message.getMessageId());
@@ -397,7 +416,7 @@ public class WeatherHandlers implements UpdatesCallback {
         sendMessage.enableMarkdown(true);
 
         sendMessage.setReplayToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(message.getChatId().toString());
         sendMessage.setReplayMarkup(getAlertsKeyboard(language));
         sendMessage.setText(LocalisationService.getInstance().getString("alertsMenuMessage", language));
 
@@ -410,7 +429,7 @@ public class WeatherHandlers implements UpdatesCallback {
         sendMessage.enableMarkdown(true);
 
         sendMessage.setReplayToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(message.getChatId().toString());
         sendMessage.setReplayMarkup(getUnitsKeyboard(language));
         sendMessage.setText(getUnitsMessage(message.getFrom().getId(), language));
 
@@ -423,7 +442,7 @@ public class WeatherHandlers implements UpdatesCallback {
         sendMessage.enableMarkdown(true);
 
         sendMessage.setReplayToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(message.getChatId().toString());
         sendMessage.setReplayMarkup(getLanguagesKeyboard(language));
         sendMessage.setText(getLanguageMessage(language));
 
@@ -460,17 +479,17 @@ public class WeatherHandlers implements UpdatesCallback {
         ReplyKeyboardMarkup replyKeyboardMarkup = getSettingsKeyboard(language);
         sendMessage.setReplayMarkup(replyKeyboardMarkup);
         sendMessage.setReplayToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(message.getChatId().toString());
         sendMessage.setText(getSettingsMessage(language));
 
         DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), SETTINGS);
         return sendMessage;
     }
 
-    private static BotApiMethod onUnitsError(Integer chatId, Integer messageId, String language) {
+    private static BotApiMethod onUnitsError(Long chatId, Integer messageId, String language) {
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.enableMarkdown(true);
-        sendMessageRequest.setChatId(chatId);
+        sendMessageRequest.setChatId(chatId.toString());
         sendMessageRequest.setReplayMarkup(getUnitsKeyboard(language));
         sendMessageRequest.setText(LocalisationService.getInstance().getString("errorUnitsNotFound", language));
         sendMessageRequest.setReplayToMessageId(messageId);
@@ -478,12 +497,12 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessageRequest;
     }
 
-    private static BotApiMethod onUnitsChosen(Integer userId, Integer chatId, Integer messageId, String units, String language) {
+    private static BotApiMethod onUnitsChosen(Integer userId, Long chatId, Integer messageId, String units, String language) {
         DatabaseManager.getInstance().putUserWeatherUnitsOption(userId, units);
 
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.enableMarkdown(true);
-        sendMessageRequest.setChatId(chatId);
+        sendMessageRequest.setChatId(chatId.toString());
         sendMessageRequest.setText(LocalisationService.getInstance().getString("unitsUpdated", language));
         sendMessageRequest.setReplayToMessageId(messageId);
         sendMessageRequest.setReplayMarkup(getMainMenuKeyboard(language));
@@ -518,17 +537,17 @@ public class WeatherHandlers implements UpdatesCallback {
         ReplyKeyboardMarkup replyKeyboardMarkup = getSettingsKeyboard(language);
         sendMessage.setReplayMarkup(replyKeyboardMarkup);
         sendMessage.setReplayToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(message.getChatId().toString());
         sendMessage.setText(getSettingsMessage(language));
 
         DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), SETTINGS);
         return sendMessage;
     }
 
-    private static BotApiMethod onLanguageError(Integer chatId, Integer messageId, String language) {
+    private static BotApiMethod onLanguageError(Long chatId, Integer messageId, String language) {
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.enableMarkdown(true);
-        sendMessageRequest.setChatId(chatId);
+        sendMessageRequest.setChatId(chatId.toString());
         sendMessageRequest.setReplayMarkup(getLanguagesKeyboard(language));
         sendMessageRequest.setText(LocalisationService.getInstance().getString("errorLanguageNotFound", language));
         sendMessageRequest.setReplayToMessageId(messageId);
@@ -536,13 +555,13 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessageRequest;
     }
 
-    private static BotApiMethod onLanguageChosen(Integer userId, Integer chatId, Integer messageId, String language) {
+    private static BotApiMethod onLanguageChosen(Integer userId, Long chatId, Integer messageId, String language) {
         String languageCode = LocalisationService.getInstance().getLanguageCodeByName(language);
         DatabaseManager.getInstance().putUserWeatherLanguageOption(userId, languageCode);
 
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.enableMarkdown(true);
-        sendMessageRequest.setChatId(chatId);
+        sendMessageRequest.setChatId(chatId.toString());
         sendMessageRequest.setText(LocalisationService.getInstance().getString("languageUpdated", languageCode));
         sendMessageRequest.setReplayToMessageId(messageId);
         sendMessageRequest.setReplayMarkup(getMainMenuKeyboard(languageCode));
@@ -597,7 +616,7 @@ public class WeatherHandlers implements UpdatesCallback {
         }
     }
 
-    private static BotApiMethod onForecastWeatherCityReceived(Integer chatId, Integer userId, Integer messageId, String text, String language) {
+    private static BotApiMethod onForecastWeatherCityReceived(Long chatId, Integer userId, Integer messageId, String text, String language) {
         Integer cityId = DatabaseManager.getInstance().getRecentWeatherIdByCity(userId, text);
         if (cityId != null) {
             String unitsSystem = DatabaseManager.getInstance().getUserWeatherOptions(userId)[1];
@@ -607,7 +626,7 @@ public class WeatherHandlers implements UpdatesCallback {
             sendMessageRequest.setReplayMarkup(getMainMenuKeyboard(language));
             sendMessageRequest.setReplayToMessageId(messageId);
             sendMessageRequest.setText(weather);
-            sendMessageRequest.setChatId(chatId);
+            sendMessageRequest.setChatId(chatId.toString());
 
             DatabaseManager.getInstance().insertWeatherState(userId, chatId, MAINMENU);
             return sendMessageRequest;
@@ -616,12 +635,12 @@ public class WeatherHandlers implements UpdatesCallback {
         }
     }
 
-    private static BotApiMethod onLocationForecastWeatherCommand(Integer chatId, Integer userId, Integer messageId, String language) {
+    private static BotApiMethod onLocationForecastWeatherCommand(Long chatId, Integer userId, Integer messageId, String language) {
         ForceReplyKeyboard forceReplyKeyboard = getForceReply();
 
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(chatId);
+        sendMessage.setChatId(chatId.toString());
         sendMessage.setReplayToMessageId(messageId);
         sendMessage.setReplayMarkup(forceReplyKeyboard);
         sendMessage.setText(LocalisationService.getInstance().getString("onWeatherLocationCommand", language));
@@ -630,12 +649,12 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onNewForecastWeatherCommand(Integer chatId, Integer userId, Integer messageId, String language) {
+    private static BotApiMethod onNewForecastWeatherCommand(Long chatId, Integer userId, Integer messageId, String language) {
         ForceReplyKeyboard forceReplyKeyboard = getForceReply();
 
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(chatId);
+        sendMessage.setChatId(chatId.toString());
         sendMessage.setReplayToMessageId(messageId);
         sendMessage.setReplayMarkup(forceReplyKeyboard);
         sendMessage.setText(LocalisationService.getInstance().getString("onWeatherNewCommand", language));
@@ -699,7 +718,7 @@ public class WeatherHandlers implements UpdatesCallback {
         }
     }
 
-    private static BotApiMethod onCurrentWeatherCityReceived(Integer chatId, Integer userId, Integer messageId, String text, String language) {
+    private static BotApiMethod onCurrentWeatherCityReceived(Long chatId, Integer userId, Integer messageId, String text, String language) {
         Integer cityId = DatabaseManager.getInstance().getRecentWeatherIdByCity(userId, text);
         if (cityId != null) {
             String unitsSystem = DatabaseManager.getInstance().getUserWeatherOptions(userId)[1];
@@ -709,7 +728,7 @@ public class WeatherHandlers implements UpdatesCallback {
             sendMessageRequest.setReplayMarkup(getMainMenuKeyboard(language));
             sendMessageRequest.setReplayToMessageId(messageId);
             sendMessageRequest.setText(weather);
-            sendMessageRequest.setChatId(chatId);
+            sendMessageRequest.setChatId(chatId.toString());
             DatabaseManager.getInstance().insertWeatherState(userId, chatId, MAINMENU);
             return sendMessageRequest;
         } else {
@@ -717,12 +736,12 @@ public class WeatherHandlers implements UpdatesCallback {
         }
     }
 
-    private static BotApiMethod onLocationCurrentWeatherCommand(Integer chatId, Integer userId, Integer messageId, String language) {
+    private static BotApiMethod onLocationCurrentWeatherCommand(Long chatId, Integer userId, Integer messageId, String language) {
         ForceReplyKeyboard forceReplyKeyboard = getForceReply();
 
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(chatId);
+        sendMessage.setChatId(chatId.toString());
         sendMessage.setReplayToMessageId(messageId);
         sendMessage.setReplayMarkup(forceReplyKeyboard);
         sendMessage.setText(LocalisationService.getInstance().getString("onWeatherLocationCommand", language));
@@ -731,12 +750,12 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onNewCurrentWeatherCommand(Integer chatId, Integer userId, Integer messageId, String language) {
+    private static BotApiMethod onNewCurrentWeatherCommand(Long chatId, Integer userId, Integer messageId, String language) {
         ForceReplyKeyboard forceReplyKeyboard = getForceReply();
 
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(chatId);
+        sendMessage.setChatId(chatId.toString());
         sendMessage.setReplayToMessageId(messageId);
         sendMessage.setReplayMarkup(forceReplyKeyboard);
         sendMessage.setText(LocalisationService.getInstance().getString("onWeatherNewCommand", language));
@@ -767,7 +786,7 @@ public class WeatherHandlers implements UpdatesCallback {
             } else if (message.getText().equals(getSettingsCommand(language))) {
                 botApiMethod = onSettingsChoosen(message, language);
             } else if (message.getText().equals(getRateCommand(language))) {
-                botApiMethod = sendRateMessage(message.getChatId(), message.getMessageId(), null, language);
+                botApiMethod = sendRateMessage(message.getChatId().toString(), message.getMessageId(), null, language);
             } else {
                 botApiMethod = sendChooseOptionMessage(message.getChatId(), message.getMessageId(),
                         getMainMenuKeyboard(language), language);
@@ -787,7 +806,7 @@ public class WeatherHandlers implements UpdatesCallback {
         ReplyKeyboardMarkup replyKeyboardMarkup = getSettingsKeyboard(language);
         sendMessage.setReplayMarkup(replyKeyboardMarkup);
         sendMessage.setReplayToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(message.getChatId().toString());
         sendMessage.setText(getSettingsMessage(language));
 
         DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), SETTINGS);
@@ -801,7 +820,7 @@ public class WeatherHandlers implements UpdatesCallback {
         ReplyKeyboardMarkup replyKeyboardMarkup = getRecentsKeyboard(message.getFrom().getId(), language);
         sendMessage.setReplayMarkup(replyKeyboardMarkup);
         sendMessage.setReplayToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(message.getChatId().toString());
         if (replyKeyboardMarkup.getKeyboard().size() > 3) {
             sendMessage.setText(LocalisationService.getInstance().getString("onForecastCommandFromHistory", language));
         } else {
@@ -819,7 +838,7 @@ public class WeatherHandlers implements UpdatesCallback {
         ReplyKeyboardMarkup replyKeyboardMarkup = getRecentsKeyboard(message.getFrom().getId(), language);
         sendMessage.setReplayMarkup(replyKeyboardMarkup);
         sendMessage.setReplayToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(message.getChatId().toString());
         if (replyKeyboardMarkup.getKeyboard().size() > 3) {
             sendMessage.setText(LocalisationService.getInstance().getString("onCurrentCommandFromHistory", language));
         } else {
@@ -1136,14 +1155,14 @@ public class WeatherHandlers implements UpdatesCallback {
     private static BotApiMethod sendMessageDefault(Message message, String language) {
         ReplyKeyboardMarkup replyKeyboardMarkup = getMainMenuKeyboard(language);
         DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), MAINMENU);
-        return sendHelpMessage(message.getChatId(), message.getMessageId(), replyKeyboardMarkup, language);
+        return sendHelpMessage(message.getChatId().toString(), message.getMessageId(), replyKeyboardMarkup, language);
     }
 
-    private static BotApiMethod sendChooseOptionMessage(Integer chatId, Integer messageId,
+    private static BotApiMethod sendChooseOptionMessage(Long chatId, Integer messageId,
                                                 ReplyKeyboard replyKeyboard, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(chatId);
+        sendMessage.setChatId(chatId.toString());
         sendMessage.setReplayToMessageId(messageId);
         sendMessage.setReplayMarkup(replyKeyboard);
         sendMessage.setText(LocalisationService.getInstance().getString("chooseOption", language));
@@ -1151,7 +1170,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod sendHelpMessage(Integer chatId, Integer messageId, ReplyKeyboardMarkup replyKeyboardMarkup, String language) {
+    private static BotApiMethod sendHelpMessage(String chatId, Integer messageId, ReplyKeyboardMarkup replyKeyboardMarkup, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(chatId);
@@ -1163,7 +1182,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod sendRateMessage(Integer chatId, Integer messageId, ReplyKeyboardMarkup replyKeyboardMarkup, String language) {
+    private static BotApiMethod sendRateMessage(String chatId, Integer messageId, ReplyKeyboardMarkup replyKeyboardMarkup, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(chatId);
@@ -1189,13 +1208,13 @@ public class WeatherHandlers implements UpdatesCallback {
         sendMessageRequest.setReplayMarkup(getMainMenuKeyboard(language));
         sendMessageRequest.setReplayToMessageId(message.getMessageId());
         sendMessageRequest.setText(weather);
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
 
         DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), MAINMENU);
         return sendMessageRequest;
     }
 
-    private static BotApiMethod onForecastWeatherReceived(Integer chatId, Integer userId, Integer messageId, String text, String language) {
+    private static BotApiMethod onForecastWeatherReceived(Long chatId, Integer userId, Integer messageId, String text, String language) {
         String unitsSystem = DatabaseManager.getInstance().getUserWeatherOptions(userId)[1];
         String weather = WeatherService.getInstance().fetchWeatherForecast(text, userId, language, unitsSystem);
         SendMessage sendMessageRequest = new SendMessage();
@@ -1203,7 +1222,7 @@ public class WeatherHandlers implements UpdatesCallback {
         sendMessageRequest.setReplayMarkup(getMainMenuKeyboard(language));
         sendMessageRequest.setReplayToMessageId(messageId);
         sendMessageRequest.setText(weather);
-        sendMessageRequest.setChatId(chatId);
+        sendMessageRequest.setChatId(chatId.toString());
 
         DatabaseManager.getInstance().insertWeatherState(userId, chatId, MAINMENU);
         return sendMessageRequest;
@@ -1218,13 +1237,13 @@ public class WeatherHandlers implements UpdatesCallback {
         sendMessageRequest.setReplayMarkup(getMainMenuKeyboard(language));
         sendMessageRequest.setReplayToMessageId(message.getMessageId());
         sendMessageRequest.setText(weather);
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
 
         DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), MAINMENU);
         return sendMessageRequest;
     }
 
-    private static BotApiMethod onCurrentWeatherReceived(Integer chatId, Integer userId, Integer messageId, String text, String language) {
+    private static BotApiMethod onCurrentWeatherReceived(Long chatId, Integer userId, Integer messageId, String text, String language) {
         String unitsSystem = DatabaseManager.getInstance().getUserWeatherOptions(userId)[1];
         String weather = WeatherService.getInstance().fetchWeatherCurrent(text, userId, language, unitsSystem);
         SendMessage sendMessageRequest = new SendMessage();
@@ -1232,7 +1251,7 @@ public class WeatherHandlers implements UpdatesCallback {
         sendMessageRequest.setReplayMarkup(getMainMenuKeyboard(language));
         sendMessageRequest.setReplayToMessageId(messageId);
         sendMessageRequest.setText(weather);
-        sendMessageRequest.setChatId(chatId);
+        sendMessageRequest.setChatId(chatId.toString());
 
         DatabaseManager.getInstance().insertWeatherState(userId, chatId, MAINMENU);
         return sendMessageRequest;
@@ -1243,7 +1262,11 @@ public class WeatherHandlers implements UpdatesCallback {
     // region Helper Methods
 
     private static void sendBuiltMessage(SendMessage sendMessage) {
-        SenderHelper.SendApiMethod(sendMessage, TOKEN);
+        try {
+            SenderHelper.SendApiMethod(sendMessage, TOKEN);
+        } catch (InvalidObjectException e) {
+            BotLogger.severe(LOGTAG, e);
+        }
     }
 
     // endregion Helper Methods

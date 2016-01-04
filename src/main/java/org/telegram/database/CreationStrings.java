@@ -7,7 +7,7 @@ package org.telegram.database;
  * @date 15 of May of 2015
  */
 public class CreationStrings {
-    public static final int version = 6;
+    public static final int version = 7;
     public static final String createVersionTable = "CREATE TABLE IF NOT EXISTS Versions(ID INTEGER PRIMARY KEY AUTO_INCREMENT, Version INTEGER);";
     public static final String insertCurrentVersion = "INSERT IGNORE INTO Versions (Version) VALUES(%d);";
     public static final String createFilesTable = "CREATE TABLE IF NOT EXISTS Files (fileId VARCHAR(100) PRIMARY KEY, userId INTEGER NOT NULL, caption TEXT NOT NULL)";
@@ -21,7 +21,7 @@ public class CreationStrings {
     public static final String createUserLanguageDatabase = "CREATE TABLE IF NOT EXISTS UserLanguage (userId INTEGER PRIMARY KEY, languageCode VARCHAR(10) NOT NULL)";
     public static final String createUserWeatherOptionDatabase = "CREATE TABLE IF NOT EXISTS UserWeatherOptions (userId INTEGER PRIMARY KEY, languageCode VARCHAR(10) NOT NULL DEFAULT 'en', " +
             "units VARCHAR(10) NOT NULL DEFAULT 'metric')";
-    public static final String createWeatherStateTable = "CREATE TABLE IF NOT EXISTS WeatherState (userId INTEGER NOT NULL, chatId INTEGER NOT NULL, state INTEGER NOT NULL DEFAULT 0, " +
+    public static final String createWeatherStateTable = "CREATE TABLE IF NOT EXISTS WeatherState (userId INTEGER NOT NULL, chatId BIGINT NOT NULL, state INTEGER NOT NULL DEFAULT 0, " +
             "languageCode VARCHAR(10) NOT NULL DEFAULT 'en', " +
             "CONSTRAINT `watherPrimaryKey` PRIMARY KEY(userId,chatId));";
     public static final String createWeatherAlertTable = "CREATE TABLE IF NOT EXISTS WeatherAlert (id INTEGER PRIMARY KEY AUTO_INCREMENT, userId INTEGER NOT NULL, cityId INTEGER NOT NULL, " +

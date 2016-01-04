@@ -3,7 +3,10 @@ package org.telegram.services;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
  * @author Ruben Bermudez
@@ -31,6 +34,7 @@ public class LocalisationService {
     private ResourceBundle galician;
     private ResourceBundle persian;
     private ResourceBundle turkish;
+    private ResourceBundle esperanto;
 
     private class CustomClassLoader extends ClassLoader {
         public CustomClassLoader(ClassLoader parent) {
@@ -92,6 +96,8 @@ public class LocalisationService {
         supportedLanguages.put("nl", "Nederlands");
         italian = ResourceBundle.getBundle("localisation.strings", new Locale("it", "IT"), loader);
         supportedLanguages.put("it", "Italiano");
+        esperanto = ResourceBundle.getBundle("localisation.strings", new Locale("eo", "EO"), loader);
+        supportedLanguages.put("eo", "Esperanto");
         /*
         german = ResourceBundle.getBundle("localisation.strings", new Locale("de", "DE"), loader);
         supportedLanguages.put("de", "Deutsch");
@@ -154,6 +160,9 @@ public class LocalisationService {
                     break;
                 case "it":
                     result = italian.getString(key);
+                    break;
+                case "eo":
+                    result = esperanto.getString(key);
                     break;
                 /*case "de":
                     result = german.getString(key);

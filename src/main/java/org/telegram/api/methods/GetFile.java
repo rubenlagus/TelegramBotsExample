@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import org.json.JSONObject;
 import org.telegram.api.objects.File;
-import org.telegram.api.objects.Message;
 
 import java.io.IOException;
 
@@ -50,11 +49,7 @@ public class GetFile extends BotApiMethod<File> {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField(METHOD_FIELD, PATH);
-        gen.writeStringField(FILEID_FIELD, fileId);
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 
     @Override

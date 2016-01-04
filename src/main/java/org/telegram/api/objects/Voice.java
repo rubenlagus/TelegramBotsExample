@@ -94,16 +94,6 @@ public class Voice implements BotApiObject {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField(FILEID_FIELD, fileId);
-        gen.writeNumberField(DURATION_FIELD, duration);
-        if (mimeType != null) {
-            gen.writeStringField(MIMETYPE_FIELD, mimeType);
-        }
-        if (fileSize != null) {
-            gen.writeNumberField(FILESIZE_FIELD, fileSize);
-        }
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

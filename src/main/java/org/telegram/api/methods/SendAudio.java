@@ -21,7 +21,7 @@ public class SendAudio {
     public static final String PATH = "sendaudio";
 
     public static final String CHATID_FIELD = "chat_id";
-    private Integer chatId; ///< Unique identifier for the message recepient — User or GroupChat id
+    private String chatId; ///< Unique identifier for the chat to send the message to (or Username fro channels)
     public static final String AUDIO_FIELD = "audio";
     private String audio; ///< Audio file to send. file_id as String to resend an audio that is already on the Telegram servers
     public static final String REPLYTOMESSAGEID_FIELD = "reply_to_message_id";
@@ -39,11 +39,11 @@ public class SendAudio {
         super();
     }
 
-    public Integer getChatId() {
+    public String getChatId() {
         return chatId;
     }
 
-    public void setChatId(Integer chatId) {
+    public void setChatId(String chatId) {
         this.chatId = chatId;
     }
 

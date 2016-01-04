@@ -16,7 +16,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
-import org.telegram.api.objects.Message;
 import org.telegram.api.methods.*;
 import org.telegram.services.BotLogger;
 import org.telegram.updateshandlers.SentCallback;
@@ -24,10 +23,8 @@ import org.telegram.updateshandlers.SentCallback;
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -38,7 +35,7 @@ import java.util.concurrent.Executors;
  * @date 20 of June of 2015
  */
 public class SenderHelper {
-    private static volatile BotLogger log = BotLogger.getLogger(SenderHelper.class.getName());
+    private static final  String LOGTAG = "SENDERHELPER";
     private static final ExecutorService exe = Executors.newSingleThreadExecutor();
 
     public static void SendDocument(SendDocument sendDocument, String botToken) {
@@ -49,7 +46,7 @@ public class SenderHelper {
 
             if (sendDocument.isNewDocument()) {
                 MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                builder.addTextBody(SendDocument.CHATID_FIELD, sendDocument.getChatId().toString());
+                builder.addTextBody(SendDocument.CHATID_FIELD, sendDocument.getChatId());
                 builder.addBinaryBody(SendDocument.DOCUMENT_FIELD, new File(sendDocument.getDocument()), ContentType.APPLICATION_OCTET_STREAM, sendDocument.getDocumentName());
                 if (sendDocument.getReplayMarkup() != null) {
                     builder.addTextBody(SendDocument.REPLYMARKUP_FIELD, sendDocument.getReplayMarkup().toJson().toString());
@@ -61,7 +58,7 @@ public class SenderHelper {
                 httppost.setEntity(multipart);
             } else {
                 List<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new BasicNameValuePair(SendDocument.CHATID_FIELD, sendDocument.getChatId().toString()));
+                nameValuePairs.add(new BasicNameValuePair(SendDocument.CHATID_FIELD, sendDocument.getChatId()));
                 nameValuePairs.add(new BasicNameValuePair(SendDocument.DOCUMENT_FIELD, sendDocument.getDocument()));
                 if (sendDocument.getReplayMarkup() != null) {
                     nameValuePairs.add(new BasicNameValuePair(SendDocument.REPLYMARKUP_FIELD, sendDocument.getReplayMarkup().toString()));
@@ -73,12 +70,13 @@ public class SenderHelper {
             }
 
             CloseableHttpResponse response = httpClient.execute(httppost);
+        } catch (IOException e) {
+            BotLogger.error(LOGTAG, e);
+        } finally {
             if (sendDocument.isNewDocument()) {
                 File fileToDelete = new File(sendDocument.getDocument());
                 fileToDelete.delete();
             }
-        } catch (IOException e) {
-            log.error(e);
         }
     }
 
@@ -90,7 +88,7 @@ public class SenderHelper {
 
             if (sendPhoto.isNewPhoto()) {
                 MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                builder.addTextBody(SendPhoto.CHATID_FIELD, sendPhoto.getChatId().toString());
+                builder.addTextBody(SendPhoto.CHATID_FIELD, sendPhoto.getChatId());
                 builder.addBinaryBody(SendPhoto.PHOTO_FIELD, new File(sendPhoto.getPhoto()), ContentType.APPLICATION_OCTET_STREAM, sendPhoto.getPhotoName());
                 if (sendPhoto.getReplayMarkup() != null) {
                     builder.addTextBody(SendPhoto.REPLYMARKUP_FIELD, sendPhoto.getReplayMarkup().toJson().toString());
@@ -105,7 +103,7 @@ public class SenderHelper {
                 httppost.setEntity(multipart);
             } else {
                 List<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new BasicNameValuePair(SendPhoto.CHATID_FIELD, sendPhoto.getChatId().toString()));
+                nameValuePairs.add(new BasicNameValuePair(SendPhoto.CHATID_FIELD, sendPhoto.getChatId()));
                 nameValuePairs.add(new BasicNameValuePair(SendPhoto.PHOTO_FIELD, sendPhoto.getPhoto()));
                 if (sendPhoto.getReplayMarkup() != null) {
                     nameValuePairs.add(new BasicNameValuePair(SendPhoto.REPLYMARKUP_FIELD, sendPhoto.getReplayMarkup().toString()));
@@ -121,7 +119,7 @@ public class SenderHelper {
 
             CloseableHttpResponse response = httpClient.execute(httppost);
         } catch (IOException e) {
-            log.error(e);
+            BotLogger.error(LOGTAG, e);
         }
     }
 
@@ -133,7 +131,7 @@ public class SenderHelper {
 
             if (sendVideo.isNewVideo()) {
                 MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                builder.addTextBody(SendVideo.CHATID_FIELD, sendVideo.getChatId().toString());
+                builder.addTextBody(SendVideo.CHATID_FIELD, sendVideo.getChatId());
                 builder.addBinaryBody(SendVideo.VIDEO_FIELD, new File(sendVideo.getVideo()), ContentType.APPLICATION_OCTET_STREAM, sendVideo.getVideoName());
                 if (sendVideo.getReplayMarkup() != null) {
                     builder.addTextBody(SendVideo.REPLYMARKUP_FIELD, sendVideo.getReplayMarkup().toJson().toString());
@@ -151,7 +149,7 @@ public class SenderHelper {
                 httppost.setEntity(multipart);
             } else {
                 List<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new BasicNameValuePair(SendVideo.CHATID_FIELD, sendVideo.getChatId().toString()));
+                nameValuePairs.add(new BasicNameValuePair(SendVideo.CHATID_FIELD, sendVideo.getChatId()));
                 nameValuePairs.add(new BasicNameValuePair(SendVideo.VIDEO_FIELD, sendVideo.getVideo()));
                 if (sendVideo.getReplayMarkup() != null) {
                     nameValuePairs.add(new BasicNameValuePair(SendVideo.REPLYMARKUP_FIELD, sendVideo.getReplayMarkup().toString()));
@@ -170,7 +168,7 @@ public class SenderHelper {
 
             CloseableHttpResponse response = httpClient.execute(httppost);
         } catch (IOException e) {
-            log.error(e);
+            BotLogger.error(LOGTAG, e);
         }
     }
 
@@ -182,7 +180,7 @@ public class SenderHelper {
 
             if (sendSticker.isNewSticker()) {
                 MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                builder.addTextBody(SendSticker.CHATID_FIELD, sendSticker.getChatId().toString());
+                builder.addTextBody(SendSticker.CHATID_FIELD, sendSticker.getChatId());
                 builder.addBinaryBody(SendSticker.STICKER_FIELD, new File(sendSticker.getSticker()), ContentType.APPLICATION_OCTET_STREAM, sendSticker.getStickerName());
                 if (sendSticker.getReplayMarkup() != null) {
                     builder.addTextBody(SendSticker.REPLYMARKUP_FIELD, sendSticker.getReplayMarkup().toJson().toString());
@@ -194,7 +192,7 @@ public class SenderHelper {
                 httppost.setEntity(multipart);
             } else {
                 List<NameValuePair> nameValuePairs = new ArrayList<>();
-                nameValuePairs.add(new BasicNameValuePair(SendSticker.CHATID_FIELD, sendSticker.getChatId().toString()));
+                nameValuePairs.add(new BasicNameValuePair(SendSticker.CHATID_FIELD, sendSticker.getChatId()));
                 nameValuePairs.add(new BasicNameValuePair(SendSticker.STICKER_FIELD, sendSticker.getSticker()));
                 if (sendSticker.getReplayMarkup() != null) {
                     nameValuePairs.add(new BasicNameValuePair(SendSticker.REPLYMARKUP_FIELD, sendSticker.getReplayMarkup().toString()));
@@ -206,14 +204,14 @@ public class SenderHelper {
             }
 
             CloseableHttpResponse response = httpClient.execute(httppost);
+        } catch (IOException e) {
+            BotLogger.error(LOGTAG, e);
+        } finally {
             if (sendSticker.isNewSticker()) {
                 File fileToDelete = new File(sendSticker.getSticker());
                 fileToDelete.delete();
             }
-        } catch (IOException e) {
-            log.error(e);
         }
-
     }
 
     public static void SendWebhook(String webHookURL, String botToken) {
@@ -233,14 +231,15 @@ public class SenderHelper {
             HttpEntity ht = response.getEntity();
             BufferedHttpEntity buf = new BufferedHttpEntity(ht);
             String responseContent = EntityUtils.toString(buf, "UTF-8");
-            log.debug(responseContent);
+            BotLogger.debug(LOGTAG, responseContent);
         } catch (IOException e) {
-            log.error(e);
+            BotLogger.error(LOGTAG, e);
         }
 
     }
 
-    public static void SendApiMethod(BotApiMethod method, String botToken) {
+    public static void SendApiMethod(BotApiMethod method, String botToken) throws InvalidObjectException {
+        String responseContent = "{}";
         try {
             CloseableHttpClient httpclient = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             String url = Constants.BASEURL + botToken + "/" + method.getPath();
@@ -250,15 +249,16 @@ public class SenderHelper {
             CloseableHttpResponse response = httpclient.execute(httppost);
             HttpEntity ht = response.getEntity();
             BufferedHttpEntity buf = new BufferedHttpEntity(ht);
-            String responseContent = EntityUtils.toString(buf, "UTF-8");
-
-            JSONObject jsonObject = new JSONObject(responseContent);
-            if (!jsonObject.getBoolean("ok")) {
-                throw new InvalidObjectException(jsonObject.toString());
-            }
+            responseContent = EntityUtils.toString(buf, "UTF-8");
         } catch (IOException e) {
-            log.error(e);
+            BotLogger.error(LOGTAG, e);
         }
+
+        JSONObject jsonObject = new JSONObject(responseContent);
+        if (!jsonObject.getBoolean("ok")) {
+            throw new InvalidObjectException(jsonObject.getString("description"));
+        }
+
     }
 
     public static void SendApiMethodAsync(BotApiMethod method, String botToken, SentCallback callback) {
@@ -280,7 +280,7 @@ public class SenderHelper {
                 }
                 callback.onResult(method, jsonObject);
             } catch (IOException e) {
-                log.error(e);
+                BotLogger.error(LOGTAG, e);
             }
         });
     }

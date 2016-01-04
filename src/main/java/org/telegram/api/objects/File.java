@@ -81,15 +81,6 @@ public class File implements BotApiObject {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField(FILE_ID, fileId);
-        if (fileSize != null) {
-            gen.writeNumberField(FILE_SIZE_FIELD, fileSize);
-        }
-        if (filePath != null) {
-            gen.writeStringField(FILE_PATH_FIELD, filePath);
-        }
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

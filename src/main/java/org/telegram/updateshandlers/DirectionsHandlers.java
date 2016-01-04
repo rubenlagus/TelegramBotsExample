@@ -1,16 +1,21 @@
 package org.telegram.updateshandlers;
 
 import org.json.JSONObject;
-import org.telegram.*;
-import org.telegram.api.objects.*;
-import org.telegram.database.DatabaseManager;
+import org.telegram.BotConfig;
+import org.telegram.BuildVars;
+import org.telegram.Commands;
+import org.telegram.SenderHelper;
 import org.telegram.api.methods.BotApiMethod;
 import org.telegram.api.methods.SendMessage;
+import org.telegram.api.objects.*;
+import org.telegram.database.DatabaseManager;
+import org.telegram.services.BotLogger;
 import org.telegram.services.DirectionsService;
 import org.telegram.services.LocalisationService;
 import org.telegram.updatesreceivers.UpdatesThread;
 import org.telegram.updatesreceivers.Webhook;
 
+import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +29,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @date 24 of June of 2015
  */
 public class DirectionsHandlers implements UpdatesCallback {
+    private static final String LOGTAG = "DIRECTIONSHANDLERS";
     private static final String TOKEN = BotConfig.TOKENDIRECTIONS;
     private static final String BOTNAME = BotConfig.USERNAMEDIRECTIONS;
     private static final boolean USEWEBHOOK = false;
@@ -33,7 +39,7 @@ public class DirectionsHandlers implements UpdatesCallback {
     private final ConcurrentLinkedQueue<Integer> languageMessages = new ConcurrentLinkedQueue<>();
 
     public DirectionsHandlers(Webhook webhook) {
-        if (USEWEBHOOK) {
+        if (USEWEBHOOK && BuildVars.useWebHook) {
             webhook.registerWebhook(this, BOTNAME);
             SenderHelper.SendWebhook(Webhook.getExternalURL(BOTNAME), TOKEN);
         } else {
@@ -44,7 +50,11 @@ public class DirectionsHandlers implements UpdatesCallback {
 
     @Override
     public void onUpdateReceived(Update update) {
-        handleDirections(update);
+        try {
+            handleDirections(update);
+        } catch (InvalidObjectException e) {
+            BotLogger.error(LOGTAG, e);
+        }
     }
 
     @Override
@@ -53,7 +63,7 @@ public class DirectionsHandlers implements UpdatesCallback {
         return null;
     }
 
-    public void handleDirections(Update update) {
+    public void handleDirections(Update update) throws InvalidObjectException {
         Message message = update.getMessage();
         if (message != null && message.hasText()) {
             if (languageMessages.contains(message.getFrom().getId())) {
@@ -84,7 +94,7 @@ public class DirectionsHandlers implements UpdatesCallback {
                         } else {
                             SendMessage sendMessageRequest = new SendMessage();
                             sendMessageRequest.setText(LocalisationService.getInstance().getString("youNeedReplyDirections", language));
-                            sendMessageRequest.setChatId(message.getChatId());
+                            sendMessageRequest.setChatId(message.getChatId().toString());
                             SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
                         }
                     }
@@ -98,7 +108,7 @@ public class DirectionsHandlers implements UpdatesCallback {
         String destiny = message.getText();
         List<String> directions = DirectionsService.getInstance().getDirections(origin, destiny, language);
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
         replyKeyboardHide.setSelective(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardHide);
@@ -125,7 +135,7 @@ public class DirectionsHandlers implements UpdatesCallback {
 
     private void onOriginReceived(Message message, String language) {
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         sendMessageRequest.setReplayToMessageId(message.getMessageId());
         ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
         forceReplyKeyboard.setSelective(true);
@@ -149,19 +159,19 @@ public class DirectionsHandlers implements UpdatesCallback {
 
     }
 
-    private void sendHelpMessage(Message message, String language) {
+    private void sendHelpMessage(Message message, String language) throws InvalidObjectException {
         SendMessage sendMessageRequest = new SendMessage();
         String helpDirectionsFormated = String.format(
                 LocalisationService.getInstance().getString("helpDirections", language),
                 Commands.startDirectionCommand);
         sendMessageRequest.setText(helpDirectionsFormated);
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
     }
 
     private void onStartdirectionsCommand(Message message, String language) {
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         sendMessageRequest.setReplayToMessageId(message.getMessageId());
         ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
         forceReplyKeyboard.setSelective(true);
@@ -185,9 +195,9 @@ public class DirectionsHandlers implements UpdatesCallback {
 
     }
 
-    private void onSetLanguageCommand(Message message, String language) {
+    private void onSetLanguageCommand(Message message, String language) throws InvalidObjectException {
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         HashMap<String, String> languages = LocalisationService.getInstance().getSupportedLanguages();
         List<List<String>> commands = new ArrayList<>();
@@ -206,10 +216,10 @@ public class DirectionsHandlers implements UpdatesCallback {
         languageMessages.add(message.getFrom().getId());
     }
 
-    private void onLanguageSelected(Message message) {
+    private void onLanguageSelected(Message message) throws InvalidObjectException {
         String[] parts = message.getText().split("-->", 2);
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(message.getChatId().toString());
         if (LocalisationService.getInstance().getSupportedLanguages().containsKey(parts[0].trim())) {
             DatabaseManager.getInstance().putUserLanguage(message.getFrom().getId(), parts[0].trim());
             sendMessageRequest.setText(LocalisationService.getInstance().getString("languageModified", parts[0].trim()));

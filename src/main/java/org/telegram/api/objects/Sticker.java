@@ -68,17 +68,6 @@ public class Sticker implements BotApiObject {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeStringField(FILEID_FIELD, fileId);
-        gen.writeNumberField(WIDTH_FIELD, width);
-        gen.writeNumberField(HEIGHT_FIELD, height);
-        if (thumb != null) {
-            gen.writeObjectField(THUMB_FIELD, thumb);
-        }
-        if (fileSize != null) {
-            gen.writeNumberField(FILESIZE_FIELD, fileSize);
-        }
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

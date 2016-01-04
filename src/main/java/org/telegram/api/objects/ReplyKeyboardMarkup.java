@@ -151,26 +151,6 @@ public class ReplyKeyboardMarkup implements ReplyKeyboard {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeArrayFieldStart(KEYBOARD_FIELD);
-        for (List<String> innerRow : keyboard) {
-            gen.writeStartArray();
-            for (String element: innerRow) {
-                gen.writeString(element);
-            }
-            gen.writeEndArray();
-        }
-        gen.writeEndArray();
-        if (this.oneTimeKeyboad != null) {
-            gen.writeBooleanField(ONETIMEKEYBOARD_FIELD, oneTimeKeyboad);
-        }
-        if (this.resizeKeyboard != null) {
-            gen.writeBooleanField(RESIZEKEYBOARD_FIELD, resizeKeyboard);
-        }
-        if (this.selective != null) {
-            gen.writeBooleanField(SELECTIVE_FIELD, selective);
-        }
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

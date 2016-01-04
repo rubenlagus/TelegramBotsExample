@@ -79,16 +79,6 @@ public class User implements BotApiObject {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeNumberField(ID_FIELD, id);
-        gen.writeStringField(FIRSTNAME_FIELD, firstName);
-        if (lastName != null) {
-            gen.writeStringField(LASTNAME_FIELD, lastName);
-        }
-        if (userName != null) {
-            gen.writeStringField(USERNAME_FIELD, userName);
-        }
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

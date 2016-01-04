@@ -61,10 +61,6 @@ public class Location implements BotApiObject {
 
     @Override
     public void serializeWithType(JsonGenerator gen, SerializerProvider serializers, TypeSerializer typeSer) throws IOException {
-        gen.writeStartObject();
-        gen.writeNumberField(LONGITUDE_FIELD, longitude);
-        gen.writeNumberField(LATITUDE_FIELD, latitude);
-        gen.writeEndObject();
-        gen.flush();
+        serialize(gen, serializers);
     }
 }

@@ -97,21 +97,23 @@ public class WeatherHandlers implements UpdatesCallback {
 
     @Override
     public void onUpdateReceived(Update update) {
-        Message message = update.getMessage();
-        if (message != null && (message.hasText() || message.hasLocation())) {
-            BotApiMethod botApiMethod = handleIncomingMessage(message);
-            try {
-                SenderHelper.SendApiMethod(botApiMethod, TOKEN);
-            } catch (InvalidObjectException e) {
-                BotLogger.error(LOGTAG, e);
+        if (update.hasMessage()) {
+            Message message = update.getMessage();
+            if (message.hasText() || message.hasLocation()) {
+                BotApiMethod botApiMethod = handleIncomingMessage(message);
+                try {
+                    SenderHelper.SendApiMethod(botApiMethod, TOKEN);
+                } catch (InvalidObjectException e) {
+                    BotLogger.error(LOGTAG, e);
+                }
             }
         }
     }
 
     @Override
     public BotApiMethod onWebhookUpdateReceived(Update update) {
-        Message message = update.getMessage();
-        if (message != null) {
+        if (update.hasMessage()) {
+            Message message = update.getMessage();
             synchronized (webhookLock) {
                 return handleIncomingMessage(message);
             }

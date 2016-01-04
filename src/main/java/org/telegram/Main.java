@@ -3,9 +3,6 @@ package org.telegram;
 import org.telegram.updateshandlers.*;
 import org.telegram.updatesreceivers.Webhook;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * @author Ruben Bermudez
  * @version 1.0
@@ -24,8 +21,7 @@ public class Main {
         initBots();
 
         if (BuildVars.useWebHook) {
-            webhook.startDebugServer();
-            //webhook.startServer();
+            webhook.startServer();
         }
     }
 
@@ -35,5 +31,6 @@ public class Main {
         UpdatesCallback transifexBot = new TransifexHandlers(webhook);
         UpdatesCallback filesBot = new FilesHandlers(webhook);
         UpdatesCallback directionsBot = new DirectionsHandlers(webhook);
+        UpdatesCallback raeBot = new RaeHandlers(webhook);
     }
 }

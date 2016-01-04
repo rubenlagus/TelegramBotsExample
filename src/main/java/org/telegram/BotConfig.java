@@ -17,4 +17,6 @@ public class BotConfig {
     public static final String USERNAMEDIRECTIONS = "directionsbot";
     public static final String TOKENCHANNEL = "<token>";
     public static final String USERNAMECHANNEL = "channelupdatesbot";
+    public static final String TOKENRAE = "<token>";
+    public static final String USERNAMERAE = "raebot";
 }

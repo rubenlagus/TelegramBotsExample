@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,6 +27,7 @@ public class BotLogger {
 
     static {
         logger.setLevel(Level.ALL);
+        logger.addHandler(new ConsoleHandler());
         loggerThread.start();
         lastFileDate = LocalDateTime.now();
         if ((currentFileName == null) || (currentFileName.compareTo("") == 0)) {

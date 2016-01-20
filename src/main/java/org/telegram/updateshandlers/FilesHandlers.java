@@ -1,22 +1,19 @@
 package org.telegram.updateshandlers;
 
 import org.telegram.BotConfig;
-import org.telegram.BuildVars;
 import org.telegram.Commands;
-import org.telegram.SenderHelper;
-import org.telegram.api.methods.BotApiMethod;
-import org.telegram.api.methods.SendDocument;
-import org.telegram.api.methods.SendMessage;
-import org.telegram.api.objects.Message;
-import org.telegram.api.objects.ReplyKeyboardHide;
-import org.telegram.api.objects.ReplyKeyboardMarkup;
-import org.telegram.api.objects.Update;
 import org.telegram.database.DatabaseManager;
 import org.telegram.services.BotLogger;
 import org.telegram.services.Emoji;
 import org.telegram.services.LocalisationService;
-import org.telegram.updatesreceivers.UpdatesThread;
-import org.telegram.updatesreceivers.Webhook;
+import org.telegram.telegrambots.TelegramApiException;
+import org.telegram.telegrambots.api.methods.SendDocument;
+import org.telegram.telegrambots.api.methods.SendMessage;
+import org.telegram.telegrambots.api.objects.Message;
+import org.telegram.telegrambots.api.objects.ReplyKeyboardHide;
+import org.telegram.telegrambots.api.objects.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
@@ -32,24 +29,16 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * This bot is an example for the use of sendMessage asynchronously
  * @date 24 of June of 2015
  */
-public class FilesHandlers implements UpdatesCallback {
+public class FilesHandlers extends TelegramLongPollingBot {
     private static final String LOGTAG = "FILESHANDLERS";
-    private static final String TOKEN = BotConfig.TOKENFILES;
-    private static final String BOTNAME = BotConfig.USERNAMEFILES;
-    private static final boolean USEWEBHOOK = false;
 
     private static final int INITIAL_UPLOAD_STATUS = 0;
     private static final int DELETE_UPLOADED_STATUS = 1;
     private final ConcurrentLinkedQueue<Integer> languageMessages = new ConcurrentLinkedQueue<>();
 
-    public FilesHandlers(Webhook webhook) {
-        if (USEWEBHOOK && BuildVars.useWebHook) {
-            webhook.registerWebhook(this, BOTNAME);
-            SenderHelper.SendWebhook(Webhook.getExternalURL(BOTNAME), TOKEN);
-        } else {
-            SenderHelper.SendWebhook("", TOKEN);
-            new UpdatesThread(TOKEN, this);
-        }
+    @Override
+    public String getBotToken() {
+        return BotConfig.TOKENFILES;
     }
 
     @Override
@@ -62,12 +51,11 @@ public class FilesHandlers implements UpdatesCallback {
     }
 
     @Override
-    public BotApiMethod onWebhookUpdateReceived(Update update) {
-        // Webhook not supported in this example
-        return null;
+    public String getBotUsername() {
+        return BotConfig.USERNAMEFILES;
     }
 
-    public void handleFileUpdate(Update update) throws InvalidObjectException {
+    private void handleFileUpdate(Update update) throws InvalidObjectException {
         Message message = update.getMessage();
         if (message != null && message.hasText()) {
             if (languageMessages.contains(message.getFrom().getId())) {
@@ -107,7 +95,11 @@ public class FilesHandlers implements UpdatesCallback {
             sendMessageRequest.setText(LocalisationService.getInstance().getString("fileUploaded", language) +
                     LocalisationService.getInstance().getString("uploadedFileURL", language) + message.getDocument().getFileId());
             sendMessageRequest.setChatId(message.getChatId().toString());
-            SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
+            try {
+                sendMessage(sendMessageRequest);
+            } catch (TelegramApiException e) {
+                BotLogger.error(LOGTAG, e);
+            }
         }
     }
 
@@ -128,7 +120,11 @@ public class FilesHandlers implements UpdatesCallback {
         ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
         replyKeyboardHide.setHideKeyboard(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardHide);
-        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
+        try {
+            sendMessage(sendMessageRequest);
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
+        }
     }
 
     private void onDeleteCommand(Message message, String language, String[] parts) throws InvalidObjectException {
@@ -160,7 +156,11 @@ public class FilesHandlers implements UpdatesCallback {
             replyKeyboardMarkup.setKeyboard(commands);
         }
         sendMessageRequest.setReplayMarkup(replyKeyboardMarkup);
-        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
+        try {
+            sendMessage(sendMessageRequest);
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
+        }
     }
 
     private void onDeleteCommandWithParameters(Message message, String language, String part) throws InvalidObjectException {
@@ -173,8 +173,13 @@ public class FilesHandlers implements UpdatesCallback {
             sendMessageRequest.setText(LocalisationService.getInstance().getString("wrongFileId", language));
         }
         sendMessageRequest.setChatId(message.getChatId().toString());
-        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
-        DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
+        try {
+            sendMessage(sendMessageRequest);
+            DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
+        }
+
     }
 
     private void onCancelCommand(Message message, String language) throws InvalidObjectException {
@@ -182,7 +187,11 @@ public class FilesHandlers implements UpdatesCallback {
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setText(LocalisationService.getInstance().getString("processFinished", language));
         sendMessageRequest.setChatId(message.getChatId().toString());
-        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
+        try {
+            sendMessage(sendMessageRequest);
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
+        }
     }
 
     private void onUploadCommand(Message message, String language) throws InvalidObjectException {
@@ -190,7 +199,11 @@ public class FilesHandlers implements UpdatesCallback {
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setText(LocalisationService.getInstance().getString("sendFileToUpload", language));
         sendMessageRequest.setChatId(message.getChatId().toString());
-        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
+        try {
+            sendMessage(sendMessageRequest);
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
+        }
     }
 
     private void sendHelpMessage(Message message, String language) throws InvalidObjectException {
@@ -201,20 +214,28 @@ public class FilesHandlers implements UpdatesCallback {
                 Commands.listCommand);
         sendMessageRequest.setText(formatedString);
         sendMessageRequest.setChatId(message.getChatId().toString());
-        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
+        try {
+            sendMessage(sendMessageRequest);
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
+        }
     }
 
     private void onStartWithParameters(Message message, String language, String part) throws InvalidObjectException {
-        if (DatabaseManager.getInstance().doesFileExists(part.trim())) {
-            SendDocument sendDocumentRequest = new SendDocument();
-            sendDocumentRequest.setDocument(part.trim());
-            sendDocumentRequest.setChatId(message.getChatId().toString());
-            SenderHelper.SendDocument(sendDocumentRequest, TOKEN);
-        } else {
-            SendMessage sendMessageRequest = new SendMessage();
-            sendMessageRequest.setText(LocalisationService.getInstance().getString("wrongFileId", language));
-            sendMessageRequest.setChatId(message.getChatId().toString());
-            SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
+        try {
+            if (DatabaseManager.getInstance().doesFileExists(part.trim())) {
+                SendDocument sendDocumentRequest = new SendDocument();
+                sendDocumentRequest.setDocument(part.trim());
+                sendDocumentRequest.setChatId(message.getChatId().toString());
+                sendDocument(sendDocumentRequest);
+            } else {
+                SendMessage sendMessageRequest = new SendMessage();
+                sendMessageRequest.setText(LocalisationService.getInstance().getString("wrongFileId", language));
+                sendMessageRequest.setChatId(message.getChatId().toString());
+                sendMessage(sendMessageRequest);
+            }
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
         }
     }
 
@@ -235,8 +256,12 @@ public class FilesHandlers implements UpdatesCallback {
         replyKeyboardMarkup.setSelective(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardMarkup);
         sendMessageRequest.setText(LocalisationService.getInstance().getString("chooselanguage", language));
-        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
-        languageMessages.add(message.getFrom().getId());
+        try {
+            sendMessage(sendMessageRequest);
+            languageMessages.add(message.getFrom().getId());
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
+        }
     }
 
     private void onLanguageReceived(Message message) throws InvalidObjectException {
@@ -254,7 +279,11 @@ public class FilesHandlers implements UpdatesCallback {
         replyKeyboardHide.setHideKeyboard(true);
         replyKeyboardHide.setSelective(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardHide);
-        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
-        languageMessages.remove(message.getFrom().getId());
+        try {
+            sendMessage(sendMessageRequest);
+            languageMessages.remove(message.getFrom().getId());
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
+        }
     }
 }

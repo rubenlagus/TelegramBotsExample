@@ -8,11 +8,25 @@
     <artifactId>org.telegram.botapi</artifactId>
     <version>1.0</version>
 
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Maven Repository Switchboard</name>
+            <layout>default</layout>
+            <url>http://repo1.maven.org/maven2</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jersey.version>2.21</jersey.version>
+        <jersey.version>2.22.1</jersey.version>
         <httpcompontents.version>4.5.1</httpcompontents.version>
+        <telegrambots.version>v0.1.5</telegrambots.version>
     </properties>
 
     <dependencyManagement>
@@ -28,6 +42,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>com.github.rubenlagus</groupId>
+            <artifactId>TelegramBots</artifactId>
+            <version>${telegrambots.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-grizzly2-http</artifactId>
@@ -50,7 +69,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20141113</version>
+            <version>20151123</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -70,7 +89,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.36</version>
+            <version>5.1.38</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>

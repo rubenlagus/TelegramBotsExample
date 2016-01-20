@@ -1,7 +1,9 @@
 package org.telegram;
 
+import org.telegram.services.BotLogger;
+import org.telegram.telegrambots.TelegramApiException;
+import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.updateshandlers.*;
-import org.telegram.updatesreceivers.Webhook;
 
 /**
  * @author Ruben Bermudez
@@ -10,27 +12,20 @@ import org.telegram.updatesreceivers.Webhook;
  * @date 20 of June of 2015
  */
 public class Main {
-    private static Webhook webhook;
+    private static final String LOGTAG = "MAIN";
 
     public static void main(String[] args) {
 
-        if (BuildVars.useWebHook) {
-            webhook = new Webhook();
+        TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
+        try {
+            telegramBotsApi.registerBot(new ChannelHandlers());
+            telegramBotsApi.registerBot(new DirectionsHandlers());
+            telegramBotsApi.registerBot(new RaeHandlers());
+            telegramBotsApi.registerBot(new WeatherHandlers());
+            telegramBotsApi.registerBot(new TransifexHandlers());
+            telegramBotsApi.registerBot(new FilesHandlers());
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
         }
-
-        initBots();
-
-        if (BuildVars.useWebHook) {
-            webhook.startServer();
-        }
-    }
-
-    private static void initBots() {
-        UpdatesCallback weatherBot = new WeatherHandlers(webhook);
-        UpdatesCallback channelBot = new ChannelHandlers(webhook);
-        UpdatesCallback transifexBot = new TransifexHandlers(webhook);
-        UpdatesCallback filesBot = new FilesHandlers(webhook);
-        UpdatesCallback directionsBot = new DirectionsHandlers(webhook);
-        UpdatesCallback raeBot = new RaeHandlers(webhook);
     }
 }

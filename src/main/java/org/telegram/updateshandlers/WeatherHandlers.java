@@ -1,19 +1,15 @@
 package org.telegram.updateshandlers;
 
 import org.telegram.BotConfig;
-import org.telegram.BuildVars;
 import org.telegram.Commands;
-import org.telegram.SenderHelper;
-import org.telegram.api.methods.BotApiMethod;
-import org.telegram.api.methods.SendMessage;
-import org.telegram.api.objects.*;
 import org.telegram.database.DatabaseManager;
 import org.telegram.services.*;
 import org.telegram.structure.WeatherAlert;
-import org.telegram.updatesreceivers.UpdatesThread;
-import org.telegram.updatesreceivers.Webhook;
+import org.telegram.telegrambots.TelegramApiException;
+import org.telegram.telegrambots.api.methods.SendMessage;
+import org.telegram.telegrambots.api.objects.*;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
-import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +17,10 @@ import java.util.List;
  * @author Ruben Bermudez
  * @version 1.0
  * @brief Handler for updates to Weather Bot
- * This is a use case that works with both Webhooks and GetUpdates methods
  * @date 24 of June of 2015
  */
-public class WeatherHandlers implements UpdatesCallback {
+public class WeatherHandlers extends TelegramLongPollingBot {
     private static final String LOGTAG = "WEATHERHANDLERS";
-    private static final String TOKEN = BotConfig.TOKENWEATHER;
-    private static final String BOTNAME = BotConfig.USERNAMEWEATHER;
-    private static final boolean USEWEBHOOK = true;
 
     private static final int STARTSTATE = 0;
     private static final int MAINMENU = 1;
@@ -45,20 +37,32 @@ public class WeatherHandlers implements UpdatesCallback {
     private static final int LANGUAGE = 12;
     private static final int UNITS = 13;
 
-    private final Object webhookLock = new Object();
-
-    public WeatherHandlers(Webhook webhook) {
-        if (USEWEBHOOK && BuildVars.useWebHook) {
-            webhook.registerWebhook(this, BOTNAME);
-            SenderHelper.SendWebhook(Webhook.getExternalURL(BOTNAME), TOKEN);
-        } else {
-            SenderHelper.SendWebhook("", TOKEN);
-            new UpdatesThread(TOKEN, this);
-        }
+    public WeatherHandlers() {
+        super();
         startAlertTimers();
     }
 
-    private static void startAlertTimers() {
+    @Override
+    public String getBotToken() {
+        return BotConfig.TOKENWEATHER;
+    }
+
+    @Override
+    public void onUpdateReceived(Update update) {
+        if (update.hasMessage()) {
+            Message message = update.getMessage();
+            if (message.hasText() || message.hasLocation()) {
+                handleIncomingMessage(message);
+            }
+        }
+    }
+
+    @Override
+    public String getBotUsername() {
+        return BotConfig.USERNAMEWEATHER;
+    }
+
+    private void startAlertTimers() {
         TimerExecutor.getInstance().startExecutionEveryDayAt(new CustomTimerTask("First day alert", -1) {
             @Override
             public void execute() {
@@ -74,7 +78,7 @@ public class WeatherHandlers implements UpdatesCallback {
         }, 12, 0, 0);
     }
 
-    private static void sendAlerts() {
+    private void sendAlerts() {
         List<WeatherAlert> allAlerts = DatabaseManager.getInstance().getAllAlerts();
         for (WeatherAlert weatherAlert : allAlerts) {
             synchronized (Thread.currentThread()) {
@@ -91,37 +95,15 @@ public class WeatherHandlers implements UpdatesCallback {
             sendMessage.enableMarkdown(true);
             sendMessage.setChatId(String.valueOf(weatherAlert.getUserId()));
             sendMessage.setText(weather);
-            sendBuiltMessage(sendMessage);
-        }
-    }
-
-    @Override
-    public void onUpdateReceived(Update update) {
-        if (update.hasMessage()) {
-            Message message = update.getMessage();
-            if (message.hasText() || message.hasLocation()) {
-                BotApiMethod botApiMethod = handleIncomingMessage(message);
-                try {
-                    SenderHelper.SendApiMethod(botApiMethod, TOKEN);
-                } catch (InvalidObjectException e) {
-                    BotLogger.error(LOGTAG, e);
-                }
+            try {
+                sendMessage(sendMessage);
+            } catch (TelegramApiException e) {
+                BotLogger.error(LOGTAG, e);
             }
         }
     }
 
-    @Override
-    public BotApiMethod onWebhookUpdateReceived(Update update) {
-        if (update.hasMessage()) {
-            Message message = update.getMessage();
-            synchronized (webhookLock) {
-                return handleIncomingMessage(message);
-            }
-        }
-        return null;
-    }
-
-    private static BotApiMethod onCancelCommand(Long chatId, Integer userId, Integer messageId, ReplyKeyboard replyKeyboard, String language) {
+    private static SendMessage onCancelCommand(Long chatId, Integer userId, Integer messageId, ReplyKeyboard replyKeyboard, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId.toString());
         sendMessage.enableMarkdown(true);
@@ -136,54 +118,59 @@ public class WeatherHandlers implements UpdatesCallback {
 
     // region Incoming messages handlers
 
-    private static BotApiMethod handleIncomingMessage(Message message) {
+    private void handleIncomingMessage(Message message) {
         final int state = DatabaseManager.getInstance().getWeatherState(message.getFrom().getId(), message.getChatId());
         final String language = DatabaseManager.getInstance().getUserWeatherOptions(message.getFrom().getId())[0];
         if (!message.isUserMessage() && message.hasText()) {
             if (isCommandForOther(message.getText())) {
-                return null;
+                return;
             } else if (message.getText().startsWith(Commands.STOPCOMMAND)){
                 sendHideKeyboard(message.getFrom().getId(), message.getChatId(), message.getMessageId());
-                return null;
+                return;
             }
         }
-        BotApiMethod botApiMethod;
+        SendMessage sendMessageRequest;
         switch(state) {
             case MAINMENU:
-                botApiMethod = messageOnMainMenu(message, language);
+                sendMessageRequest = messageOnMainMenu(message, language);
                 break;
             case CURRENTWEATHER:
             case CURRENTNEWWEATHER:
             case CURRENTLOCATIONWEATHER:
-                botApiMethod = messageOnCurrentWeather(message, language, state);
+                sendMessageRequest = messageOnCurrentWeather(message, language, state);
                 break;
             case FORECASTWEATHER:
             case FORECASTNEWWEATHER:
             case FORECASTLOCATIONWEATHER:
-                botApiMethod = messageOnForecastWeather(message, language, state);
+                sendMessageRequest = messageOnForecastWeather(message, language, state);
                 break;
             case ALERT:
             case ALERTNEW:
             case ALERTDELETE:
-                botApiMethod = messageOnAlert(message, language, state);
+                sendMessageRequest = messageOnAlert(message, language, state);
                 break;
             case SETTINGS:
-                botApiMethod = messageOnSetting(message, language);
+                sendMessageRequest = messageOnSetting(message, language);
                 break;
             case LANGUAGE:
-                botApiMethod = messageOnLanguage(message, language);
+                sendMessageRequest = messageOnLanguage(message, language);
                 break;
             case UNITS:
-                botApiMethod = messageOnUnits(message, language);
+                sendMessageRequest = messageOnUnits(message, language);
                 break;
             default:
-                botApiMethod = sendMessageDefault(message, language);
+                sendMessageRequest = sendMessageDefault(message, language);
                 break;
         }
-        return botApiMethod;
+
+        try {
+            sendMessage(sendMessageRequest);
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
+        }
     }
 
-    private static void sendHideKeyboard(Integer userId, Long chatId, Integer messageId) {
+    private void sendHideKeyboard(Integer userId, Long chatId, Integer messageId) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId.toString());
         sendMessage.enableMarkdown(true);
@@ -196,9 +183,9 @@ public class WeatherHandlers implements UpdatesCallback {
         sendMessage.setReplayMarkup(replyKeyboardHide);
 
         try {
-            SenderHelper.SendApiMethod(sendMessage, TOKEN);
+            sendMessage(sendMessage);
             DatabaseManager.getInstance().insertWeatherState(userId, chatId, STARTSTATE);
-        } catch (InvalidObjectException e) {
+        } catch (TelegramApiException e) {
             BotLogger.error(LOGTAG, e);
         }
 
@@ -214,38 +201,38 @@ public class WeatherHandlers implements UpdatesCallback {
 
     // region Alerts Menu Option selected
 
-    private static BotApiMethod messageOnAlert(Message message, String language, int state) {
-        BotApiMethod botApiMethod = null;
+    private static SendMessage messageOnAlert(Message message, String language, int state) {
+        SendMessage sendMessageRequest = null;
         switch(state) {
             case ALERT:
-                botApiMethod = onAlertOptionSelected(message, language);
+                sendMessageRequest = onAlertOptionSelected(message, language);
                 break;
             case ALERTNEW:
-                botApiMethod = onAlertNewOptionSelected(message, language);
+                sendMessageRequest = onAlertNewOptionSelected(message, language);
                 break;
             case ALERTDELETE:
-                botApiMethod = onAlertDeleteOptionSelected(message, language);
+                sendMessageRequest = onAlertDeleteOptionSelected(message, language);
                 break;
         }
-        return botApiMethod;
+        return sendMessageRequest;
     }
 
-    private static BotApiMethod onAlertDeleteOptionSelected(Message message, String language) {
-        BotApiMethod botApiMethod = null;
+    private static SendMessage onAlertDeleteOptionSelected(Message message, String language) {
+        SendMessage sendMessageRequest = null;
         if (message.hasText()) {
             if (message.getText().equals(getCancelCommand(language))) {
-                botApiMethod = onAlertDeleteBackOptionSelected(message, language);
+                sendMessageRequest = onAlertDeleteBackOptionSelected(message, language);
             } else if (DatabaseManager.getInstance().getAlertCitiesNameByUser(message.getFrom().getId()).contains(message.getText())) {
-                botApiMethod = onAlertDeleteCityOptionSelected(message, language);
+                sendMessageRequest = onAlertDeleteCityOptionSelected(message, language);
             } else {
-                botApiMethod = sendChooseOptionMessage(message.getChatId(), message.getMessageId(), getAlertsListKeyboard(message.getFrom().getId(), language), language);
+                sendMessageRequest = sendChooseOptionMessage(message.getChatId(), message.getMessageId(), getAlertsListKeyboard(message.getFrom().getId(), language), language);
             }
         }
 
-        return botApiMethod;
+        return sendMessageRequest;
     }
 
-    private static BotApiMethod onAlertDeleteCityOptionSelected(Message message, String language) {
+    private static SendMessage onAlertDeleteCityOptionSelected(Message message, String language) {
         DatabaseManager.getInstance().deleteAlertCity(message.getFrom().getId(), message.getText());
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
@@ -258,7 +245,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onAlertDeleteBackOptionSelected(Message message, String language) {
+    private static SendMessage onAlertDeleteBackOptionSelected(Message message, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setReplayToMessageId(message.getMessageId());
@@ -270,8 +257,8 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onAlertNewOptionSelected(Message message, String language) {
-        BotApiMethod botApiMethod = null;
+    private static SendMessage onAlertNewOptionSelected(Message message, String language) {
+        SendMessage sendMessageRequest = null;
         if (message.hasText()) {
             if (message.getText().equals(getCancelCommand(language))) {
                 SendMessage sendMessage = new SendMessage();
@@ -281,15 +268,15 @@ public class WeatherHandlers implements UpdatesCallback {
                 sendMessage.setReplayMarkup(getAlertsKeyboard(language));
                 sendMessage.setText(LocalisationService.getInstance().getString("alertsMenuMessage", language));
                 DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), ALERT);
-                botApiMethod = sendMessage;
+                sendMessageRequest = sendMessage;
             } else {
-                botApiMethod = onNewAlertCityReceived(message, language);
+                sendMessageRequest = onNewAlertCityReceived(message, language);
             }
         }
-        return botApiMethod;
+        return sendMessageRequest;
     }
 
-    private static BotApiMethod onNewAlertCityReceived(Message message, String language) {
+    private static SendMessage onNewAlertCityReceived(Message message, String language) {
         int userId = message.getFrom().getId();
         Integer cityId = DatabaseManager.getInstance().getRecentWeatherIdByCity(userId, message.getText());
         if (cityId != null) {
@@ -309,26 +296,26 @@ public class WeatherHandlers implements UpdatesCallback {
         }
     }
 
-    private static BotApiMethod onAlertOptionSelected(Message message, String language) {
-        BotApiMethod botApiMethod = null;
+    private static SendMessage onAlertOptionSelected(Message message, String language) {
+        SendMessage sendMessageRequest = null;
         if (message.hasText()) {
             if (message.getText().equals(getNewCommand(language))) {
-                botApiMethod = onNewAlertCommand(message, language);
+                sendMessageRequest = onNewAlertCommand(message, language);
             } else if (message.getText().equals(getDeleteCommand(language))) {
-                botApiMethod = onDeleteAlertCommand(message, language);
+                sendMessageRequest = onDeleteAlertCommand(message, language);
             } else if (message.getText().equals(getListCommand(language))) {
-                botApiMethod = onListAlertCommand(message, language);
+                sendMessageRequest = onListAlertCommand(message, language);
             } else if (message.getText().equals(getBackCommand(language))) {
-                botApiMethod = onBackAlertCommand(message, language);
+                sendMessageRequest = onBackAlertCommand(message, language);
             } else {
-                botApiMethod = sendChooseOptionMessage(message.getChatId(), message.getMessageId(),
+                sendMessageRequest = sendChooseOptionMessage(message.getChatId(), message.getMessageId(),
                         getAlertsKeyboard(language), language);
             }
         }
-        return botApiMethod;
+        return sendMessageRequest;
     }
 
-    private static BotApiMethod onBackAlertCommand(Message message, String language) {
+    private static SendMessage onBackAlertCommand(Message message, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
@@ -342,7 +329,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onListAlertCommand(Message message, String language) {
+    private static SendMessage onListAlertCommand(Message message, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
@@ -355,7 +342,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onDeleteAlertCommand(Message message, String language) {
+    private static SendMessage onDeleteAlertCommand(Message message, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
@@ -392,26 +379,26 @@ public class WeatherHandlers implements UpdatesCallback {
 
     // region Settings Menu Option selected
 
-    private static BotApiMethod messageOnSetting(Message message, String language) {
-        BotApiMethod botApiMethod = null;
+    private static SendMessage messageOnSetting(Message message, String language) {
+        SendMessage sendMessageRequest = null;
         if (message.hasText()) {
             if (message.getText().startsWith(getLanguagesCommand(language))) {
-                botApiMethod = onLanguageCommand(message, language);
+                sendMessageRequest = onLanguageCommand(message, language);
             } else if (message.getText().startsWith(getUnitsCommand(language))) {
-                botApiMethod = onUnitsCommand(message, language);
+                sendMessageRequest = onUnitsCommand(message, language);
             } else if (message.getText().startsWith(getAlertsCommand(language))) {
-                botApiMethod = onAlertsCommand(message, language);
+                sendMessageRequest = onAlertsCommand(message, language);
             } else if (message.getText().startsWith(getBackCommand(language))) {
-                botApiMethod = sendMessageDefault(message, language);
+                sendMessageRequest = sendMessageDefault(message, language);
             } else {
-                botApiMethod = sendChooseOptionMessage(message.getChatId(), message.getMessageId(),
+                sendMessageRequest = sendChooseOptionMessage(message.getChatId(), message.getMessageId(),
                         getSettingsKeyboard(language), language);
             }
         }
-        return botApiMethod;
+        return sendMessageRequest;
     }
 
-    private static BotApiMethod onAlertsCommand(Message message, String language) {
+    private static SendMessage onAlertsCommand(Message message, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
@@ -424,7 +411,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onUnitsCommand(Message message, String language) {
+    private static SendMessage onUnitsCommand(Message message, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
@@ -437,7 +424,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onLanguageCommand(Message message, String language) {
+    private static SendMessage onLanguageCommand(Message message, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
@@ -454,25 +441,25 @@ public class WeatherHandlers implements UpdatesCallback {
 
     // region Units Menu Option selected
 
-    private static BotApiMethod messageOnUnits(Message message, String language) {
-        BotApiMethod botApiMethod = null;
+    private static SendMessage messageOnUnits(Message message, String language) {
+        SendMessage sendMessageRequest = null;
         if (message.hasText()) {
             if (message.getText().trim().equals(getCancelCommand(language))) {
-                botApiMethod = onBackUnitsCommand(message, language);
+                sendMessageRequest = onBackUnitsCommand(message, language);
             } else if (message.getText().trim().equals(LocalisationService.getInstance().getString("metricSystem", language))) {
-                botApiMethod = onUnitsChosen(message.getFrom().getId(), message.getChatId(),
+                sendMessageRequest = onUnitsChosen(message.getFrom().getId(), message.getChatId(),
                         message.getMessageId(), WeatherService.METRICSYSTEM, language);
             } else if (message.getText().trim().equals(LocalisationService.getInstance().getString("imperialSystem", language))) {
-                botApiMethod = onUnitsChosen(message.getFrom().getId(), message.getChatId(),
+                sendMessageRequest = onUnitsChosen(message.getFrom().getId(), message.getChatId(),
                         message.getMessageId(), WeatherService.IMPERIALSYSTEM, language);
             } else {
-                botApiMethod = onUnitsError(message.getChatId(), message.getMessageId(), language);
+                sendMessageRequest = onUnitsError(message.getChatId(), message.getMessageId(), language);
             }
         }
-        return botApiMethod;
+        return sendMessageRequest;
     }
 
-    private static BotApiMethod onBackUnitsCommand(Message message, String language) {
+    private static SendMessage onBackUnitsCommand(Message message, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
@@ -486,7 +473,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onUnitsError(Long chatId, Integer messageId, String language) {
+    private static SendMessage onUnitsError(Long chatId, Integer messageId, String language) {
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.enableMarkdown(true);
         sendMessageRequest.setChatId(chatId.toString());
@@ -497,7 +484,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessageRequest;
     }
 
-    private static BotApiMethod onUnitsChosen(Integer userId, Long chatId, Integer messageId, String units, String language) {
+    private static SendMessage onUnitsChosen(Integer userId, Long chatId, Integer messageId, String units, String language) {
         DatabaseManager.getInstance().putUserWeatherUnitsOption(userId, units);
 
         SendMessage sendMessageRequest = new SendMessage();
@@ -515,22 +502,22 @@ public class WeatherHandlers implements UpdatesCallback {
 
     // region Language Menu Option selected
 
-    private static BotApiMethod messageOnLanguage(Message message, String language) {
-        BotApiMethod botApiMethod = null;
+    private static SendMessage messageOnLanguage(Message message, String language) {
+        SendMessage sendMessageRequest = null;
         if (message.hasText()) {
             if (message.getText().trim().equals(getCancelCommand(language))) {
-                botApiMethod = onBackLanguageCommand(message, language);
+                sendMessageRequest = onBackLanguageCommand(message, language);
             } else if (LocalisationService.getInstance().getSupportedLanguages().values().contains(message.getText().trim())) {
-                botApiMethod = onLanguageChosen(message.getFrom().getId(), message.getChatId(),
+                sendMessageRequest = onLanguageChosen(message.getFrom().getId(), message.getChatId(),
                         message.getMessageId(), message.getText().trim());
             } else {
-                botApiMethod = onLanguageError(message.getChatId(), message.getMessageId(), language);
+                sendMessageRequest = onLanguageError(message.getChatId(), message.getMessageId(), language);
             }
         }
-        return botApiMethod;
+        return sendMessageRequest;
     }
 
-    private static BotApiMethod onBackLanguageCommand(Message message, String language) {
+    private static SendMessage onBackLanguageCommand(Message message, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
@@ -544,7 +531,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onLanguageError(Long chatId, Integer messageId, String language) {
+    private static SendMessage onLanguageError(Long chatId, Integer messageId, String language) {
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.enableMarkdown(true);
         sendMessageRequest.setChatId(chatId.toString());
@@ -555,7 +542,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessageRequest;
     }
 
-    private static BotApiMethod onLanguageChosen(Integer userId, Long chatId, Integer messageId, String language) {
+    private static SendMessage onLanguageChosen(Integer userId, Long chatId, Integer messageId, String language) {
         String languageCode = LocalisationService.getInstance().getLanguageCodeByName(language);
         DatabaseManager.getInstance().putUserWeatherLanguageOption(userId, languageCode);
 
@@ -574,41 +561,41 @@ public class WeatherHandlers implements UpdatesCallback {
 
     // region Forecast Weather Menu Option selected
 
-    private static BotApiMethod messageOnForecastWeather(Message message, String language, int state) {
-        BotApiMethod botApiMethod = null;
+    private static SendMessage messageOnForecastWeather(Message message, String language, int state) {
+        SendMessage sendMessageRequest = null;
         switch(state) {
             case FORECASTWEATHER:
-                botApiMethod = onForecastWeather(message, language);
+                sendMessageRequest = onForecastWeather(message, language);
                 break;
             case FORECASTNEWWEATHER:
-                botApiMethod = onForecastNewWeather(message, language);
+                sendMessageRequest = onForecastNewWeather(message, language);
                 break;
             case FORECASTLOCATIONWEATHER:
-                botApiMethod = onForecastWeatherLocation(message, language);
+                sendMessageRequest = onForecastWeatherLocation(message, language);
                 break;
         }
-        return botApiMethod;
+        return sendMessageRequest;
     }
 
-    private static BotApiMethod onForecastWeather(Message message, String language) {
-        BotApiMethod botApiMethod = null;
+    private static SendMessage onForecastWeather(Message message, String language) {
+        SendMessage sendMessageRequest = null;
         if (message.hasText()) {
             if (message.getText().startsWith(getNewCommand(language))) {
-                botApiMethod = onNewForecastWeatherCommand(message.getChatId(), message.getFrom().getId(), message.getMessageId(), language);
+                sendMessageRequest = onNewForecastWeatherCommand(message.getChatId(), message.getFrom().getId(), message.getMessageId(), language);
             } else if (message.getText().startsWith(getLocationCommand(language))) {
-                botApiMethod = onLocationForecastWeatherCommand(message.getChatId(), message.getFrom().getId(), message.getMessageId(), language);
+                sendMessageRequest = onLocationForecastWeatherCommand(message.getChatId(), message.getFrom().getId(), message.getMessageId(), language);
             } else if (message.getText().startsWith(getCancelCommand(language))) {
-                botApiMethod = onCancelCommand(message.getChatId(), message.getFrom().getId(), message.getMessageId(),
+                sendMessageRequest = onCancelCommand(message.getChatId(), message.getFrom().getId(), message.getMessageId(),
                         getMainMenuKeyboard(language), language);
             } else {
-                botApiMethod = onForecastWeatherCityReceived(message.getChatId(), message.getFrom().getId(), message.getMessageId(),
+                sendMessageRequest = onForecastWeatherCityReceived(message.getChatId(), message.getFrom().getId(), message.getMessageId(),
                         message.getText(), language);
             }
         }
-        return botApiMethod;
+        return sendMessageRequest;
     }
 
-    private static BotApiMethod onForecastNewWeather(Message message, String language) {
+    private static SendMessage onForecastNewWeather(Message message, String language) {
         if (message.isReply()) {
             return onForecastWeatherReceived(message.getChatId(), message.getFrom().getId(), message.getMessageId(), message.getText(), language);
         } else {
@@ -616,7 +603,7 @@ public class WeatherHandlers implements UpdatesCallback {
         }
     }
 
-    private static BotApiMethod onForecastWeatherCityReceived(Long chatId, Integer userId, Integer messageId, String text, String language) {
+    private static SendMessage onForecastWeatherCityReceived(Long chatId, Integer userId, Integer messageId, String text, String language) {
         Integer cityId = DatabaseManager.getInstance().getRecentWeatherIdByCity(userId, text);
         if (cityId != null) {
             String unitsSystem = DatabaseManager.getInstance().getUserWeatherOptions(userId)[1];
@@ -635,7 +622,7 @@ public class WeatherHandlers implements UpdatesCallback {
         }
     }
 
-    private static BotApiMethod onLocationForecastWeatherCommand(Long chatId, Integer userId, Integer messageId, String language) {
+    private static SendMessage onLocationForecastWeatherCommand(Long chatId, Integer userId, Integer messageId, String language) {
         ForceReplyKeyboard forceReplyKeyboard = getForceReply();
 
         SendMessage sendMessage = new SendMessage();
@@ -649,7 +636,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onNewForecastWeatherCommand(Long chatId, Integer userId, Integer messageId, String language) {
+    private static SendMessage onNewForecastWeatherCommand(Long chatId, Integer userId, Integer messageId, String language) {
         ForceReplyKeyboard forceReplyKeyboard = getForceReply();
 
         SendMessage sendMessage = new SendMessage();
@@ -663,7 +650,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onForecastWeatherLocation(Message message, String language) {
+    private static SendMessage onForecastWeatherLocation(Message message, String language) {
         if (message.isReply() && message.hasLocation()) {
             return onForecastWeatherLocationReceived(message, language);
         } else {
@@ -675,42 +662,42 @@ public class WeatherHandlers implements UpdatesCallback {
 
     // region Current Weather Menu Option selected
 
-    private static BotApiMethod messageOnCurrentWeather(Message message, String language, int state) {
-        BotApiMethod botApiMethod = null;
+    private static SendMessage messageOnCurrentWeather(Message message, String language, int state) {
+        SendMessage sendMessageRequest = null;
         switch(state) {
             case CURRENTWEATHER:
-                botApiMethod = onCurrentWeather(message, language);
+                sendMessageRequest = onCurrentWeather(message, language);
                 break;
             case CURRENTNEWWEATHER:
-                botApiMethod = onCurrentNewWeather(message, language);
+                sendMessageRequest = onCurrentNewWeather(message, language);
                 break;
             case CURRENTLOCATIONWEATHER:
-                botApiMethod = onCurrentWeatherLocation(message, language);
+                sendMessageRequest = onCurrentWeatherLocation(message, language);
                 break;
         }
 
-        return botApiMethod;
+        return sendMessageRequest;
     }
 
-    private static BotApiMethod onCurrentWeather(Message message, String language) {
-        BotApiMethod botApiMethod = null;
+    private static SendMessage onCurrentWeather(Message message, String language) {
+        SendMessage sendMessageRequest = null;
         if (message.hasText()) {
             if (message.getText().startsWith(getNewCommand(language))) {
-                botApiMethod = onNewCurrentWeatherCommand(message.getChatId(), message.getFrom().getId(), message.getMessageId(), language);
+                sendMessageRequest = onNewCurrentWeatherCommand(message.getChatId(), message.getFrom().getId(), message.getMessageId(), language);
             } else if (message.getText().startsWith(getLocationCommand(language))) {
-                botApiMethod = onLocationCurrentWeatherCommand(message.getChatId(), message.getFrom().getId(), message.getMessageId(), language);
+                sendMessageRequest = onLocationCurrentWeatherCommand(message.getChatId(), message.getFrom().getId(), message.getMessageId(), language);
             } else if (message.getText().startsWith(getCancelCommand(language))) {
-                botApiMethod = onCancelCommand(message.getChatId(), message.getFrom().getId(), message.getMessageId(),
+                sendMessageRequest = onCancelCommand(message.getChatId(), message.getFrom().getId(), message.getMessageId(),
                         getMainMenuKeyboard(language), language);
             } else {
-                botApiMethod = onCurrentWeatherCityReceived(message.getChatId(), message.getFrom().getId(), message.getMessageId(),
+                sendMessageRequest = onCurrentWeatherCityReceived(message.getChatId(), message.getFrom().getId(), message.getMessageId(),
                         message.getText(), language);
             }
         }
-        return botApiMethod;
+        return sendMessageRequest;
     }
 
-    private static BotApiMethod onCurrentNewWeather(Message message, String language) {
+    private static SendMessage onCurrentNewWeather(Message message, String language) {
         if (message.isReply()) {
             return onCurrentWeatherReceived(message.getChatId(), message.getFrom().getId(), message.getMessageId(), message.getText(), language);
         } else {
@@ -718,7 +705,7 @@ public class WeatherHandlers implements UpdatesCallback {
         }
     }
 
-    private static BotApiMethod onCurrentWeatherCityReceived(Long chatId, Integer userId, Integer messageId, String text, String language) {
+    private static SendMessage onCurrentWeatherCityReceived(Long chatId, Integer userId, Integer messageId, String text, String language) {
         Integer cityId = DatabaseManager.getInstance().getRecentWeatherIdByCity(userId, text);
         if (cityId != null) {
             String unitsSystem = DatabaseManager.getInstance().getUserWeatherOptions(userId)[1];
@@ -736,7 +723,7 @@ public class WeatherHandlers implements UpdatesCallback {
         }
     }
 
-    private static BotApiMethod onLocationCurrentWeatherCommand(Long chatId, Integer userId, Integer messageId, String language) {
+    private static SendMessage onLocationCurrentWeatherCommand(Long chatId, Integer userId, Integer messageId, String language) {
         ForceReplyKeyboard forceReplyKeyboard = getForceReply();
 
         SendMessage sendMessage = new SendMessage();
@@ -750,7 +737,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onNewCurrentWeatherCommand(Long chatId, Integer userId, Integer messageId, String language) {
+    private static SendMessage onNewCurrentWeatherCommand(Long chatId, Integer userId, Integer messageId, String language) {
         ForceReplyKeyboard forceReplyKeyboard = getForceReply();
 
         SendMessage sendMessage = new SendMessage();
@@ -764,7 +751,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onCurrentWeatherLocation(Message message, String language) {
+    private static SendMessage onCurrentWeatherLocation(Message message, String language) {
         if (message.isReply() && message.hasLocation()) {
             return onCurrentWeatherLocationReceived(message, language);
         } else {
@@ -776,30 +763,30 @@ public class WeatherHandlers implements UpdatesCallback {
 
     // region Main menu options selected
 
-    private static BotApiMethod messageOnMainMenu(Message message, String language) {
-        BotApiMethod botApiMethod;
+    private static SendMessage messageOnMainMenu(Message message, String language) {
+        SendMessage sendMessageRequest;
         if (message.hasText()) {
             if (message.getText().equals(getCurrentCommand(language))) {
-                botApiMethod = onCurrentChoosen(message, language);
+                sendMessageRequest = onCurrentChoosen(message, language);
             } else if (message.getText().equals(getForecastCommand(language))) {
-                botApiMethod = onForecastChoosen(message, language);
+                sendMessageRequest = onForecastChoosen(message, language);
             } else if (message.getText().equals(getSettingsCommand(language))) {
-                botApiMethod = onSettingsChoosen(message, language);
+                sendMessageRequest = onSettingsChoosen(message, language);
             } else if (message.getText().equals(getRateCommand(language))) {
-                botApiMethod = sendRateMessage(message.getChatId().toString(), message.getMessageId(), null, language);
+                sendMessageRequest = sendRateMessage(message.getChatId().toString(), message.getMessageId(), null, language);
             } else {
-                botApiMethod = sendChooseOptionMessage(message.getChatId(), message.getMessageId(),
+                sendMessageRequest = sendChooseOptionMessage(message.getChatId(), message.getMessageId(),
                         getMainMenuKeyboard(language), language);
             }
         } else {
-            botApiMethod = sendChooseOptionMessage(message.getChatId(), message.getMessageId(),
+            sendMessageRequest = sendChooseOptionMessage(message.getChatId(), message.getMessageId(),
                     getMainMenuKeyboard(language), language);
         }
 
-        return botApiMethod;
+        return sendMessageRequest;
     }
 
-    private static BotApiMethod onSettingsChoosen(Message message, String language) {
+    private static SendMessage onSettingsChoosen(Message message, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
@@ -813,7 +800,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onForecastChoosen(Message message, String language) {
+    private static SendMessage onForecastChoosen(Message message, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
@@ -831,7 +818,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod onCurrentChoosen(Message message, String language) {
+    private static SendMessage onCurrentChoosen(Message message, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
@@ -1152,13 +1139,13 @@ public class WeatherHandlers implements UpdatesCallback {
 
     // region Send common messages
 
-    private static BotApiMethod sendMessageDefault(Message message, String language) {
+    private static SendMessage sendMessageDefault(Message message, String language) {
         ReplyKeyboardMarkup replyKeyboardMarkup = getMainMenuKeyboard(language);
         DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), MAINMENU);
         return sendHelpMessage(message.getChatId().toString(), message.getMessageId(), replyKeyboardMarkup, language);
     }
 
-    private static BotApiMethod sendChooseOptionMessage(Long chatId, Integer messageId,
+    private static SendMessage sendChooseOptionMessage(Long chatId, Integer messageId,
                                                 ReplyKeyboard replyKeyboard, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
@@ -1170,7 +1157,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod sendHelpMessage(String chatId, Integer messageId, ReplyKeyboardMarkup replyKeyboardMarkup, String language) {
+    private static SendMessage sendHelpMessage(String chatId, Integer messageId, ReplyKeyboardMarkup replyKeyboardMarkup, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(chatId);
@@ -1182,7 +1169,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessage;
     }
 
-    private static BotApiMethod sendRateMessage(String chatId, Integer messageId, ReplyKeyboardMarkup replyKeyboardMarkup, String language) {
+    private static SendMessage sendRateMessage(String chatId, Integer messageId, ReplyKeyboardMarkup replyKeyboardMarkup, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(chatId);
@@ -1199,7 +1186,7 @@ public class WeatherHandlers implements UpdatesCallback {
 
     // region Send weather
 
-    private static BotApiMethod onForecastWeatherLocationReceived(Message message, String language) {
+    private static SendMessage onForecastWeatherLocationReceived(Message message, String language) {
         String unitsSystem = DatabaseManager.getInstance().getUserWeatherOptions(message.getFrom().getId())[1];
         String weather = WeatherService.getInstance().fetchWeatherForecastByLocation(message.getLocation().getLongitude(),
                 message.getLocation().getLatitude(), message.getFrom().getId(), language, unitsSystem);
@@ -1214,7 +1201,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessageRequest;
     }
 
-    private static BotApiMethod onForecastWeatherReceived(Long chatId, Integer userId, Integer messageId, String text, String language) {
+    private static SendMessage onForecastWeatherReceived(Long chatId, Integer userId, Integer messageId, String text, String language) {
         String unitsSystem = DatabaseManager.getInstance().getUserWeatherOptions(userId)[1];
         String weather = WeatherService.getInstance().fetchWeatherForecast(text, userId, language, unitsSystem);
         SendMessage sendMessageRequest = new SendMessage();
@@ -1228,7 +1215,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessageRequest;
     }
 
-    private static BotApiMethod onCurrentWeatherLocationReceived(Message message, String language) {
+    private static SendMessage onCurrentWeatherLocationReceived(Message message, String language) {
         String unitsSystem = DatabaseManager.getInstance().getUserWeatherOptions(message.getFrom().getId())[1];
         String weather = WeatherService.getInstance().fetchWeatherCurrentByLocation(message.getLocation().getLongitude(),
                 message.getLocation().getLatitude(), message.getFrom().getId(), language, unitsSystem);
@@ -1243,7 +1230,7 @@ public class WeatherHandlers implements UpdatesCallback {
         return sendMessageRequest;
     }
 
-    private static BotApiMethod onCurrentWeatherReceived(Long chatId, Integer userId, Integer messageId, String text, String language) {
+    private static SendMessage onCurrentWeatherReceived(Long chatId, Integer userId, Integer messageId, String text, String language) {
         String unitsSystem = DatabaseManager.getInstance().getUserWeatherOptions(userId)[1];
         String weather = WeatherService.getInstance().fetchWeatherCurrent(text, userId, language, unitsSystem);
         SendMessage sendMessageRequest = new SendMessage();
@@ -1258,16 +1245,4 @@ public class WeatherHandlers implements UpdatesCallback {
     }
 
     // endregion Send weather
-
-    // region Helper Methods
-
-    private static void sendBuiltMessage(SendMessage sendMessage) {
-        try {
-            SenderHelper.SendApiMethod(sendMessage, TOKEN);
-        } catch (InvalidObjectException e) {
-            BotLogger.severe(LOGTAG, e);
-        }
-    }
-
-    // endregion Helper Methods
 }

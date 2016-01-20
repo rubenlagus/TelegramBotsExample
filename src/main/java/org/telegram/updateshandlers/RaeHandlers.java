@@ -1,18 +1,14 @@
 package org.telegram.updateshandlers;
 
 import org.telegram.BotConfig;
-import org.telegram.BuildVars;
-import org.telegram.SenderHelper;
-import org.telegram.api.methods.AnswerInlineQuery;
-import org.telegram.api.methods.BotApiMethod;
-import org.telegram.api.methods.SendMessage;
-import org.telegram.api.objects.*;
 import org.telegram.services.BotLogger;
 import org.telegram.services.RaeService;
-import org.telegram.updatesreceivers.UpdatesThread;
-import org.telegram.updatesreceivers.Webhook;
+import org.telegram.telegrambots.TelegramApiException;
+import org.telegram.telegrambots.api.methods.AnswerInlineQuery;
+import org.telegram.telegrambots.api.methods.SendMessage;
+import org.telegram.telegrambots.api.objects.*;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
-import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,18 +16,14 @@ import java.util.List;
  * @author Ruben Bermudez
  * @version 1.0
  * @brief Handler for inline queries in Raebot
- * This is a use case that works with both Webhooks and GetUpdates methods
  * @date 24 of June of 2015
  */
-public class RaeHandlers implements UpdatesCallback {
+public class RaeHandlers extends TelegramLongPollingBot {
     private static final String LOGTAG = "RAEHANDLERS";
-    private static final String TOKEN = BotConfig.TOKENRAE;
-    private static final String BOTNAME = BotConfig.USERNAMERAE;
+
     private static final Integer CACHETIME = 86400;
-    private static final boolean USEWEBHOOK = true;
-    private final RaeService raeService;
-    private final Object webhookLock = new Object();
-    private final String THUMBNAILBLUE = "https://lh5.ggpht.com/-kSFHGvQkFivERzyCNgKPIECtIOELfPNWAQdXqQ7uqv2xztxqll4bVibI0oHJYAuAas=w300";
+    private final RaeService raeService = new RaeService();
+    private static final String THUMBNAILBLUE = "https://lh5.ggpht.com/-kSFHGvQkFivERzyCNgKPIECtIOELfPNWAQdXqQ7uqv2xztxqll4bVibI0oHJYAuAas=w300";
     private static final String helpMessage = "Este bot puede ayudarte a buscar definiciones de palabras según el diccionario de la RAE.\n\n" +
             "Funciona automáticamente, no hay necesidad de añadirlo a ningún sitio.\n" +
             "Simplemente abre cualquiera de tus chats y escribe `@raebot loquesea` en la zona de escribir mensajes.\n" +
@@ -39,62 +31,45 @@ public class RaeHandlers implements UpdatesCallback {
             "\n\n" +
             "Por ejemplo, intenta escribir `@raebot Punto` aquí.";
 
-    public RaeHandlers(Webhook webhook) {
-        raeService = new RaeService();
-        if (USEWEBHOOK && BuildVars.useWebHook) {
-            webhook.registerWebhook(this, BOTNAME);
-            SenderHelper.SendWebhook(Webhook.getExternalURL(BOTNAME), TOKEN);
-        } else {
-            SenderHelper.SendWebhook("", TOKEN);
-            new UpdatesThread(TOKEN, this);
-        }
+    @Override
+    public String getBotToken() {
+        return BotConfig.TOKENRAE;
     }
 
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasInlineQuery()) {
-            BotApiMethod botApiMethod = handleIncomingInlineQuery(update.getInlineQuery());
-            try {
-                SenderHelper.SendApiMethod(botApiMethod, TOKEN);
-            } catch (InvalidObjectException e) {
-                BotLogger.error(LOGTAG, e);
-            }
+            handleIncomingInlineQuery(update.getInlineQuery());
         } else if (update.hasMessage() && update.getMessage().isUserMessage()) {
             try {
-                SenderHelper.SendApiMethod(getHelpMessage(update.getMessage()), TOKEN);
-            } catch (InvalidObjectException e) {
-                BotLogger.error(LOGTAG, e);
+                sendMessage(getHelpMessage(update.getMessage()));
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
             }
         }
     }
 
     @Override
-    public BotApiMethod onWebhookUpdateReceived(Update update) {
-        if (update.hasInlineQuery()) {
-            synchronized (webhookLock) {
-                return handleIncomingInlineQuery(update.getInlineQuery());
-            }
-        } else if (update.hasMessage() && update.getMessage().isUserMessage()) {
-            synchronized (webhookLock) {
-                return getHelpMessage(update.getMessage());
-            }
-        }
-        return null;
+    public String getBotUsername() {
+        return BotConfig.USERNAMERAE;
     }
 
     /**
      * For an InlineQuery, results from RAE dictionariy are fetch and returned
      * @param inlineQuery InlineQuery recieved
-     * @return BotApiMethod as response to the inline query
      */
-    private BotApiMethod handleIncomingInlineQuery(InlineQuery inlineQuery) {
+    private void handleIncomingInlineQuery(InlineQuery inlineQuery) {
         String query = inlineQuery.getQuery();
         BotLogger.debug(LOGTAG, "Searching: " + query);
-        if (!query.isEmpty()) {
-            List<RaeService.RaeResult> results = raeService.getResults(query);
-            return converteResultsToResponse(inlineQuery, results);
-        } else {
-            return converteResultsToResponse(inlineQuery, new ArrayList<>());
+        try {
+            if (!query.isEmpty()) {
+                List<RaeService.RaeResult> results = raeService.getResults(query);
+                sendAnswerInlineQuery(converteResultsToResponse(inlineQuery, results));
+            } else {
+                sendAnswerInlineQuery(converteResultsToResponse(inlineQuery, new ArrayList<>()));
+            }
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
         }
     }
 
@@ -104,7 +79,7 @@ public class RaeHandlers implements UpdatesCallback {
      * @param results Results from RAE service
      * @return AnswerInlineQuery method to answer the query
      */
-    private BotApiMethod converteResultsToResponse(InlineQuery inlineQuery, List<RaeService.RaeResult> results) {
+    private static AnswerInlineQuery converteResultsToResponse(InlineQuery inlineQuery, List<RaeService.RaeResult> results) {
         AnswerInlineQuery answerInlineQuery = new AnswerInlineQuery();
         answerInlineQuery.setInlineQueryId(inlineQuery.getId());
         answerInlineQuery.setCacheTime(CACHETIME);
@@ -117,14 +92,14 @@ public class RaeHandlers implements UpdatesCallback {
      * @param raeResults Results from rae service
      * @return List of InlineQueryResult
      */
-    private List<InlineQueryResult> convertRaeResults(List<RaeService.RaeResult> raeResults) {
+    private static List<InlineQueryResult> convertRaeResults(List<RaeService.RaeResult> raeResults) {
         List<InlineQueryResult> results = new ArrayList<>();
 
         for (int i = 0; i < raeResults.size(); i++) {
             RaeService.RaeResult raeResult = raeResults.get(i);
             InlineQueryResultArticle article = new InlineQueryResultArticle();
             article.setDisableWebPagePreview(true);
-            article.setMarkdown(true);
+            article.enableMarkdown(true);
             article.setId(Integer.toString(i));
             article.setMessageText(raeResult.getDefinition());
             article.setTitle(raeResult.getTitle());
@@ -141,7 +116,7 @@ public class RaeHandlers implements UpdatesCallback {
      * @param message Received message
      * @return SendMessage method
      */
-    public BotApiMethod getHelpMessage(Message message) {
+    private static SendMessage getHelpMessage(Message message) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(message.getChatId().toString());
         sendMessage.enableMarkdown(true);

@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.telegram.BuildVars;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.format.DateTimeFormatter;

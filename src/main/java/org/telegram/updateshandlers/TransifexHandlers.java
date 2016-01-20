@@ -1,20 +1,17 @@
 package org.telegram.updateshandlers;
 
 import org.telegram.BotConfig;
-import org.telegram.BuildVars;
 import org.telegram.Commands;
-import org.telegram.SenderHelper;
-import org.telegram.api.methods.BotApiMethod;
-import org.telegram.api.methods.SendDocument;
-import org.telegram.api.methods.SendMessage;
-import org.telegram.api.objects.Message;
-import org.telegram.api.objects.Update;
 import org.telegram.database.DatabaseManager;
 import org.telegram.services.BotLogger;
 import org.telegram.services.LocalisationService;
 import org.telegram.services.TransifexService;
-import org.telegram.updatesreceivers.UpdatesThread;
-import org.telegram.updatesreceivers.Webhook;
+import org.telegram.telegrambots.TelegramApiException;
+import org.telegram.telegrambots.api.methods.SendDocument;
+import org.telegram.telegrambots.api.methods.SendMessage;
+import org.telegram.telegrambots.api.objects.Message;
+import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
 import java.io.InvalidObjectException;
 
@@ -24,20 +21,12 @@ import java.io.InvalidObjectException;
  * @brief Handler for updates to Transifex Bot
  * @date 24 of June of 2015
  */
-public class TransifexHandlers implements UpdatesCallback {
+public class TransifexHandlers extends TelegramLongPollingBot {
     private static final String LOGTAG = "TRANSIFEXHANDLERS";
-    private static final String TOKEN = BotConfig.TOKENTRANSIFEX;
-    private static final String BOTNAME = BotConfig.USERNAMETRANSIFEX;
-    private static final boolean USEWEBHOOK = false;
 
-    public TransifexHandlers(Webhook webhook) {
-        if (USEWEBHOOK && BuildVars.useWebHook) {
-            webhook.registerWebhook(this, BOTNAME);
-            SenderHelper.SendWebhook(Webhook.getExternalURL(BOTNAME), TOKEN);
-        } else {
-            SenderHelper.SendWebhook("", TOKEN);
-            new UpdatesThread(TOKEN, this);
-        }
+    @Override
+    public String getBotToken() {
+        return BotConfig.TOKENTRANSIFEX;
     }
 
     @Override
@@ -50,12 +39,11 @@ public class TransifexHandlers implements UpdatesCallback {
     }
 
     @Override
-    public BotApiMethod onWebhookUpdateReceived(Update update) {
-        // Webhook not supported in this example
-        return null;
+    public String getBotUsername() {
+        return BotConfig.USERNAMETRANSIFEX;
     }
 
-    public void sendTransifexFile(Update update) throws InvalidObjectException {
+    private void sendTransifexFile(Update update) throws InvalidObjectException {
         Message message = update.getMessage();
         if (message != null && message.hasText()) {
             String language = DatabaseManager.getInstance().getUserLanguage(update.getMessage().getFrom().getId());
@@ -86,12 +74,20 @@ public class TransifexHandlers implements UpdatesCallback {
                             Commands.transifexAndroidSupportCommand);
                     sendMessageRequest.setText(helpFormated);
                     sendMessageRequest.setChatId(message.getChatId().toString());
-                    SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
+                    try {
+                        sendMessage(sendMessageRequest);
+                    } catch (TelegramApiException e) {
+                        BotLogger.error(LOGTAG, e);
+                    }
                 }
 
                 if (sendDocument != null) {
                     sendDocument.setChatId(message.getChatId().toString());
-                    SenderHelper.SendDocument(sendDocument, TOKEN);
+                    try {
+                        sendDocument(sendDocument);
+                    } catch (TelegramApiException e) {
+                        BotLogger.error(LOGTAG, e);
+                    }
                 }
             } else if (parts[0].startsWith(Commands.help) ||
                     (message.getText().startsWith(Commands.startCommand) || !message.isGroupMessage())) {
@@ -103,7 +99,11 @@ public class TransifexHandlers implements UpdatesCallback {
                         Commands.transifexAndroidSupportCommand);
                 sendMessageRequest.setText(helpFormated);
                 sendMessageRequest.setChatId(message.getChatId().toString());
-                SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
+                try {
+                    sendMessage(sendMessageRequest);
+                } catch (TelegramApiException e) {
+                    BotLogger.error(LOGTAG, e);
+                }
             }
         }
     }

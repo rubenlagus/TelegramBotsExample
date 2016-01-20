@@ -94,7 +94,7 @@ public class RaeService {
                 Elements links = list.getElementsByTag("a");
                 if (!links.isEmpty()) {
                     for (Element link : links) {
-                        List<RaeResult> partialResults = fetchWord(link.attributes().get("href"), link.text());
+                        List<RaeResult> partialResults = fetchWord(URLEncoder.encode(link.attributes().get("href"), "UTF-8"), link.text());
                         if (!partialResults.isEmpty()) {
                             results.addAll(partialResults);
                         }

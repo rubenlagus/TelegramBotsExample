@@ -2,18 +2,17 @@ package org.telegram.updateshandlers;
 
 import org.json.JSONObject;
 import org.telegram.BotConfig;
-import org.telegram.BuildVars;
 import org.telegram.Commands;
-import org.telegram.SenderHelper;
-import org.telegram.api.methods.BotApiMethod;
-import org.telegram.api.methods.SendMessage;
-import org.telegram.api.objects.*;
 import org.telegram.database.DatabaseManager;
 import org.telegram.services.BotLogger;
 import org.telegram.services.DirectionsService;
 import org.telegram.services.LocalisationService;
-import org.telegram.updatesreceivers.UpdatesThread;
-import org.telegram.updatesreceivers.Webhook;
+import org.telegram.telegrambots.TelegramApiException;
+import org.telegram.telegrambots.api.methods.BotApiMethod;
+import org.telegram.telegrambots.api.methods.SendMessage;
+import org.telegram.telegrambots.api.objects.*;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.updateshandlers.SentCallback;
 
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
@@ -28,24 +27,17 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @brief Handler for updates to Directions Bot
  * @date 24 of June of 2015
  */
-public class DirectionsHandlers implements UpdatesCallback {
+public class DirectionsHandlers extends TelegramLongPollingBot {
     private static final String LOGTAG = "DIRECTIONSHANDLERS";
-    private static final String TOKEN = BotConfig.TOKENDIRECTIONS;
-    private static final String BOTNAME = BotConfig.USERNAMEDIRECTIONS;
-    private static final boolean USEWEBHOOK = false;
 
     private static final int WATING_ORIGIN_STATUS = 0;
     private static final int WATING_DESTINY_STATUS = 1;
     private final ConcurrentLinkedQueue<Integer> languageMessages = new ConcurrentLinkedQueue<>();
 
-    public DirectionsHandlers(Webhook webhook) {
-        if (USEWEBHOOK && BuildVars.useWebHook) {
-            webhook.registerWebhook(this, BOTNAME);
-            SenderHelper.SendWebhook(Webhook.getExternalURL(BOTNAME), TOKEN);
-        } else {
-            SenderHelper.SendWebhook("", TOKEN);
-            new UpdatesThread(TOKEN, this);
-        }
+
+    @Override
+    public String getBotToken() {
+        return BotConfig.TOKENDIRECTIONS;
     }
 
     @Override
@@ -58,12 +50,11 @@ public class DirectionsHandlers implements UpdatesCallback {
     }
 
     @Override
-    public BotApiMethod onWebhookUpdateReceived(Update update) {
-        // Webhook not supported in this example
-        return null;
+    public String getBotUsername() {
+        return BotConfig.USERNAMEDIRECTIONS;
     }
 
-    public void handleDirections(Update update) throws InvalidObjectException {
+    private void handleDirections(Update update) throws InvalidObjectException {
         Message message = update.getMessage();
         if (message != null && message.hasText()) {
             if (languageMessages.contains(message.getFrom().getId())) {
@@ -95,7 +86,11 @@ public class DirectionsHandlers implements UpdatesCallback {
                             SendMessage sendMessageRequest = new SendMessage();
                             sendMessageRequest.setText(LocalisationService.getInstance().getString("youNeedReplyDirections", language));
                             sendMessageRequest.setChatId(message.getChatId().toString());
-                            SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
+                            try {
+                                sendMessage(sendMessageRequest);
+                            } catch (TelegramApiException e) {
+                                BotLogger.error(LOGTAG, e);
+                            }
                         }
                     }
                 }
@@ -113,22 +108,29 @@ public class DirectionsHandlers implements UpdatesCallback {
         replyKeyboardHide.setSelective(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardHide);
         sendMessageRequest.setReplayToMessageId(message.getMessageId());
-        Message sentMessage = null;
         for (String direction : directions) {
             sendMessageRequest.setText(direction);
-            SenderHelper.SendApiMethodAsync(sendMessageRequest, TOKEN, new SentCallback<Message>() {
-                @Override
-                public void onResult(BotApiMethod<Message> method, JSONObject jsonObject) {
-                    Message sentMessage = method.deserializeResponse(jsonObject);
-                    if (sentMessage != null) {
-                        DatabaseManager.getInstance().deleteUserForDirections(message.getFrom().getId());
+            try {
+                sendMessageAsync(sendMessageRequest, new SentCallback<Message>() {
+                    @Override
+                    public void onResult(BotApiMethod<Message> botApiMethod, JSONObject jsonObject) {
+                        Message sentMessage = botApiMethod.deserializeResponse(jsonObject);
+                        if (sentMessage != null) {
+                            DatabaseManager.getInstance().deleteUserForDirections(message.getFrom().getId());
+                        }
                     }
-                }
 
-                @Override
-                public void onError(BotApiMethod<Message> method, JSONObject jsonObject) {
-                }
-            });
+                    @Override
+                    public void onError(BotApiMethod<Message> botApiMethod, JSONObject jsonObject) {
+                    }
+
+                    @Override
+                    public void onException(BotApiMethod<Message> botApiMethod, Exception e) {
+                    }
+                });
+            } catch (TelegramApiException e) {
+                BotLogger.error(LOGTAG, e);
+            }
         }
 
     }
@@ -142,20 +144,28 @@ public class DirectionsHandlers implements UpdatesCallback {
         sendMessageRequest.setReplayMarkup(forceReplyKeyboard);
         sendMessageRequest.setText(LocalisationService.getInstance().getString("sendDestination", language));
 
-        SenderHelper.SendApiMethodAsync(sendMessageRequest, TOKEN, new SentCallback<Message>() {
-            @Override
-            public void onResult(BotApiMethod<Message> method, JSONObject jsonObject) {
-                Message sentMessage = method.deserializeResponse(jsonObject);
-                if (sentMessage != null) {
-                    DatabaseManager.getInstance().addUserForDirection(message.getFrom().getId(), WATING_DESTINY_STATUS,
-                            sentMessage.getMessageId(), message.getText());
+        try {
+            sendMessageAsync(sendMessageRequest, new SentCallback<Message>() {
+                @Override
+                public void onResult(BotApiMethod<Message> method, JSONObject jsonObject) {
+                    Message sentMessage = method.deserializeResponse(jsonObject);
+                    if (sentMessage != null) {
+                        DatabaseManager.getInstance().addUserForDirection(message.getFrom().getId(), WATING_DESTINY_STATUS,
+                                sentMessage.getMessageId(), message.getText());
+                    }
                 }
-            }
 
-            @Override
-            public void onError(BotApiMethod<Message> method, JSONObject jsonObject) {
-            }
-        });
+                @Override
+                public void onError(BotApiMethod<Message> botApiMethod, JSONObject jsonObject) {
+                }
+
+                @Override
+                public void onException(BotApiMethod<Message> botApiMethod, Exception e) {
+                }
+            });
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
+        }
 
     }
 
@@ -166,7 +176,11 @@ public class DirectionsHandlers implements UpdatesCallback {
                 Commands.startDirectionCommand);
         sendMessageRequest.setText(helpDirectionsFormated);
         sendMessageRequest.setChatId(message.getChatId().toString());
-        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
+        try {
+            sendMessage(sendMessageRequest);
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
+        }
     }
 
     private void onStartdirectionsCommand(Message message, String language) {
@@ -178,20 +192,28 @@ public class DirectionsHandlers implements UpdatesCallback {
         sendMessageRequest.setReplayMarkup(forceReplyKeyboard);
         sendMessageRequest.setText(LocalisationService.getInstance().getString("initDirections", language));
 
-        SenderHelper.SendApiMethodAsync(sendMessageRequest, TOKEN, new SentCallback<Message>() {
-            @Override
-            public void onResult(BotApiMethod<Message> method, JSONObject jsonObject) {
-                Message sentMessage = method.deserializeResponse(jsonObject);
-                if (sentMessage != null) {
-                    DatabaseManager.getInstance().addUserForDirection(message.getFrom().getId(), WATING_ORIGIN_STATUS,
-                            sentMessage.getMessageId(), null);
+        try {
+            sendMessageAsync(sendMessageRequest, new SentCallback<Message>() {
+                @Override
+                public void onResult(BotApiMethod<Message> method, JSONObject jsonObject) {
+                    Message sentMessage = method.deserializeResponse(jsonObject);
+                    if (sentMessage != null) {
+                        DatabaseManager.getInstance().addUserForDirection(message.getFrom().getId(), WATING_ORIGIN_STATUS,
+                                sentMessage.getMessageId(), null);
+                    }
                 }
-            }
 
-            @Override
-            public void onError(BotApiMethod<Message> method, JSONObject jsonObject) {
-            }
-        });
+                @Override
+                public void onError(BotApiMethod<Message> botApiMethod, JSONObject jsonObject) {
+                }
+
+                @Override
+                public void onException(BotApiMethod<Message> botApiMethod, Exception e) {
+                }
+            });
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
+        }
 
     }
 
@@ -212,8 +234,12 @@ public class DirectionsHandlers implements UpdatesCallback {
         replyKeyboardMarkup.setSelective(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardMarkup);
         sendMessageRequest.setText(LocalisationService.getInstance().getString("chooselanguage", language));
-        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
-        languageMessages.add(message.getFrom().getId());
+        try {
+            sendMessage(sendMessageRequest);
+            languageMessages.add(message.getFrom().getId());
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
+        }
     }
 
     private void onLanguageSelected(Message message) throws InvalidObjectException {
@@ -231,7 +257,11 @@ public class DirectionsHandlers implements UpdatesCallback {
         replyKeyboardHide.setHideKeyboard(true);
         replyKeyboardHide.setSelective(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardHide);
-        SenderHelper.SendApiMethod(sendMessageRequest, TOKEN);
-        languageMessages.remove(message.getFrom().getId());
+        try {
+            sendMessage(sendMessageRequest);
+            languageMessages.remove(message.getFrom().getId());
+        } catch (TelegramApiException e) {
+            BotLogger.error(LOGTAG, e);
+        }
     }
 }

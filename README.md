@@ -35,6 +35,9 @@ Feel free to create issues [here](https://github.com/rubenlagus/TelegramBots/iss
 
 Follow the steps created by Rico [here](https://github.com/rubenlagus/TelegramBots/blob/master/eclipse%20configuration.md)
 
+## Tutorial
+Short tutorial how to make a simple Echo Bot is available [here](HOWTO.md)
+
 ## License 
 
 This program is free software: you can redistribute it and/or modify

@@ -7,12 +7,13 @@ import org.telegram.services.BotLogger;
 import org.telegram.services.Emoji;
 import org.telegram.services.LocalisationService;
 import org.telegram.telegrambots.TelegramApiException;
-import org.telegram.telegrambots.api.methods.SendDocument;
-import org.telegram.telegrambots.api.methods.SendMessage;
+import org.telegram.telegrambots.api.methods.send.SendDocument;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.ReplyKeyboardHide;
-import org.telegram.telegrambots.api.objects.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardHide;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
 import java.io.InvalidObjectException;
@@ -144,9 +145,9 @@ public class FilesHandlers extends TelegramLongPollingBot {
         HashMap<String, String> files = DatabaseManager.getInstance().getFilesByUser(message.getFrom().getId());
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         if (files.size() > 0) {
-            List<List<String>> commands = new ArrayList<>();
+            List<KeyboardRow> commands = new ArrayList<>();
             for (Map.Entry<String, String> entry : files.entrySet()) {
-                List<String> commandRow = new ArrayList<>();
+                KeyboardRow commandRow = new KeyboardRow();
                 commandRow.add(Commands.deleteCommand + " " + entry.getKey() + " " + Emoji.LEFT_RIGHT_ARROW.toString()
                         + " " + entry.getValue());
                 commands.add(commandRow);
@@ -244,9 +245,9 @@ public class FilesHandlers extends TelegramLongPollingBot {
         sendMessageRequest.setChatId(message.getChatId().toString());
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         HashMap<String, String> languages = LocalisationService.getInstance().getSupportedLanguages();
-        List<List<String>> commands = new ArrayList<>();
+        List<KeyboardRow> commands = new ArrayList<>();
         for (Map.Entry<String, String> entry : languages.entrySet()) {
-            List<String> commandRow = new ArrayList<>();
+            KeyboardRow commandRow = new KeyboardRow();
             commandRow.add(entry.getKey() + " " + Emoji.LEFT_RIGHT_ARROW.toString() + " " + entry.getValue());
             commands.add(commandRow);
         }

@@ -9,8 +9,13 @@ import org.telegram.services.DirectionsService;
 import org.telegram.services.LocalisationService;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.methods.SendMessage;
-import org.telegram.telegrambots.api.objects.*;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Message;
+import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.api.objects.replykeyboard.ForceReplyKeyboard;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardHide;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.updateshandlers.SentCallback;
 
@@ -222,9 +227,9 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         sendMessageRequest.setChatId(message.getChatId().toString());
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         HashMap<String, String> languages = LocalisationService.getInstance().getSupportedLanguages();
-        List<List<String>> commands = new ArrayList<>();
+        List<KeyboardRow> commands = new ArrayList<>();
         for (Map.Entry<String, String> entry : languages.entrySet()) {
-            List<String> commandRow = new ArrayList<>();
+            KeyboardRow commandRow = new KeyboardRow();
             commandRow.add(entry.getKey() + " --> " + entry.getValue());
             commands.add(commandRow);
         }

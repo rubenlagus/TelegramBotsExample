@@ -3,11 +3,22 @@ package org.telegram.updateshandlers;
 import org.telegram.BotConfig;
 import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
-import org.telegram.services.*;
+import org.telegram.services.BotLogger;
+import org.telegram.services.CustomTimerTask;
+import org.telegram.services.Emoji;
+import org.telegram.services.LocalisationService;
+import org.telegram.services.TimerExecutor;
+import org.telegram.services.WeatherService;
 import org.telegram.structure.WeatherAlert;
 import org.telegram.telegrambots.TelegramApiException;
-import org.telegram.telegrambots.api.methods.SendMessage;
-import org.telegram.telegrambots.api.objects.*;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Message;
+import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.api.objects.replykeyboard.ForceReplyKeyboard;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardHide;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 
 import java.util.ArrayList;
@@ -899,11 +910,11 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboad(false);
 
-        List<List<String>> keyboard = new ArrayList<>();
-        List<String> keyboardFirstRow = new ArrayList<>();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow keyboardFirstRow = new KeyboardRow();
         keyboardFirstRow.add(getCurrentCommand(language));
         keyboardFirstRow.add(getForecastCommand(language));
-        List<String> keyboardSecondRow = new ArrayList<>();
+        KeyboardRow keyboardSecondRow = new KeyboardRow();
         keyboardSecondRow.add(getSettingsCommand(language));
         keyboardSecondRow.add(getRateCommand(language));
         keyboard.add(keyboardFirstRow);
@@ -919,14 +930,14 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboad(false);
 
-        List<List<String>> keyboard = new ArrayList<>();
+        List<KeyboardRow> keyboard = new ArrayList<>();
         for (String languageName : LocalisationService.getInstance().getSupportedLanguages().values()) {
-            List<String> row = new ArrayList<>();
+            KeyboardRow row = new KeyboardRow();
             row.add(languageName);
             keyboard.add(row);
         }
 
-        List<String> row = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
         row.add(getCancelCommand(language));
         keyboard.add(row);
         replyKeyboardMarkup.setKeyboard(keyboard);
@@ -940,14 +951,14 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboad(false);
 
-        List<List<String>> keyboard = new ArrayList<>();
-        List<String> row = new ArrayList<>();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
         row.add(LocalisationService.getInstance().getString("metricSystem", language));
         keyboard.add(row);
-        row = new ArrayList<>();
+        row = new KeyboardRow();
         row.add(LocalisationService.getInstance().getString("imperialSystem", language));
         keyboard.add(row);
-        row = new ArrayList<>();
+        row = new KeyboardRow();
         row.add(getCancelCommand(language));
         keyboard.add(row);
         replyKeyboardMarkup.setKeyboard(keyboard);
@@ -961,11 +972,11 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboad(false);
 
-        List<List<String>> keyboard = new ArrayList<>();
-        List<String> keyboardFirstRow = new ArrayList<>();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow keyboardFirstRow = new KeyboardRow();
         keyboardFirstRow.add(getLanguagesCommand(language));
         keyboardFirstRow.add(getUnitsCommand(language));
-        List<String> keyboardSecondRow = new ArrayList<>();
+        KeyboardRow keyboardSecondRow = new KeyboardRow();
         keyboardSecondRow.add(getAlertsCommand(language));
         keyboardSecondRow.add(getBackCommand(language));
         keyboard.add(keyboardFirstRow);
@@ -985,23 +996,23 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboad(true);
 
-        List<List<String>> keyboard = new ArrayList<>();
+        List<KeyboardRow> keyboard = new ArrayList<>();
         for (String recentWeather : DatabaseManager.getInstance().getRecentWeather(userId)) {
-            List<String> row = new ArrayList<>();
+            KeyboardRow row = new KeyboardRow();
             row.add(recentWeather);
             keyboard.add(row);
         }
 
-        List<String> row = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
         if (allowNew) {
             row.add(getLocationCommand(language));
             keyboard.add(row);
 
-            row = new ArrayList<>();
+            row = new KeyboardRow();
             row.add(getNewCommand(language));
             keyboard.add(row);
 
-            row = new ArrayList<>();
+            row = new KeyboardRow();
         }
         row.add(getCancelCommand(language));
         keyboard.add(row);
@@ -1017,14 +1028,14 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboad(true);
 
-        List<List<String>> keyboard = new ArrayList<>();
+        List<KeyboardRow> keyboard = new ArrayList<>();
 
-        List<String> row = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
         row.add(getNewCommand(language));
         row.add(getDeleteCommand(language));
         keyboard.add(row);
 
-        row = new ArrayList<>();
+        row = new KeyboardRow();
         row.add(getListCommand(language));
         row.add(getBackCommand(language));
         keyboard.add(row);
@@ -1044,13 +1055,13 @@ public class WeatherHandlers extends TelegramLongPollingBot {
             replyKeyboardMarkup.setResizeKeyboard(true);
             replyKeyboardMarkup.setOneTimeKeyboad(true);
 
-            List<List<String>> keyboard = new ArrayList<>();
+            List<KeyboardRow> keyboard = new ArrayList<>();
             for (String alertCityName: alertCitiesNames) {
-                List<String> row = new ArrayList<>();
+                KeyboardRow row = new KeyboardRow();
                 row.add(alertCityName);
                 keyboard.add(row);
             }
-            List<String> row = new ArrayList<>();
+            KeyboardRow row = new KeyboardRow();
             row.add(getCancelCommand(language));
             keyboard.add(row);
 

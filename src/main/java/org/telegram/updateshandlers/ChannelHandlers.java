@@ -36,13 +36,17 @@ public class ChannelHandlers extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        Message message = update.getMessage();
-        if (message != null && message.hasText()) {
-            try {
-                handleIncomingMessage(message);
-            } catch (InvalidObjectException e) {
-                BotLogger.severe(LOGTAG, e);
+        try {
+            Message message = update.getMessage();
+            if (message != null && message.hasText()) {
+                try {
+                    handleIncomingMessage(message);
+                } catch (InvalidObjectException e) {
+                    BotLogger.severe(LOGTAG, e);
+                }
             }
+        } catch (Exception e) {
+            BotLogger.error(LOGTAG, e);
         }
     }
 

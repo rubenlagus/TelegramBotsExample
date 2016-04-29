@@ -33,7 +33,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         try {
             sendTransifexFile(update);
-        } catch (InvalidObjectException e) {
+        } catch (Exception e) {
             BotLogger.error(LOGTAG, e);
         }
     }

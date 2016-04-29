@@ -43,14 +43,18 @@ public class RaeHandlers extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasInlineQuery()) {
-            handleIncomingInlineQuery(update.getInlineQuery());
-        } else if (update.hasMessage() && update.getMessage().isUserMessage()) {
-            try {
-                sendMessage(getHelpMessage(update.getMessage()));
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
+        try {
+            if (update.hasInlineQuery()) {
+                handleIncomingInlineQuery(update.getInlineQuery());
+            } else if (update.hasMessage() && update.getMessage().isUserMessage()) {
+                try {
+                    sendMessage(getHelpMessage(update.getMessage()));
+                } catch (TelegramApiException e) {
+                    BotLogger.error(LOGTAG, e);
+                }
             }
+        } catch (Exception e) {
+            BotLogger.error(LOGTAG, e);
         }
     }
 

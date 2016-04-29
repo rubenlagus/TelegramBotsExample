@@ -46,7 +46,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         try {
             handleFileUpdate(update);
-        } catch (InvalidObjectException e) {
+        } catch (Exception e) {
             BotLogger.error(LOGTAG, e);
         }
     }

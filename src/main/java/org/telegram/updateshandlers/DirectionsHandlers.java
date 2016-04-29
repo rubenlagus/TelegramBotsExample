@@ -49,7 +49,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         try {
             handleDirections(update);
-        } catch (InvalidObjectException e) {
+        } catch (Exception e) {
             BotLogger.error(LOGTAG, e);
         }
     }

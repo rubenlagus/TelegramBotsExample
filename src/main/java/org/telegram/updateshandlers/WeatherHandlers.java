@@ -60,11 +60,15 @@ public class WeatherHandlers extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage()) {
-            Message message = update.getMessage();
-            if (message.hasText() || message.hasLocation()) {
-                handleIncomingMessage(message);
+        try {
+            if (update.hasMessage()) {
+                Message message = update.getMessage();
+                if (message.hasText() || message.hasLocation()) {
+                    handleIncomingMessage(message);
+                }
             }
+        } catch (Exception e) {
+            BotLogger.error(LOGTAG, e);
         }
     }
 

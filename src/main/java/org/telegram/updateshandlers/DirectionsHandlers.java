@@ -76,15 +76,15 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                     sendHelpMessage(message, language);
                 } else if (!message.getText().startsWith("/")) {
                     if (DatabaseManager.getInstance().getUserDestinationStatus(message.getFrom().getId()) == WATING_ORIGIN_STATUS &&
-                            message.hasReplayMessage() &&
+                            message.isReply() &&
                             DatabaseManager.getInstance().getUserDestinationMessageId(message.getFrom().getId()) == message.getReplyToMessage().getMessageId()) {
                         onOriginReceived(message, language);
 
                     } else if (DatabaseManager.getInstance().getUserDestinationStatus(message.getFrom().getId()) == WATING_DESTINY_STATUS &&
-                            message.hasReplayMessage() &&
+                            message.isReply() &&
                             DatabaseManager.getInstance().getUserDestinationMessageId(message.getFrom().getId()) == message.getReplyToMessage().getMessageId()) {
                         onDestinationReceived(message, language);
-                    } else if (!message.hasReplayMessage()) {
+                    } else if (!message.isReply()) {
                         if (DatabaseManager.getInstance().getUserDestinationStatus(message.getFrom().getId()) == -1) {
                             sendHelpMessage(message, language);
                         } else {

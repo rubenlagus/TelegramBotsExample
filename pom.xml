@@ -27,7 +27,7 @@
         <jersey.version>2.22.2</jersey.version>
         <jerseyengine.version>1.19.1</jerseyengine.version>
         <httpcompontents.version>4.5.2</httpcompontents.version>
-        <telegrambots.version>v2.0.1</telegrambots.version>
+        <telegrambots.version>v2.2.6</telegrambots.version>
         <json.version>20160212</json.version>
         <mysql.version>5.1.38</mysql.version>
     </properties>

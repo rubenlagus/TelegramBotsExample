@@ -2,16 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cc3252dd-ba1f-404e-b603-ef880b5c3341" name="Default" comment="1. Merge&#10;">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_rubenlagus_TelegramBots_v2_0_1.xml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/BotConfig.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/BotConfig.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/BuildVars.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/BuildVars.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/Main.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/ChannelHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/ChannelHandlers.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/database/DatabaseManager.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/database/DatabaseManager.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/RaeHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/RaeHandlers.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/TransifexHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/TransifexHandlers.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java" afterPath="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java" />
     </list>
     <ignored path="BotAPi.iws" />
@@ -55,69 +51,68 @@
     <favorites_list name="BotAPi" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="RaeHandlers.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/RaeHandlers.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="52" column="45" selection-start-line="52" selection-start-column="45" selection-end-line="52" selection-end-column="45" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="docComment;class#RaeHandlers#0" expanded="true" />
-                <element signature="docComment;method#handleIncomingInlineQuery#0;class#RaeHandlers#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="TransifexHandlers.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/TransifexHandlers.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="35" column="12" selection-start-line="35" selection-start-column="12" selection-end-line="35" selection-end-column="12" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="WeatherHandlers.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="62" column="13" selection-start-line="62" selection-start-column="13" selection-end-line="62" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DirectionsHandlers.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="51" column="20" selection-start-line="51" selection-start-column="20" selection-end-line="51" selection-end-column="20" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ChannelHandlers.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/ChannelHandlers.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="451">
-              <caret line="50" column="5" selection-start-line="50" selection-start-column="5" selection-end-line="50" selection-end-column="5" />
+            <state relative-caret-position="375">
+              <caret line="69" column="23" selection-start-line="69" selection-start-column="23" selection-end-line="69" selection-end-column="23" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#2983#2984#0" expanded="true" />
+                <element signature="e#3027#3028#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FilesHandlers.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java">
+      <file leaf-file-name="DatabaseManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/database/DatabaseManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="49" column="35" selection-start-line="49" selection-start-column="35" selection-end-line="49" selection-end-column="35" />
-              <folding />
+            <state relative-caret-position="301">
+              <caret line="486" column="0" selection-start-line="486" selection-start-column="0" selection-end-line="486" selection-end-column="0" />
+              <folding>
+                <element signature="method#DatabaseManager#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#getInstance#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#recreateTable#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#updateToVersion2#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#updateToVersion3#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#updateToVersion4#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#updateToVersion5#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#updateToVersion6#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#updateToVersion7#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#createNewTables#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#addFile#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#getFilesByUser#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#addUserForFile#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#deleteUserForFile#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#getUserStatusForFile#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#doesFileExists#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#deleteFile#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#addRecentWeather#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#getRecentWeather#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#cleanUpRecent#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#addUserForDirection#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#getUserDestinationStatus#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#getUserDestinationMessageId#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#getUserOrigin#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#deleteUserForDirections#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#putLastUpdate#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#getLastUpdate#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#getUserLanguage#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#putUserLanguage#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#getWeatherState#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#insertWeatherState#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#getRecentWeatherIdByCity#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#getUserWeatherOptions#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#addNewUserWeatherOptions#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#putUserWeatherLanguageOption#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#putUserWeatherUnitsOption#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#createNewWeatherAlert#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#getAlertCitiesNameByUser#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#deleteAlertCity#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#deleteAlertsForUser#0;class#DatabaseManager#0" expanded="false" />
+                <element signature="method#getAllAlerts#0;class#DatabaseManager#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -165,7 +160,6 @@
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/services/LocalisationService.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/methods/SendDocument.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/SenderHelper.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/database/DatabaseManager.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/database/CreationStrings.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Audio.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/api/objects/Chat.java" />
@@ -204,10 +198,11 @@
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/Main.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/ChannelHandlers.java" />
-        <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/RaeHandlers.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/TransifexHandlers.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/database/DatabaseManager.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java" />
       </list>
     </option>
@@ -375,6 +370,7 @@
     </navigator>
     <panes>
       <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -514,7 +510,6 @@
         </subPane>
       </pane>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1206,14 +1201,8 @@
       <workItem from="1460911144788" duration="1760000" />
       <workItem from="1460922884231" duration="536000" />
       <workItem from="1461933375684" duration="218000" />
-      <workItem from="1461935875574" duration="130000" />
-    </task>
-    <task id="LOCAL-00010" summary="1. Cleanup databasemanager file">
-      <created>1434928139587</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1434928139587</updated>
+      <workItem from="1461935875574" duration="293000" />
+      <workItem from="1461943598189" duration="1022000" />
     </task>
     <task id="LOCAL-00011" summary="1. Fix weather api">
       <created>1434932225092</created>
@@ -1551,11 +1540,18 @@
       <option name="project" value="LOCAL" />
       <updated>1461933537820</updated>
     </task>
-    <option name="localTasksCounter" value="59" />
+    <task id="LOCAL-00059" summary="1. Global exceptions&#10;">
+      <created>1461936025610</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1461936025610</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="288198000" />
+    <option name="totallyTimeSpent" value="289383000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1572,7 +1568,6 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295129" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32886904" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Java Enterprise" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1586,6 +1581,7 @@
       <window_info id="Bean Validation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Statistic" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19335347" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Dynamic Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1595,8 +1591,8 @@
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Dynamic Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40327382" sideWeight="0.4879154" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32886904" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32886904" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Database Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32886904" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1646,7 +1642,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="1. Fix filesbot bug &#10;" />
     <MESSAGE value="1. Added spanish localization&#10;" />
     <MESSAGE value="1. Added portuguese localization&#10;2. Updates english and spanish localizations&#10;" />
     <MESSAGE value="1. Fix weather bug and spanish translation&#10;" />
@@ -1671,7 +1666,8 @@
     <MESSAGE value="1. Samples Bots 2.0&#10;" />
     <MESSAGE value="1. Update dependencies" />
     <MESSAGE value="v2.2.6" />
-    <option name="LAST_COMMIT_MESSAGE" value="v2.2.6" />
+    <MESSAGE value="1. Global exceptions&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="1. Global exceptions&#10;" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1709,13 +1705,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java</url>
-          <line>1182</line>
+          <line>1178</line>
           <properties />
           <option name="timeStamp" value="301" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java</url>
-          <line>1175</line>
+          <line>1171</line>
           <properties />
           <option name="timeStamp" value="302" />
         </line-breakpoint>
@@ -1744,8 +1740,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/812016.log" />
-    <entry file="file://$PROJECT_DIR$/1712016.log" />
     <entry file="file://$PROJECT_DIR$/1812016.log" />
     <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/api/objects/ChosenInlineQuery.java" />
     <entry file="jar://$MAVEN_REPOSITORY$/com/github/rubenlagus/TelegramBots/v0.1/TelegramBots-v0.1.jar!/org/telegram/telegrambots/bots/TelegramLongPollingBot.class" />
@@ -1871,16 +1865,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/database/DatabaseManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/1742016.log">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1919,18 +1903,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/rubenlagus/TelegramBots/v2.2.6/TelegramBots-v2.2.6.jar!/org/telegram/telegrambots/bots/AbsSender.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="49" column="35" selection-start-line="49" selection-start-column="35" selection-end-line="49" selection-end-column="35" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="51" column="20" selection-start-line="51" selection-start-column="20" selection-end-line="51" selection-end-column="20" />
+        <state relative-caret-position="210">
+          <caret line="66" column="19" selection-start-line="66" selection-start-column="19" selection-end-line="66" selection-end-column="19" />
           <folding />
         </state>
       </provider>
@@ -1945,15 +1921,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/RaeHandlers.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/DirectionsHandlers.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="52" column="45" selection-start-line="52" selection-start-column="45" selection-end-line="52" selection-end-column="45" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="docComment;class#RaeHandlers#0" expanded="true" />
-            <element signature="docComment;method#handleIncomingInlineQuery#0;class#RaeHandlers#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="300">
+          <caret line="51" column="20" selection-start-line="51" selection-start-column="20" selection-end-line="51" selection-end-column="20" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -1965,11 +1937,92 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/RaeHandlers.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="52" column="45" selection-start-line="52" selection-start-column="45" selection-end-line="52" selection-end-column="45" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="docComment;class#RaeHandlers#0" expanded="true" />
+            <element signature="docComment;method#handleIncomingInlineQuery#0;class#RaeHandlers#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/structure/WeatherAlert.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/FilesHandlers.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="139">
+          <caret line="51" column="53" selection-start-line="51" selection-start-column="53" selection-end-line="51" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/database/DatabaseManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="301">
+          <caret line="486" column="0" selection-start-line="486" selection-start-column="0" selection-end-line="486" selection-end-column="0" />
+          <folding>
+            <element signature="method#DatabaseManager#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#getInstance#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#recreateTable#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#updateToVersion2#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#updateToVersion3#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#updateToVersion4#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#updateToVersion5#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#updateToVersion6#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#updateToVersion7#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#createNewTables#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#addFile#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#getFilesByUser#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#addUserForFile#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#deleteUserForFile#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#getUserStatusForFile#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#doesFileExists#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#deleteFile#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#addRecentWeather#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#getRecentWeather#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#cleanUpRecent#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#addUserForDirection#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#getUserDestinationStatus#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#getUserDestinationMessageId#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#getUserOrigin#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#deleteUserForDirections#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#putLastUpdate#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#getLastUpdate#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#getUserLanguage#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#putUserLanguage#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#getWeatherState#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#insertWeatherState#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#getRecentWeatherIdByCity#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#getUserWeatherOptions#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#addNewUserWeatherOptions#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#putUserWeatherLanguageOption#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#putUserWeatherUnitsOption#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#createNewWeatherAlert#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#getAlertCitiesNameByUser#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#deleteAlertCity#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#deleteAlertsForUser#0;class#DatabaseManager#0" expanded="false" />
+            <element signature="method#getAllAlerts#0;class#DatabaseManager#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/telegram/updateshandlers/WeatherHandlers.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="62" column="13" selection-start-line="62" selection-start-column="13" selection-end-line="62" selection-end-column="13" />
-          <folding />
+        <state relative-caret-position="375">
+          <caret line="69" column="23" selection-start-line="69" selection-start-column="23" selection-end-line="69" selection-end-column="23" />
+          <folding>
+            <element signature="e#2983#2984#0" expanded="true" />
+            <element signature="e#3027#3028#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

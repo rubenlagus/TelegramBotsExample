@@ -113,7 +113,12 @@ public class WeatherHandlers extends TelegramLongPollingBot {
             try {
                 sendMessage(sendMessage);
             } catch (TelegramApiException e) {
-                BotLogger.error(LOGTAG, e);
+                BotLogger.warn(LOGTAG, e);
+                if (e.getApiResponse().contains("Can't access the chat") || e.getApiResponse().contains("Bot was blocked by the user")) {
+                    DatabaseManager.getInstance().deleteAlertsForUser(weatherAlert.getUserId());
+                }
+            } catch (Exception e) {
+                BotLogger.severe(LOGTAG, e);
             }
         }
     }
@@ -133,7 +138,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
 
     // region Incoming messages handlers
 
-    private void handleIncomingMessage(Message message) {
+    private void handleIncomingMessage(Message message) throws TelegramApiException {
         final int state = DatabaseManager.getInstance().getWeatherState(message.getFrom().getId(), message.getChatId());
         final String language = DatabaseManager.getInstance().getUserWeatherOptions(message.getFrom().getId())[0];
         if (!message.isUserMessage() && message.hasText()) {
@@ -178,14 +183,10 @@ public class WeatherHandlers extends TelegramLongPollingBot {
                 break;
         }
 
-        try {
             sendMessage(sendMessageRequest);
-        } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
-        }
     }
 
-    private void sendHideKeyboard(Integer userId, Long chatId, Integer messageId) {
+    private void sendHideKeyboard(Integer userId, Long chatId, Integer messageId) throws TelegramApiException {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId.toString());
         sendMessage.enableMarkdown(true);
@@ -197,13 +198,8 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         replyKeyboardHide.setHideKeyboard(true);
         sendMessage.setReplayMarkup(replyKeyboardHide);
 
-        try {
-            sendMessage(sendMessage);
-            DatabaseManager.getInstance().insertWeatherState(userId, chatId, STARTSTATE);
-        } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
-        }
-
+        sendMessage(sendMessage);
+        DatabaseManager.getInstance().insertWeatherState(userId, chatId, STARTSTATE);
     }
 
     private static boolean isCommandForOther(String text) {

@@ -24,10 +24,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jersey.version>2.22.2</jersey.version>
-        <jerseyengine.version>1.19.1</jerseyengine.version>
         <httpcompontents.version>4.5.2</httpcompontents.version>
-        <telegrambots.version>v2.2.6</telegrambots.version>
+        <telegrambots.version>v2.3.3.1</telegrambots.version>
         <json.version>20160212</json.version>
         <mysql.version>5.1.38</mysql.version>
     </properties>
@@ -53,21 +51,6 @@
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-grizzly2-http</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-json-jackson</artifactId>
-            <version>${jersey.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-bundle</artifactId>
-            <version>${jerseyengine.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-grizzly2-servlet</artifactId>
-            <version>${jerseyengine.version}</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>

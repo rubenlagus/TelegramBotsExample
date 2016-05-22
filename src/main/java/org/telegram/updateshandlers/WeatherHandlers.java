@@ -3,7 +3,6 @@ package org.telegram.updateshandlers;
 import org.telegram.BotConfig;
 import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
-import org.telegram.services.BotLogger;
 import org.telegram.services.CustomTimerTask;
 import org.telegram.services.Emoji;
 import org.telegram.services.LocalisationService;
@@ -20,6 +19,7 @@ import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardHide;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.logging.BotLogger;
 
 import java.util.ArrayList;
 import java.util.List;

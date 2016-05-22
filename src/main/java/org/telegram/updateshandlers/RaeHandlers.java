@@ -1,7 +1,6 @@
 package org.telegram.updateshandlers;
 
 import org.telegram.BotConfig;
-import org.telegram.services.BotLogger;
 import org.telegram.services.RaeService;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.AnswerInlineQuery;
@@ -13,6 +12,7 @@ import org.telegram.telegrambots.api.objects.inlinequery.inputmessagecontent.Inp
 import org.telegram.telegrambots.api.objects.inlinequery.result.InlineQueryResult;
 import org.telegram.telegrambots.api.objects.inlinequery.result.InlineQueryResultArticle;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.logging.BotLogger;
 
 import java.util.ArrayList;
 import java.util.List;

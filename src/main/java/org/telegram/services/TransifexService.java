@@ -9,6 +9,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.telegram.BuildVars;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
+import org.telegram.telegrambots.logging.BotLogger;
 
 import java.io.BufferedReader;
 import java.io.File;

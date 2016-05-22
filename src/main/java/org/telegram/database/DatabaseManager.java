@@ -7,8 +7,8 @@
  */
 package org.telegram.database;
 
-import org.telegram.services.BotLogger;
 import org.telegram.structure.WeatherAlert;
+import org.telegram.telegrambots.logging.BotLogger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

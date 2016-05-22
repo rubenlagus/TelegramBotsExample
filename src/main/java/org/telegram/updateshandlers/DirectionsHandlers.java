@@ -4,7 +4,6 @@ import org.json.JSONObject;
 import org.telegram.BotConfig;
 import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
-import org.telegram.services.BotLogger;
 import org.telegram.services.DirectionsService;
 import org.telegram.services.LocalisationService;
 import org.telegram.telegrambots.TelegramApiException;
@@ -17,6 +16,7 @@ import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardHide;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.logging.BotLogger;
 import org.telegram.telegrambots.updateshandlers.SentCallback;
 
 import java.io.InvalidObjectException;

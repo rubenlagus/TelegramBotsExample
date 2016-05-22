@@ -7,8 +7,8 @@
  */
 package org.telegram.database;
 
-import org.telegram.services.BotLogger;
 import org.telegram.structure.WeatherAlert;
+import org.telegram.telegrambots.logging.BotLogger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -559,6 +559,18 @@ public class DatabaseManager {
             final PreparedStatement preparedStatement = connetion.getPreparedStatement("DELETE FROM WeatherAlert WHERE userId=? AND cityName=?;");
             preparedStatement.setInt(1, userId);
             preparedStatement.setString(2, cityName);
+            updatedRows = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return updatedRows > 0;
+    }
+
+    public boolean deleteAlertsForUser(Integer userId) {
+        int updatedRows = 0;
+        try {
+            final PreparedStatement preparedStatement = connetion.getPreparedStatement("DELETE FROM WeatherAlert WHERE userId=?");
+            preparedStatement.setInt(1, userId);
             updatedRows = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

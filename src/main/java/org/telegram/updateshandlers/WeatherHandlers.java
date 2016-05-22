@@ -3,12 +3,23 @@ package org.telegram.updateshandlers;
 import org.telegram.BotConfig;
 import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
-import org.telegram.services.*;
+import org.telegram.services.CustomTimerTask;
+import org.telegram.services.Emoji;
+import org.telegram.services.LocalisationService;
+import org.telegram.services.TimerExecutor;
+import org.telegram.services.WeatherService;
 import org.telegram.structure.WeatherAlert;
 import org.telegram.telegrambots.TelegramApiException;
-import org.telegram.telegrambots.api.methods.SendMessage;
-import org.telegram.telegrambots.api.objects.*;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Message;
+import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.api.objects.replykeyboard.ForceReplyKeyboard;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardHide;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.logging.BotLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,11 +60,15 @@ public class WeatherHandlers extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage()) {
-            Message message = update.getMessage();
-            if (message.hasText() || message.hasLocation()) {
-                handleIncomingMessage(message);
+        try {
+            if (update.hasMessage()) {
+                Message message = update.getMessage();
+                if (message.hasText() || message.hasLocation()) {
+                    handleIncomingMessage(message);
+                }
             }
+        } catch (Exception e) {
+            BotLogger.error(LOGTAG, e);
         }
     }
 
@@ -98,7 +113,12 @@ public class WeatherHandlers extends TelegramLongPollingBot {
             try {
                 sendMessage(sendMessage);
             } catch (TelegramApiException e) {
-                BotLogger.error(LOGTAG, e);
+                BotLogger.warn(LOGTAG, e);
+                if (e.getApiResponse().contains("Can't access the chat") || e.getApiResponse().contains("Bot was blocked by the user")) {
+                    DatabaseManager.getInstance().deleteAlertsForUser(weatherAlert.getUserId());
+                }
+            } catch (Exception e) {
+                BotLogger.severe(LOGTAG, e);
             }
         }
     }
@@ -118,7 +138,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
 
     // region Incoming messages handlers
 
-    private void handleIncomingMessage(Message message) {
+    private void handleIncomingMessage(Message message) throws TelegramApiException {
         final int state = DatabaseManager.getInstance().getWeatherState(message.getFrom().getId(), message.getChatId());
         final String language = DatabaseManager.getInstance().getUserWeatherOptions(message.getFrom().getId())[0];
         if (!message.isUserMessage() && message.hasText()) {
@@ -163,14 +183,10 @@ public class WeatherHandlers extends TelegramLongPollingBot {
                 break;
         }
 
-        try {
             sendMessage(sendMessageRequest);
-        } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
-        }
     }
 
-    private void sendHideKeyboard(Integer userId, Long chatId, Integer messageId) {
+    private void sendHideKeyboard(Integer userId, Long chatId, Integer messageId) throws TelegramApiException {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(chatId.toString());
         sendMessage.enableMarkdown(true);
@@ -182,13 +198,8 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         replyKeyboardHide.setHideKeyboard(true);
         sendMessage.setReplayMarkup(replyKeyboardHide);
 
-        try {
-            sendMessage(sendMessage);
-            DatabaseManager.getInstance().insertWeatherState(userId, chatId, STARTSTATE);
-        } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
-        }
-
+        sendMessage(sendMessage);
+        DatabaseManager.getInstance().insertWeatherState(userId, chatId, STARTSTATE);
     }
 
     private static boolean isCommandForOther(String text) {
@@ -899,11 +910,11 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboad(false);
 
-        List<List<String>> keyboard = new ArrayList<>();
-        List<String> keyboardFirstRow = new ArrayList<>();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow keyboardFirstRow = new KeyboardRow();
         keyboardFirstRow.add(getCurrentCommand(language));
         keyboardFirstRow.add(getForecastCommand(language));
-        List<String> keyboardSecondRow = new ArrayList<>();
+        KeyboardRow keyboardSecondRow = new KeyboardRow();
         keyboardSecondRow.add(getSettingsCommand(language));
         keyboardSecondRow.add(getRateCommand(language));
         keyboard.add(keyboardFirstRow);
@@ -919,14 +930,14 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboad(false);
 
-        List<List<String>> keyboard = new ArrayList<>();
+        List<KeyboardRow> keyboard = new ArrayList<>();
         for (String languageName : LocalisationService.getInstance().getSupportedLanguages().values()) {
-            List<String> row = new ArrayList<>();
+            KeyboardRow row = new KeyboardRow();
             row.add(languageName);
             keyboard.add(row);
         }
 
-        List<String> row = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
         row.add(getCancelCommand(language));
         keyboard.add(row);
         replyKeyboardMarkup.setKeyboard(keyboard);
@@ -940,14 +951,14 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboad(false);
 
-        List<List<String>> keyboard = new ArrayList<>();
-        List<String> row = new ArrayList<>();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
         row.add(LocalisationService.getInstance().getString("metricSystem", language));
         keyboard.add(row);
-        row = new ArrayList<>();
+        row = new KeyboardRow();
         row.add(LocalisationService.getInstance().getString("imperialSystem", language));
         keyboard.add(row);
-        row = new ArrayList<>();
+        row = new KeyboardRow();
         row.add(getCancelCommand(language));
         keyboard.add(row);
         replyKeyboardMarkup.setKeyboard(keyboard);
@@ -961,11 +972,11 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboad(false);
 
-        List<List<String>> keyboard = new ArrayList<>();
-        List<String> keyboardFirstRow = new ArrayList<>();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow keyboardFirstRow = new KeyboardRow();
         keyboardFirstRow.add(getLanguagesCommand(language));
         keyboardFirstRow.add(getUnitsCommand(language));
-        List<String> keyboardSecondRow = new ArrayList<>();
+        KeyboardRow keyboardSecondRow = new KeyboardRow();
         keyboardSecondRow.add(getAlertsCommand(language));
         keyboardSecondRow.add(getBackCommand(language));
         keyboard.add(keyboardFirstRow);
@@ -985,23 +996,23 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboad(true);
 
-        List<List<String>> keyboard = new ArrayList<>();
+        List<KeyboardRow> keyboard = new ArrayList<>();
         for (String recentWeather : DatabaseManager.getInstance().getRecentWeather(userId)) {
-            List<String> row = new ArrayList<>();
+            KeyboardRow row = new KeyboardRow();
             row.add(recentWeather);
             keyboard.add(row);
         }
 
-        List<String> row = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
         if (allowNew) {
             row.add(getLocationCommand(language));
             keyboard.add(row);
 
-            row = new ArrayList<>();
+            row = new KeyboardRow();
             row.add(getNewCommand(language));
             keyboard.add(row);
 
-            row = new ArrayList<>();
+            row = new KeyboardRow();
         }
         row.add(getCancelCommand(language));
         keyboard.add(row);
@@ -1017,14 +1028,14 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboad(true);
 
-        List<List<String>> keyboard = new ArrayList<>();
+        List<KeyboardRow> keyboard = new ArrayList<>();
 
-        List<String> row = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
         row.add(getNewCommand(language));
         row.add(getDeleteCommand(language));
         keyboard.add(row);
 
-        row = new ArrayList<>();
+        row = new KeyboardRow();
         row.add(getListCommand(language));
         row.add(getBackCommand(language));
         keyboard.add(row);
@@ -1044,13 +1055,13 @@ public class WeatherHandlers extends TelegramLongPollingBot {
             replyKeyboardMarkup.setResizeKeyboard(true);
             replyKeyboardMarkup.setOneTimeKeyboad(true);
 
-            List<List<String>> keyboard = new ArrayList<>();
+            List<KeyboardRow> keyboard = new ArrayList<>();
             for (String alertCityName: alertCitiesNames) {
-                List<String> row = new ArrayList<>();
+                KeyboardRow row = new KeyboardRow();
                 row.add(alertCityName);
                 keyboard.add(row);
             }
-            List<String> row = new ArrayList<>();
+            KeyboardRow row = new KeyboardRow();
             row.add(getCancelCommand(language));
             keyboard.add(row);
 

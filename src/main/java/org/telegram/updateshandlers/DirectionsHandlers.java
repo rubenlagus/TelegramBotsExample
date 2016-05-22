@@ -4,14 +4,19 @@ import org.json.JSONObject;
 import org.telegram.BotConfig;
 import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
-import org.telegram.services.BotLogger;
 import org.telegram.services.DirectionsService;
 import org.telegram.services.LocalisationService;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.methods.SendMessage;
-import org.telegram.telegrambots.api.objects.*;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Message;
+import org.telegram.telegrambots.api.objects.Update;
+import org.telegram.telegrambots.api.objects.replykeyboard.ForceReplyKeyboard;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardHide;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.logging.BotLogger;
 import org.telegram.telegrambots.updateshandlers.SentCallback;
 
 import java.io.InvalidObjectException;
@@ -44,7 +49,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         try {
             handleDirections(update);
-        } catch (InvalidObjectException e) {
+        } catch (Exception e) {
             BotLogger.error(LOGTAG, e);
         }
     }
@@ -71,15 +76,15 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                     sendHelpMessage(message, language);
                 } else if (!message.getText().startsWith("/")) {
                     if (DatabaseManager.getInstance().getUserDestinationStatus(message.getFrom().getId()) == WATING_ORIGIN_STATUS &&
-                            message.hasReplayMessage() &&
+                            message.isReply() &&
                             DatabaseManager.getInstance().getUserDestinationMessageId(message.getFrom().getId()) == message.getReplyToMessage().getMessageId()) {
                         onOriginReceived(message, language);
 
                     } else if (DatabaseManager.getInstance().getUserDestinationStatus(message.getFrom().getId()) == WATING_DESTINY_STATUS &&
-                            message.hasReplayMessage() &&
+                            message.isReply() &&
                             DatabaseManager.getInstance().getUserDestinationMessageId(message.getFrom().getId()) == message.getReplyToMessage().getMessageId()) {
                         onDestinationReceived(message, language);
-                    } else if (!message.hasReplayMessage()) {
+                    } else if (!message.isReply()) {
                         if (DatabaseManager.getInstance().getUserDestinationStatus(message.getFrom().getId()) == -1) {
                             sendHelpMessage(message, language);
                         } else {
@@ -222,9 +227,9 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         sendMessageRequest.setChatId(message.getChatId().toString());
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         HashMap<String, String> languages = LocalisationService.getInstance().getSupportedLanguages();
-        List<List<String>> commands = new ArrayList<>();
+        List<KeyboardRow> commands = new ArrayList<>();
         for (Map.Entry<String, String> entry : languages.entrySet()) {
-            List<String> commandRow = new ArrayList<>();
+            KeyboardRow commandRow = new KeyboardRow();
             commandRow.add(entry.getKey() + " --> " + entry.getValue());
             commands.add(commandRow);
         }

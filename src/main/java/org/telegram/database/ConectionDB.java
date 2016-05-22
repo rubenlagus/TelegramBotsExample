@@ -8,9 +8,15 @@
 package org.telegram.database;
 
 import org.telegram.BuildVars;
-import org.telegram.services.BotLogger;
+import org.telegram.telegrambots.logging.BotLogger;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * @author Ruben Bermudez

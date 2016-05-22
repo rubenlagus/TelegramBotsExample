@@ -1,5 +1,7 @@
 package org.telegram.services;
 
+import org.telegram.telegrambots.logging.BotLogger;
+
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDateTime;

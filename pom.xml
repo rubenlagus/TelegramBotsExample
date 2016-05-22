@@ -28,31 +28,13 @@
         <telegrambots.version>v2.3.3.1</telegrambots.version>
         <json.version>20160212</json.version>
         <mysql.version>5.1.39</mysql.version>
-        <jersey.version>2.23</jersey.version>
-        <jerseyengine.version>1.19.1</jerseyengine.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.glassfish.jersey</groupId>
-                <artifactId>jersey-bom</artifactId>
-                <version>${jersey.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>com.github.rubenlagus</groupId>
             <artifactId>TelegramBots</artifactId>
             <version>${telegrambots.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-grizzly2-http</artifactId>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>

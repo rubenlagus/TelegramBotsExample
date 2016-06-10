@@ -89,6 +89,9 @@ public class DatabaseManager {
             if (currentVersion == 6) {
                 currentVersion = updateToVersion7();
             }
+            if (currentVersion == 7) {
+                currentVersion = updateToVersion8();
+            }
             connetion.commitTransaction();
         } catch (SQLException e) {
             BotLogger.error(LOGTAG, e);
@@ -133,6 +136,12 @@ public class DatabaseManager {
         return 7;
     }
 
+    private int updateToVersion8() throws SQLException {
+        connetion.executeQuery(CreationStrings.CREATE_COMMANDS_TABLE);
+        connetion.executeQuery(String.format(CreationStrings.insertCurrentVersion, 8));
+        return 8;
+    }
+
     private int createNewTables() throws SQLException {
         connetion.executeQuery(CreationStrings.createVersionTable);
         connetion.executeQuery(CreationStrings.createFilesTable);
@@ -144,7 +153,38 @@ public class DatabaseManager {
         connetion.executeQuery(CreationStrings.createWeatherStateTable);
         connetion.executeQuery(CreationStrings.createUserWeatherOptionDatabase);
         connetion.executeQuery(CreationStrings.createWeatherAlertTable);
+        connetion.executeQuery(CreationStrings.CREATE_COMMANDS_TABLE);
         return CreationStrings.version;
+    }
+
+    public boolean setUserStateForCommandsBot(Integer userId, boolean active) {
+        int updatedRows = 0;
+        try {
+            final PreparedStatement preparedStatement = connetion.getPreparedStatement("INSERT INTO CommandUsers (userId, status) VALUES(?, ?) ON DUPLICATE KEY UPDATE status=?");
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, active ? 1 : 0);
+            preparedStatement.setInt(3, active ? 1 : 0);
+
+            updatedRows = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return updatedRows > 0;
+    }
+
+    public boolean getUserStateForCommandsBot(Integer userId) {
+        int status = -1;
+        try {
+            final PreparedStatement preparedStatement = connetion.getPreparedStatement("Select status FROM CommandUsers WHERE userId=?");
+            preparedStatement.setInt(1, userId);
+            final ResultSet result = preparedStatement.executeQuery();
+            if (result.next()) {
+                status = result.getInt("status");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return status == 1;
     }
 
     public boolean addFile(String fileId, Integer userId, String caption) {

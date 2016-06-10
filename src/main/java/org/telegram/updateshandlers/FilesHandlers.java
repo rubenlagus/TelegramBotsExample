@@ -125,7 +125,6 @@ public class FilesHandlers extends TelegramLongPollingBot {
         }
         sendMessageRequest.setChatId(message.getChatId().toString());
         ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
-        replyKeyboardHide.setHideKeyboard(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardHide);
         sendMessage(sendMessageRequest);
     }
@@ -252,7 +251,6 @@ public class FilesHandlers extends TelegramLongPollingBot {
         }
         sendMessageRequest.setReplayToMessageId(message.getMessageId());
         ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
-        replyKeyboardHide.setHideKeyboard(true);
         replyKeyboardHide.setSelective(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardHide);
         sendMessage(sendMessageRequest);

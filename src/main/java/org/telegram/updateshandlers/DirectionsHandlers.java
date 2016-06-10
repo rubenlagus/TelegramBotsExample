@@ -259,7 +259,6 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         }
         sendMessageRequest.setReplayToMessageId(message.getMessageId());
         ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
-        replyKeyboardHide.setHideKeyboard(true);
         replyKeyboardHide.setSelective(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardHide);
         try {

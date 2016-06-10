@@ -12,7 +12,7 @@ import org.telegram.telegrambots.logging.BotLogger;
  * Created by pithera on 5/31/16.
  * Yes this is an ugly example, feel free to supply something nice.
  */
-public class webHookExampleHandlers extends TelegramWebhookBot {
+public class WebHookExampleHandlers extends TelegramWebhookBot {
     @Override
     public BotApiMethod onWebhookUpdateReceived(Update update) {
         BotLogger.severe("UPDATE", update.toString());

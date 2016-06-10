@@ -48,7 +48,7 @@ public class Main {
             } else if (!BuildVars.pathToCertificatePublicKey.isEmpty()) {
                 try {
                     TelegramBotsApi telegramBotsSelfWebhookApi = new TelegramBotsApi(BuildVars.pathToCertificateStore, BuildVars.certificateStorePassword, BuildVars.EXTERNALWEBHOOKURL, BuildVars.INTERNALWEBHOOKURL,BuildVars.pathToCertificatePublicKey);
-                    telegramBotsSelfWebhookApi.registerBot(new webHookExampleHandlers());
+                    telegramBotsSelfWebhookApi.registerBot(new WebHookExampleHandlers());
                 } catch (Exception e) {
                     BotLogger.error(LOGTAG, e);
                 }
@@ -60,7 +60,7 @@ public class Main {
             // have (an) intermediate(s) to supply? first: cat public.pem intermediate.pem > set.pem (use set.pem as -in)
             try {
                 TelegramBotsApi telegramBotsWebhookApi = new TelegramBotsApi(BuildVars.pathToCertificateStore, BuildVars.certificateStorePassword, BuildVars.EXTERNALWEBHOOKURL, BuildVars.INTERNALWEBHOOKURL);
-                telegramBotsWebhookApi.registerBot(new webHookExampleHandlers());
+                telegramBotsWebhookApi.registerBot(new WebHookExampleHandlers());
             } catch (Exception e) {
                 BotLogger.error(LOGTAG, e);
             }

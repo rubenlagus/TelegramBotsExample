@@ -42,7 +42,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return BotConfig.TOKENDIRECTIONS;
+        return BotConfig.DIRECTIONS_TOKEN;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return BotConfig.USERNAMEDIRECTIONS;
+        return BotConfig.DIRECTIONS_USER;
     }
 
     private void handleDirections(Update update) throws InvalidObjectException {

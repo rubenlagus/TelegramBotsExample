@@ -39,7 +39,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return BotConfig.TOKENFILES;
+        return BotConfig.FILES_TOKEN;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return BotConfig.USERNAMEFILES;
+        return BotConfig.FILES_USER;
     }
 
     private void handleFileUpdate(Update update) throws InvalidObjectException, TelegramApiException {

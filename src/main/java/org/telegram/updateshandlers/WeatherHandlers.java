@@ -51,7 +51,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return BotConfig.TOKENWEATHER;
+        return BotConfig.WEATHER_TOKEN;
     }
 
     @Override
@@ -70,7 +70,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return BotConfig.USERNAMEWEATHER;
+        return BotConfig.WEATHER_USER;
     }
 
     private void startAlertTimers() {

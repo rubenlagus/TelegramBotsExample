@@ -52,13 +52,13 @@ public class ChannelHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return BotConfig.TOKENCHANNEL;
+        return BotConfig.CHANNEL_TOKEN;
     }
 
 
     @Override
     public String getBotUsername() {
-        return BotConfig.USERNAMECHANNEL;
+        return BotConfig.CHANNEL_USER;
     }
 
 

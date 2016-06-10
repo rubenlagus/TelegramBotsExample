@@ -26,7 +26,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return BotConfig.TOKENTRANSIFEX;
+        return BotConfig.TRANSIFEX_TOKEN;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return BotConfig.USERNAMETRANSIFEX;
+        return BotConfig.TRANSIFEX_USER;
     }
 
     private void sendTransifexFile(Update update) throws InvalidObjectException {

@@ -52,13 +52,13 @@ public class ChannelHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return BotConfig.TOKENCHANNEL;
+        return BotConfig.CHANNEL_TOKEN;
     }
 
 
     @Override
     public String getBotUsername() {
-        return BotConfig.USERNAMECHANNEL;
+        return BotConfig.CHANNEL_USER;
     }
 
 
@@ -115,7 +115,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setReplayToMessageId(message.getMessageId());
+        sendMessage.setReplyToMessageId(message.getMessageId());
 
         sendMessage.setText(String.format(ERROR_MESSAGE_TEXT, message.getText().trim(), errorText.replace("\"", "\\\"")));
         sendMessage.enableMarkdown(true);
@@ -131,12 +131,11 @@ public class ChannelHandlers extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setReplayToMessageId(message.getMessageId());
+        sendMessage.setReplyToMessageId(message.getMessageId());
 
         ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
         forceReplyKeyboard.setSelective(true);
-        forceReplyKeyboard.setForceReply(true);
-        sendMessage.setReplayMarkup(forceReplyKeyboard);
+        sendMessage.setReplyMarkup(forceReplyKeyboard);
 
         sendMessage.setText(WRONG_CHANNEL_TEXT);
         sendMessage.enableMarkdown(true);
@@ -147,7 +146,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setReplayToMessageId(message.getMessageId());
+        sendMessage.setReplyToMessageId(message.getMessageId());
 
         sendMessage.setText(AFTER_CHANNEL_TEXT);
         return sendMessage;
@@ -157,9 +156,9 @@ public class ChannelHandlers extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(chatId);
-        sendMessage.setReplayToMessageId(messageId);
+        sendMessage.setReplyToMessageId(messageId);
         if (replyKeyboardMarkup != null) {
-            sendMessage.setReplayMarkup(replyKeyboardMarkup);
+            sendMessage.setReplyMarkup(replyKeyboardMarkup);
         }
 
         sendMessage.setText(HELP_TEXT);

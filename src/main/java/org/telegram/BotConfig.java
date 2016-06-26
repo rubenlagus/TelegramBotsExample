@@ -7,18 +7,27 @@ package org.telegram;
  * @date 20 of June of 2015
  */
 public class BotConfig {
-    public static final String TOKENWEATHER = "<token>";
-    public static final String USERNAMEWEATHER = "weatherbot";
-    public static final String TOKENTRANSIFEX = "<token>";
-    public static final String USERNAMETRANSIFEX = "TGlanguagesbot";
-    public static final String TOKENFILES = "<token>";
-    public static final String USERNAMEFILES = "filesbot";
-    public static final String TOKENDIRECTIONS = "<token>";
-    public static final String USERNAMEDIRECTIONS = "directionsbot";
-    public static final String TOKENCHANNEL = "<token>";
-    public static final String USERNAMECHANNEL = "channelupdatesbot";
-    public static final String TOKENRAE = "<token>";
-    public static final String USERNAMERAE = "raebot";
-    public static final String TOKENWEBHOOK = "<token>";
-    public static final String USERNAMEWEBHOOK = "webhooksamplebot";
+    public static final String WEATHER_TOKEN = "<token>";
+    public static final String WEATHER_USER = "weatherbot";
+
+    public static final String TRANSIFEX_TOKEN = "<token>";
+    public static final String TRANSIFEX_USER = "TGlanguagesbot";
+
+    public static final String FILES_TOKEN = "<token>";
+    public static final String FILES_USER = "filesbot";
+
+    public static final String DIRECTIONS_TOKEN = "<token>";
+    public static final String DIRECTIONS_USER = "directionsbot";
+
+    public static final String CHANNEL_TOKEN = "<token>";
+    public static final String CHANNEL_USER = "channelupdatesbot";
+
+    public static final String RAE_TOKEN = "<token>";
+    public static final String RAE_USER = "raebot";
+
+    public static final String WEBHOOK_TOKEN = "<token>";
+    public static final String WEBHOOK_USER = "webhooksamplebot";
+
+    public static final String COMMANDS_TOKEN = "<token>";
+    public static final String COMMANDS_USER = "MyCommandsBot";
 }

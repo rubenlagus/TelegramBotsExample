@@ -38,7 +38,7 @@ public class RaeHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return BotConfig.TOKENRAE;
+        return BotConfig.RAE_TOKEN;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class RaeHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return BotConfig.USERNAMERAE;
+        return BotConfig.RAE_USER;
     }
 
     /**

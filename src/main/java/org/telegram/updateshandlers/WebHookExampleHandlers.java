@@ -26,16 +26,16 @@ public class WebHookExampleHandlers extends TelegramWebhookBot {
 
     @Override
     public String getBotUsername() {
-        return BotConfig.USERNAMEWEBHOOK;
+        return BotConfig.WEBHOOK_USER;
     }
 
     @Override
     public String getBotToken() {
-        return BotConfig.TOKENWEBHOOK;
+        return BotConfig.WEBHOOK_TOKEN;
     }
 
     @Override
     public String getBotPath() {
-        return BotConfig.USERNAMEWEBHOOK; //arbitrary path to deliver updates on, username is an example.
+        return BotConfig.WEBHOOK_USER; //arbitrary path to deliver updates on, username is an example.
     }
 }

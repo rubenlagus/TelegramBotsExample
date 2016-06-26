@@ -94,7 +94,7 @@ public class TransifexService {
             HttpClient client = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(BASEURLiOS.replace("@language", query));
             HttpResponse response = client.execute(request);
-            result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"));
+            result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"), "UTF-16LE");
         } catch (IOException e) {
             BotLogger.error(LOGTAG, e);
         }
@@ -107,7 +107,7 @@ public class TransifexService {
             HttpClient client = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(BASEURLOSX.replace("@language", query));
             HttpResponse response = client.execute(request);
-            result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"));
+            result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"), "UTF-16LE");
         } catch (IOException e) {
             BotLogger.error(LOGTAG, e);
         }
@@ -120,7 +120,7 @@ public class TransifexService {
             HttpClient client = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(BASEURLTDesktop.replace("@language", query));
             HttpResponse response = client.execute(request);
-            result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"));
+            result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"), "UTF-16LE");
         } catch (IOException e) {
             BotLogger.error(LOGTAG, e);
         }
@@ -133,7 +133,7 @@ public class TransifexService {
             HttpClient client = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(BASEURLTemplates.replace("@language", languageCode));
             HttpResponse response = client.execute(request);
-            result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+            result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-8"), "UTF-8");
         } catch (IOException e) {
             BotLogger.error(LOGTAG, e);
         }
@@ -146,7 +146,7 @@ public class TransifexService {
             HttpClient client = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(BASEURLWebogram.replace("@language", query));
             HttpResponse response = client.execute(request);
-            result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"));
+            result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"), "UTF-16LE");
         } catch (IOException e) {
             BotLogger.error(LOGTAG, e);
         }
@@ -159,7 +159,7 @@ public class TransifexService {
             HttpClient client = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(BASEURLWP.replace("@language", query));
             HttpResponse response = client.execute(request);
-            result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"));
+            result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"), "UTF-16LE");
         } catch (IOException e) {
             BotLogger.error(LOGTAG, e);
         }
@@ -199,7 +199,7 @@ public class TransifexService {
                     localFile.close();
                     File fileToUpload = new File(fileName);
                     sendDocument = new SendDocument();
-                    sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+                    sendDocument.setNewDocument(fileToUpload.getAbsoluteFile());
                 } catch (FileNotFoundException e) {
                     BotLogger.error(LOGTAG, e);
                 }
@@ -226,7 +226,7 @@ public class TransifexService {
                     localFile.close();
                     File fileToUpload = new File(fileName);
                     sendDocument = new SendDocument();
-                    sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+                    sendDocument.setNewDocument(fileToUpload.getAbsoluteFile());
                 } catch (FileNotFoundException e) {
                     BotLogger.error(LOGTAG, e);
                 }
@@ -254,7 +254,7 @@ public class TransifexService {
                     IOUtils.write(file, output);
                     output.close();
                     sendDocument = new SendDocument();
-                    sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+                    sendDocument.setNewDocument(fileToUpload.getAbsoluteFile());
                 } catch (IOException e) {
                     BotLogger.error(LOGTAG, e);
                 }
@@ -281,7 +281,7 @@ public class TransifexService {
                     IOUtils.write(file, output);
                     output.close();
                     sendDocument = new SendDocument();
-                    sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+                    sendDocument.setNewDocument(fileToUpload.getAbsoluteFile());
                 } catch (IOException e) {
                     BotLogger.error(LOGTAG, e);
                 }
@@ -309,7 +309,7 @@ public class TransifexService {
                     output.close();
                     if (fileToUpload.exists()) {
                         sendDocument = new SendDocument();
-                        sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+                        sendDocument.setNewDocument(fileToUpload.getAbsoluteFile());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -338,7 +338,7 @@ public class TransifexService {
                     output.close();
                     if (fileToUpload.exists()) {
                         sendDocument = new SendDocument();
-                        sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+                        sendDocument.setNewDocument(fileToUpload.getAbsoluteFile());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -367,7 +367,7 @@ public class TransifexService {
                     output.close();
                     if (fileToUpload.exists()) {
                         sendDocument = new SendDocument();
-                        sendDocument.setNewDocument(fileToUpload.getAbsolutePath(), fileName);
+                        sendDocument.setNewDocument(fileToUpload.getAbsoluteFile());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

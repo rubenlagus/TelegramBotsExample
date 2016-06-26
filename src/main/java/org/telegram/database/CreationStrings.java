@@ -7,7 +7,7 @@ package org.telegram.database;
  * @date 15 of May of 2015
  */
 public class CreationStrings {
-    public static final int version = 7;
+    public static final int version = 8;
     public static final String createVersionTable = "CREATE TABLE IF NOT EXISTS Versions(ID INTEGER PRIMARY KEY AUTO_INCREMENT, Version INTEGER);";
     public static final String insertCurrentVersion = "INSERT IGNORE INTO Versions (Version) VALUES(%d);";
     public static final String createFilesTable = "CREATE TABLE IF NOT EXISTS Files (fileId VARCHAR(100) PRIMARY KEY, userId INTEGER NOT NULL, caption TEXT NOT NULL)";
@@ -27,4 +27,6 @@ public class CreationStrings {
     public static final String createWeatherAlertTable = "CREATE TABLE IF NOT EXISTS WeatherAlert (id INTEGER PRIMARY KEY AUTO_INCREMENT, userId INTEGER NOT NULL, cityId INTEGER NOT NULL, " +
             "cityName VARCHAR(60) NOT NULL, time INTEGER NOT NULL DEFAULT -1, CONSTRAINT unique_cityNameAlert UNIQUE (userId, cityName)," +
             "CONSTRAINT unique_cityIdAlert UNIQUE (userId, cityId));";
+
+    public static final String CREATE_COMMANDS_TABLE = "CREATE TABLE IF NOT EXISTS CommandUsers (userId INTEGER PRIMARY KEY, status INTEGER NOT NULL);";
 }

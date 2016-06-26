@@ -52,13 +52,13 @@ public class ChannelHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return BotConfig.TOKENCHANNEL;
+        return BotConfig.CHANNEL_TOKEN;
     }
 
 
     @Override
     public String getBotUsername() {
-        return BotConfig.USERNAMECHANNEL;
+        return BotConfig.CHANNEL_USER;
     }
 
 
@@ -135,7 +135,6 @@ public class ChannelHandlers extends TelegramLongPollingBot {
 
         ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
         forceReplyKeyboard.setSelective(true);
-        forceReplyKeyboard.setForceReply(true);
         sendMessage.setReplayMarkup(forceReplyKeyboard);
 
         sendMessage.setText(WRONG_CHANNEL_TEXT);

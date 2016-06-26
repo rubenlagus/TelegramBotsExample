@@ -39,7 +39,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return BotConfig.TOKENFILES;
+        return BotConfig.FILES_TOKEN;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return BotConfig.USERNAMEFILES;
+        return BotConfig.FILES_USER;
     }
 
     private void handleFileUpdate(Update update) throws InvalidObjectException, TelegramApiException {
@@ -125,7 +125,6 @@ public class FilesHandlers extends TelegramLongPollingBot {
         }
         sendMessageRequest.setChatId(message.getChatId().toString());
         ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
-        replyKeyboardHide.setHideKeyboard(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardHide);
         sendMessage(sendMessageRequest);
     }
@@ -252,7 +251,6 @@ public class FilesHandlers extends TelegramLongPollingBot {
         }
         sendMessageRequest.setReplayToMessageId(message.getMessageId());
         ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
-        replyKeyboardHide.setHideKeyboard(true);
         replyKeyboardHide.setSelective(true);
         sendMessageRequest.setReplayMarkup(replyKeyboardHide);
         sendMessage(sendMessageRequest);

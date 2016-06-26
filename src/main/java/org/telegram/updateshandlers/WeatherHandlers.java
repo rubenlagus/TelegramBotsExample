@@ -3,11 +3,7 @@ package org.telegram.updateshandlers;
 import org.telegram.BotConfig;
 import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
-import org.telegram.services.CustomTimerTask;
-import org.telegram.services.Emoji;
-import org.telegram.services.LocalisationService;
-import org.telegram.services.TimerExecutor;
-import org.telegram.services.WeatherService;
+import org.telegram.services.*;
 import org.telegram.structure.WeatherAlert;
 import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -55,7 +51,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return BotConfig.TOKENWEATHER;
+        return BotConfig.WEATHER_TOKEN;
     }
 
     @Override
@@ -74,7 +70,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return BotConfig.USERNAMEWEATHER;
+        return BotConfig.WEATHER_USER;
     }
 
     private void startAlertTimers() {
@@ -195,7 +191,6 @@ public class WeatherHandlers extends TelegramLongPollingBot {
 
         ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
         replyKeyboardHide.setSelective(true);
-        replyKeyboardHide.setHideKeyboard(true);
         sendMessage.setReplayMarkup(replyKeyboardHide);
 
         sendMessage(sendMessage);
@@ -1073,7 +1068,6 @@ public class WeatherHandlers extends TelegramLongPollingBot {
 
     private static ForceReplyKeyboard getForceReply() {
         ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
-        forceReplyKeyboard.setForceReply(true);
         forceReplyKeyboard.setSelective(true);
         return forceReplyKeyboard;
     }

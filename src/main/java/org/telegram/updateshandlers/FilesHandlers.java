@@ -125,7 +125,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
         }
         sendMessageRequest.setChatId(message.getChatId().toString());
         ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
-        sendMessageRequest.setReplayMarkup(replyKeyboardHide);
+        sendMessageRequest.setReplyMarkup(replyKeyboardHide);
         sendMessage(sendMessageRequest);
     }
 
@@ -157,7 +157,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
             replyKeyboardMarkup.setOneTimeKeyboad(true);
             replyKeyboardMarkup.setKeyboard(commands);
         }
-        sendMessageRequest.setReplayMarkup(replyKeyboardMarkup);
+        sendMessageRequest.setReplyMarkup(replyKeyboardMarkup);
         sendMessage(sendMessageRequest);
     }
 
@@ -233,7 +233,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
         replyKeyboardMarkup.setOneTimeKeyboad(true);
         replyKeyboardMarkup.setKeyboard(commands);
         replyKeyboardMarkup.setSelective(true);
-        sendMessageRequest.setReplayMarkup(replyKeyboardMarkup);
+        sendMessageRequest.setReplyMarkup(replyKeyboardMarkup);
         sendMessageRequest.setText(LocalisationService.getInstance().getString("chooselanguage", language));
         sendMessage(sendMessageRequest);
         languageMessages.add(message.getFrom().getId());
@@ -249,10 +249,10 @@ public class FilesHandlers extends TelegramLongPollingBot {
         } else {
             sendMessageRequest.setText(LocalisationService.getInstance().getString("errorLanguage"));
         }
-        sendMessageRequest.setReplayToMessageId(message.getMessageId());
+        sendMessageRequest.setReplyToMessageId(message.getMessageId());
         ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
         replyKeyboardHide.setSelective(true);
-        sendMessageRequest.setReplayMarkup(replyKeyboardHide);
+        sendMessageRequest.setReplyMarkup(replyKeyboardHide);
         sendMessage(sendMessageRequest);
         languageMessages.remove(message.getFrom().getId());
     }

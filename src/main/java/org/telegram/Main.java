@@ -1,10 +1,17 @@
 package org.telegram;
 
-import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.TelegramBotsApi;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.logging.BotLogger;
 import org.telegram.telegrambots.logging.BotsFileHandler;
-import org.telegram.updateshandlers.*;
+import org.telegram.updateshandlers.ChannelHandlers;
+import org.telegram.updateshandlers.CommandsHandler;
+import org.telegram.updateshandlers.DirectionsHandlers;
+import org.telegram.updateshandlers.FilesHandlers;
+import org.telegram.updateshandlers.RaeHandlers;
+import org.telegram.updateshandlers.TransifexHandlers;
+import org.telegram.updateshandlers.WeatherHandlers;
+import org.telegram.updateshandlers.WebHookExampleHandlers;
 
 import java.io.IOException;
 import java.util.logging.ConsoleHandler;

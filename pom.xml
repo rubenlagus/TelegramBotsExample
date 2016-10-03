@@ -4,36 +4,23 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>BotApi</groupId>
-    <artifactId>org.telegram.botapi</artifactId>
+    <groupId>org.telegram</groupId>
+    <artifactId>botapi</artifactId>
     <version>2.1</version>
-
-    <repositories>
-        <repository>
-            <id>central</id>
-            <name>Maven Repository Switchboard</name>
-            <layout>default</layout>
-            <url>http://repo1.maven.org/maven2</url>
-        </repository>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <httpcompontents.version>4.5.2</httpcompontents.version>
-        <telegrambots.version>v2.3.3.4</telegrambots.version>
-        <json.version>20160212</json.version>
-        <mysql.version>5.1.39</mysql.version>
+        <telegrambots.version>2.4.0</telegrambots.version>
+        <json.version>20160810</json.version>
+        <mysql.version>6.0.4</mysql.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.github.rubenlagus</groupId>
-            <artifactId>TelegramBots</artifactId>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots</artifactId>
             <version>${telegrambots.version}</version>
         </dependency>
         <dependency>

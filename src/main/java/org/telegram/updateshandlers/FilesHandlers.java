@@ -5,7 +5,6 @@ import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
 import org.telegram.services.Emoji;
 import org.telegram.services.LocalisationService;
-import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
@@ -14,6 +13,8 @@ import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardHide;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.logging.BotLogger;
 
 import java.io.InvalidObjectException;
@@ -48,12 +49,14 @@ public class FilesHandlers extends TelegramLongPollingBot {
             if (update.hasMessage()) {
                 try {
                     handleFileUpdate(update);
-                } catch (TelegramApiException e) {
+                } catch (TelegramApiRequestException e) {
                     if (e.getApiResponse().contains("Bot was blocked by the user")) {
                         if (update.getMessage().getFrom() != null) {
                             DatabaseManager.getInstance().deleteUserForFile(update.getMessage().getFrom().getId());
                         }
                     }
+                } catch (Exception e) {
+                    BotLogger.severe(LOGTAG, e);
                 }
             }
         } catch (Exception e) {

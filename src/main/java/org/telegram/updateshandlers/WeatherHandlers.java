@@ -9,7 +9,6 @@ import org.telegram.services.LocalisationService;
 import org.telegram.services.TimerExecutor;
 import org.telegram.services.WeatherService;
 import org.telegram.structure.WeatherAlert;
-import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
@@ -19,6 +18,8 @@ import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardHide;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.logging.BotLogger;
 
 import java.util.ArrayList;
@@ -112,7 +113,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
             sendMessage.setText(weather);
             try {
                 sendMessage(sendMessage);
-            } catch (TelegramApiException e) {
+            } catch (TelegramApiRequestException e) {
                 BotLogger.warn(LOGTAG, e);
                 if (e.getApiResponse().contains("Can't access the chat") || e.getApiResponse().contains("Bot was blocked by the user")) {
                     DatabaseManager.getInstance().deleteAlertsForUser(weatherAlert.getUserId());

@@ -7,11 +7,11 @@ import org.telegram.commands.StartCommand;
 import org.telegram.commands.StopCommand;
 import org.telegram.database.DatabaseManager;
 import org.telegram.services.Emoji;
-import org.telegram.telegrambots.TelegramApiException;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.logging.BotLogger;
 
 /**

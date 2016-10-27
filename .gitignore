@@ -37,3 +37,7 @@ copyright/
 *.jks
 *.cer
 *.pem
+
+# Idea
+*.ipr
+*.iws

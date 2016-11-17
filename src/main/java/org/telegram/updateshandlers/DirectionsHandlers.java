@@ -1,6 +1,5 @@
 package org.telegram.updateshandlers;
 
-import org.json.JSONObject;
 import org.telegram.BotConfig;
 import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
@@ -16,6 +15,7 @@ import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.logging.BotLogger;
 import org.telegram.telegrambots.updateshandlers.SentCallback;
 
@@ -90,7 +90,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                         } else {
                             SendMessage sendMessageRequest = new SendMessage();
                             sendMessageRequest.setText(LocalisationService.getInstance().getString("youNeedReplyDirections", language));
-                            sendMessageRequest.setChatId(message.getChatId().toString());
+                            sendMessageRequest.setChatId(message.getChatId());
                             try {
                                 sendMessage(sendMessageRequest);
                             } catch (TelegramApiException e) {
@@ -108,7 +108,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         String destiny = message.getText();
         List<String> directions = DirectionsService.getInstance().getDirections(origin, destiny, language);
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
         ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
         replyKeyboardHide.setSelective(true);
         sendMessageRequest.setReplyMarkup(replyKeyboardHide);
@@ -118,15 +118,14 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
             try {
                 sendMessageAsync(sendMessageRequest, new SentCallback<Message>() {
                     @Override
-                    public void onResult(BotApiMethod<Message> botApiMethod, JSONObject jsonObject) {
-                        Message sentMessage = botApiMethod.deserializeResponse(jsonObject);
+                    public void onResult(BotApiMethod<Message> botApiMethod, Message sentMessage) {
                         if (sentMessage != null) {
                             DatabaseManager.getInstance().deleteUserForDirections(message.getFrom().getId());
                         }
                     }
 
                     @Override
-                    public void onError(BotApiMethod<Message> botApiMethod, JSONObject jsonObject) {
+                    public void onError(BotApiMethod<Message> botApiMethod, TelegramApiRequestException e) {
                     }
 
                     @Override
@@ -142,7 +141,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
 
     private void onOriginReceived(Message message, String language) {
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
         sendMessageRequest.setReplyToMessageId(message.getMessageId());
         ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
         forceReplyKeyboard.setSelective(true);
@@ -152,8 +151,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         try {
             sendMessageAsync(sendMessageRequest, new SentCallback<Message>() {
                 @Override
-                public void onResult(BotApiMethod<Message> method, JSONObject jsonObject) {
-                    Message sentMessage = method.deserializeResponse(jsonObject);
+                public void onResult(BotApiMethod<Message> method, Message sentMessage) {
                     if (sentMessage != null) {
                         DatabaseManager.getInstance().addUserForDirection(message.getFrom().getId(), WATING_DESTINY_STATUS,
                                 sentMessage.getMessageId(), message.getText());
@@ -161,7 +159,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                 }
 
                 @Override
-                public void onError(BotApiMethod<Message> botApiMethod, JSONObject jsonObject) {
+                public void onError(BotApiMethod<Message> botApiMethod, TelegramApiRequestException e) {
                 }
 
                 @Override
@@ -180,7 +178,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                 LocalisationService.getInstance().getString("helpDirections", language),
                 Commands.startDirectionCommand);
         sendMessageRequest.setText(helpDirectionsFormated);
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
         try {
             sendMessage(sendMessageRequest);
         } catch (TelegramApiException e) {
@@ -190,7 +188,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
 
     private void onStartdirectionsCommand(Message message, String language) {
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
         sendMessageRequest.setReplyToMessageId(message.getMessageId());
         ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
         forceReplyKeyboard.setSelective(true);
@@ -200,8 +198,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         try {
             sendMessageAsync(sendMessageRequest, new SentCallback<Message>() {
                 @Override
-                public void onResult(BotApiMethod<Message> method, JSONObject jsonObject) {
-                    Message sentMessage = method.deserializeResponse(jsonObject);
+                public void onResult(BotApiMethod<Message> method, Message sentMessage) {
                     if (sentMessage != null) {
                         DatabaseManager.getInstance().addUserForDirection(message.getFrom().getId(), WATING_ORIGIN_STATUS,
                                 sentMessage.getMessageId(), null);
@@ -209,7 +206,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                 }
 
                 @Override
-                public void onError(BotApiMethod<Message> botApiMethod, JSONObject jsonObject) {
+                public void onError(BotApiMethod<Message> botApiMethod, TelegramApiRequestException e) {
                 }
 
                 @Override
@@ -224,7 +221,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
 
     private void onSetLanguageCommand(Message message, String language) throws InvalidObjectException {
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         HashMap<String, String> languages = LocalisationService.getInstance().getSupportedLanguages();
         List<KeyboardRow> commands = new ArrayList<>();
@@ -250,7 +247,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
     private void onLanguageSelected(Message message) throws InvalidObjectException {
         String[] parts = message.getText().split("-->", 2);
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
         if (LocalisationService.getInstance().getSupportedLanguages().containsKey(parts[0].trim())) {
             DatabaseManager.getInstance().putUserLanguage(message.getFrom().getId(), parts[0].trim());
             sendMessageRequest.setText(LocalisationService.getInstance().getString("languageModified", parts[0].trim()));

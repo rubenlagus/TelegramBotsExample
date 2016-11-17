@@ -1,5 +1,6 @@
 package org.telegram;
 
+import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 import org.telegram.telegrambots.logging.BotLogger;
@@ -36,6 +37,7 @@ public class Main {
         }
 
         try {
+            ApiContextInitializer.init();
             TelegramBotsApi telegramBotsApi = createTelegramBotsApi();
             try {
                 // Register long polling bots. They work regardless type of TelegramBotsApi we are creating

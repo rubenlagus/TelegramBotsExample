@@ -71,7 +71,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
                 onWaitingChannelMessage(message);
                 break;
             default:
-                sendHelpMessage(message.getChatId().toString(), message.getMessageId(), null);
+                sendHelpMessage(message.getChatId(), message.getMessageId(), null);
                 userState.put(message.getFrom().getId(), WAITINGCHANNEL);
                 break;
         }
@@ -81,7 +81,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
         try {
             if (message.getText().equals(CANCEL_COMMAND)) {
                 userState.remove(message.getFrom().getId());
-                sendHelpMessage(message.getChatId().toString(), message.getMessageId(), null);
+                sendHelpMessage(message.getChatId(), message.getMessageId(), null);
             } else {
                 if (message.getText().startsWith("@") && !message.getText().trim().contains(" ")) {
                     sendMessage(getMessageToChannelSent(message));
@@ -114,7 +114,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     private void sendErrorMessage(Message message, String errorText) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         sendMessage.setReplyToMessageId(message.getMessageId());
 
         sendMessage.setText(String.format(ERROR_MESSAGE_TEXT, message.getText().trim(), errorText.replace("\"", "\\\"")));
@@ -130,7 +130,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     private static SendMessage getWrongUsernameMessage(Message message) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         sendMessage.setReplyToMessageId(message.getMessageId());
 
         ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
@@ -145,14 +145,14 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     private static SendMessage getMessageToChannelSent(Message message) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         sendMessage.setReplyToMessageId(message.getMessageId());
 
         sendMessage.setText(AFTER_CHANNEL_TEXT);
         return sendMessage;
     }
 
-    private void sendHelpMessage(String chatId, Integer messageId, ReplyKeyboardMarkup replyKeyboardMarkup) {
+    private void sendHelpMessage(Long chatId, Integer messageId, ReplyKeyboardMarkup replyKeyboardMarkup) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(chatId);

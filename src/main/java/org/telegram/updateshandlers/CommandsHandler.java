@@ -35,7 +35,7 @@ public class CommandsHandler extends TelegramLongPollingCommandBot {
 
         registerDefaultAction((absSender, message) -> {
             SendMessage commandUnknownMessage = new SendMessage();
-            commandUnknownMessage.setChatId(message.getChatId().toString());
+            commandUnknownMessage.setChatId(message.getChatId());
             commandUnknownMessage.setText("The command '" + message.getText() + "' is not known by this bot. Here comes some help " + Emoji.AMBULANCE);
             try {
                 absSender.sendMessage(commandUnknownMessage);
@@ -58,7 +58,7 @@ public class CommandsHandler extends TelegramLongPollingCommandBot {
 
             if (message.hasText()) {
                 SendMessage echoMessage = new SendMessage();
-                echoMessage.setChatId(message.getChatId().toString());
+                echoMessage.setChatId(message.getChatId());
                 echoMessage.setText("Hey heres your message:\n" + message.getText());
 
                 try {

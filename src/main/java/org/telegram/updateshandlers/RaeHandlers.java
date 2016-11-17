@@ -129,7 +129,7 @@ public class RaeHandlers extends TelegramLongPollingBot {
      */
     private static SendMessage getHelpMessage(Message message) {
         SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         sendMessage.enableMarkdown(true);
         sendMessage.setText(helpMessage);
         return sendMessage;

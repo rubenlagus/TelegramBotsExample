@@ -247,7 +247,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setReplyToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         sendMessage.setReplyMarkup(getAlertsKeyboard(language));
         sendMessage.setText(LocalisationService.getInstance().getString("alertDeleted", language));
 
@@ -259,7 +259,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setReplyToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         sendMessage.setReplyMarkup(getAlertsKeyboard(language));
         sendMessage.setText(LocalisationService.getInstance().getString("alertsMenuMessage", language));
 
@@ -273,7 +273,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
             if (message.getText().equals(getCancelCommand(language))) {
                 SendMessage sendMessage = new SendMessage();
                 sendMessage.enableMarkdown(true);
-                sendMessage.setChatId(message.getChatId().toString());
+                sendMessage.setChatId(message.getChatId());
                 sendMessage.setReplyToMessageId(message.getMessageId());
                 sendMessage.setReplyMarkup(getAlertsKeyboard(language));
                 sendMessage.setText(LocalisationService.getInstance().getString("alertsMenuMessage", language));
@@ -296,7 +296,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
             sendMessageRequest.setReplyMarkup(getAlertsKeyboard(language));
             sendMessageRequest.setReplyToMessageId(message.getMessageId());
             sendMessageRequest.setText(getChooseNewAlertSetMessage(message.getText(), language));
-            sendMessageRequest.setChatId(message.getChatId().toString());
+            sendMessageRequest.setChatId(message.getChatId());
 
             DatabaseManager.getInstance().insertWeatherState(userId, message.getChatId(), ALERT);
             return sendMessageRequest;
@@ -332,7 +332,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         ReplyKeyboardMarkup replyKeyboardMarkup = getSettingsKeyboard(language);
         sendMessage.setReplyMarkup(replyKeyboardMarkup);
         sendMessage.setReplyToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         sendMessage.setText(getSettingsMessage(language));
 
         DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), SETTINGS);
@@ -343,7 +343,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         sendMessage.setReplyToMessageId(message.getMessageId());
         sendMessage.setReplyMarkup(getAlertsKeyboard(language));
         sendMessage.setText(getAlertListMessage(message.getFrom().getId(), language));
@@ -356,7 +356,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
 
         ReplyKeyboardMarkup replyKeyboardMarkup = getAlertsListKeyboard(message.getFrom().getId(), language);
         if (replyKeyboardMarkup != null) {
@@ -376,7 +376,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
 
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         sendMessage.setReplyMarkup(getRecentsKeyboard(message.getFrom().getId(), language, false));
         sendMessage.setText(LocalisationService.getInstance().getString("chooseNewAlertCity", language));
         sendMessage.setReplyToMessageId(message.getMessageId());
@@ -413,7 +413,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         sendMessage.enableMarkdown(true);
 
         sendMessage.setReplyToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         sendMessage.setReplyMarkup(getAlertsKeyboard(language));
         sendMessage.setText(LocalisationService.getInstance().getString("alertsMenuMessage", language));
 
@@ -426,7 +426,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         sendMessage.enableMarkdown(true);
 
         sendMessage.setReplyToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         sendMessage.setReplyMarkup(getUnitsKeyboard(language));
         sendMessage.setText(getUnitsMessage(message.getFrom().getId(), language));
 
@@ -439,7 +439,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         sendMessage.enableMarkdown(true);
 
         sendMessage.setReplyToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         sendMessage.setReplyMarkup(getLanguagesKeyboard(language));
         sendMessage.setText(getLanguageMessage(language));
 
@@ -476,7 +476,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         ReplyKeyboardMarkup replyKeyboardMarkup = getSettingsKeyboard(language);
         sendMessage.setReplyMarkup(replyKeyboardMarkup);
         sendMessage.setReplyToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         sendMessage.setText(getSettingsMessage(language));
 
         DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), SETTINGS);
@@ -534,7 +534,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         ReplyKeyboardMarkup replyKeyboardMarkup = getSettingsKeyboard(language);
         sendMessage.setReplyMarkup(replyKeyboardMarkup);
         sendMessage.setReplyToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         sendMessage.setText(getSettingsMessage(language));
 
         DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), SETTINGS);
@@ -783,7 +783,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
             } else if (message.getText().equals(getSettingsCommand(language))) {
                 sendMessageRequest = onSettingsChoosen(message, language);
             } else if (message.getText().equals(getRateCommand(language))) {
-                sendMessageRequest = sendRateMessage(message.getChatId().toString(), message.getMessageId(), null, language);
+                sendMessageRequest = sendRateMessage(message.getChatId(), message.getMessageId(), null, language);
             } else {
                 sendMessageRequest = sendChooseOptionMessage(message.getChatId(), message.getMessageId(),
                         getMainMenuKeyboard(language), language);
@@ -803,7 +803,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         ReplyKeyboardMarkup replyKeyboardMarkup = getSettingsKeyboard(language);
         sendMessage.setReplyMarkup(replyKeyboardMarkup);
         sendMessage.setReplyToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         sendMessage.setText(getSettingsMessage(language));
 
         DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), SETTINGS);
@@ -817,7 +817,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         ReplyKeyboardMarkup replyKeyboardMarkup = getRecentsKeyboard(message.getFrom().getId(), language);
         sendMessage.setReplyMarkup(replyKeyboardMarkup);
         sendMessage.setReplyToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         if (replyKeyboardMarkup.getKeyboard().size() > 3) {
             sendMessage.setText(LocalisationService.getInstance().getString("onForecastCommandFromHistory", language));
         } else {
@@ -835,7 +835,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         ReplyKeyboardMarkup replyKeyboardMarkup = getRecentsKeyboard(message.getFrom().getId(), language);
         sendMessage.setReplyMarkup(replyKeyboardMarkup);
         sendMessage.setReplyToMessageId(message.getMessageId());
-        sendMessage.setChatId(message.getChatId().toString());
+        sendMessage.setChatId(message.getChatId());
         if (replyKeyboardMarkup.getKeyboard().size() > 3) {
             sendMessage.setText(LocalisationService.getInstance().getString("onCurrentCommandFromHistory", language));
         } else {
@@ -1151,7 +1151,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
     private static SendMessage sendMessageDefault(Message message, String language) {
         ReplyKeyboardMarkup replyKeyboardMarkup = getMainMenuKeyboard(language);
         DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), MAINMENU);
-        return sendHelpMessage(message.getChatId().toString(), message.getMessageId(), replyKeyboardMarkup, language);
+        return sendHelpMessage(message.getChatId(), message.getMessageId(), replyKeyboardMarkup, language);
     }
 
     private static SendMessage sendChooseOptionMessage(Long chatId, Integer messageId,
@@ -1166,7 +1166,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         return sendMessage;
     }
 
-    private static SendMessage sendHelpMessage(String chatId, Integer messageId, ReplyKeyboardMarkup replyKeyboardMarkup, String language) {
+    private static SendMessage sendHelpMessage(Long chatId, Integer messageId, ReplyKeyboardMarkup replyKeyboardMarkup, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(chatId);
@@ -1178,7 +1178,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         return sendMessage;
     }
 
-    private static SendMessage sendRateMessage(String chatId, Integer messageId, ReplyKeyboardMarkup replyKeyboardMarkup, String language) {
+    private static SendMessage sendRateMessage(Long chatId, Integer messageId, ReplyKeyboardMarkup replyKeyboardMarkup, String language) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
         sendMessage.setChatId(chatId);
@@ -1204,7 +1204,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         sendMessageRequest.setReplyMarkup(getMainMenuKeyboard(language));
         sendMessageRequest.setReplyToMessageId(message.getMessageId());
         sendMessageRequest.setText(weather);
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
 
         DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), MAINMENU);
         return sendMessageRequest;
@@ -1233,7 +1233,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         sendMessageRequest.setReplyMarkup(getMainMenuKeyboard(language));
         sendMessageRequest.setReplyToMessageId(message.getMessageId());
         sendMessageRequest.setText(weather);
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
 
         DatabaseManager.getInstance().insertWeatherState(message.getFrom().getId(), message.getChatId(), MAINMENU);
         return sendMessageRequest;

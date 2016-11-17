@@ -10,8 +10,8 @@ public class BotConfig {
     public static final String WEATHER_TOKEN = "<token>";
     public static final String WEATHER_USER = "weatherbot";
 
-    public static final String TRANSIFEX_TOKEN = "<token>";
-    public static final String TRANSIFEX_USER = "TGlanguagesbot";
+    public static final String TRANSIFEX_TOKEN = "143603381:AAEHhhN7gDLywsdy8v53psOKGDxk14mOMn8";
+    public static final String TRANSIFEX_USER = "rubenlagusbot";
 
     public static final String FILES_TOKEN = "<token>";
     public static final String FILES_USER = "filesbot";

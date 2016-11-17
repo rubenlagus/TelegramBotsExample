@@ -108,7 +108,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
             SendMessage sendMessageRequest = new SendMessage();
             sendMessageRequest.setText(LocalisationService.getInstance().getString("fileUploaded", language) +
                     LocalisationService.getInstance().getString("uploadedFileURL", language) + message.getDocument().getFileId());
-            sendMessageRequest.setChatId(message.getChatId().toString());
+            sendMessageRequest.setChatId(message.getChatId());
             sendMessage(sendMessageRequest);
         }
     }
@@ -126,7 +126,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
         } else {
             sendMessageRequest.setText(LocalisationService.getInstance().getString("noFiles", language));
         }
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
         ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
         sendMessageRequest.setReplyMarkup(replyKeyboardHide);
         sendMessage(sendMessageRequest);
@@ -145,7 +145,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
         DatabaseManager.getInstance().addUserForFile(message.getFrom().getId(), DELETE_UPLOADED_STATUS);
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setText(LocalisationService.getInstance().getString("deleteUploadedFile", language));
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
         HashMap<String, String> files = DatabaseManager.getInstance().getFilesByUser(message.getFrom().getId());
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         if (files.size() > 0) {
@@ -173,7 +173,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
         } else {
             sendMessageRequest.setText(LocalisationService.getInstance().getString("wrongFileId", language));
         }
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
 
         sendMessage(sendMessageRequest);
         DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
@@ -184,7 +184,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
         DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setText(LocalisationService.getInstance().getString("processFinished", language));
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
         sendMessage(sendMessageRequest);
     }
 
@@ -192,7 +192,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
         DatabaseManager.getInstance().addUserForFile(message.getFrom().getId(), INITIAL_UPLOAD_STATUS);
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setText(LocalisationService.getInstance().getString("sendFileToUpload", language));
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
         sendMessage(sendMessageRequest);
     }
 
@@ -203,7 +203,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
                 Commands.startCommand, Commands.uploadCommand, Commands.deleteCommand,
                 Commands.listCommand);
         sendMessageRequest.setText(formatedString);
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
         sendMessage(sendMessageRequest);
     }
 
@@ -211,19 +211,19 @@ public class FilesHandlers extends TelegramLongPollingBot {
         if (DatabaseManager.getInstance().doesFileExists(part.trim())) {
             SendDocument sendDocumentRequest = new SendDocument();
             sendDocumentRequest.setDocument(part.trim());
-            sendDocumentRequest.setChatId(message.getChatId().toString());
+            sendDocumentRequest.setChatId(message.getChatId());
             sendDocument(sendDocumentRequest);
         } else {
             SendMessage sendMessageRequest = new SendMessage();
             sendMessageRequest.setText(LocalisationService.getInstance().getString("wrongFileId", language));
-            sendMessageRequest.setChatId(message.getChatId().toString());
+            sendMessageRequest.setChatId(message.getChatId());
             sendMessage(sendMessageRequest);
         }
     }
 
     private void onSetLanguageCommand(Message message, String language) throws InvalidObjectException, TelegramApiException {
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         HashMap<String, String> languages = LocalisationService.getInstance().getSupportedLanguages();
         List<KeyboardRow> commands = new ArrayList<>();
@@ -245,7 +245,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
     private void onLanguageReceived(Message message) throws InvalidObjectException, TelegramApiException {
         String[] parts = message.getText().split(Emoji.LEFT_RIGHT_ARROW.toString(), 2);
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId().toString());
+        sendMessageRequest.setChatId(message.getChatId());
         if (LocalisationService.getInstance().getSupportedLanguages().containsKey(parts[0].trim())) {
             DatabaseManager.getInstance().putUserLanguage(message.getFrom().getId(), parts[0].trim());
             sendMessageRequest.setText(LocalisationService.getInstance().getString("languageModified", parts[0].trim()));

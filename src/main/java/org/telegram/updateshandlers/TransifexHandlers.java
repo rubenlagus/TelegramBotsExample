@@ -82,7 +82,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
             } else if (parts[0].startsWith(Commands.help)) {
                 SendMessage sendMessageRequest = new SendMessage();
                 String helpFormated = String.format(
-                        LocalisationService.getInstance().getString("helpTransifex", language),
+                        LocalisationService.getString("helpTransifex", language),
                         Commands.transifexiOSCommand, Commands.transifexAndroidCommand, Commands.transifexWebogram,
                         Commands.transifexTDesktop, Commands.transifexOSX, Commands.transifexWP,
                         Commands.transifexAndroidSupportCommand);
@@ -107,7 +107,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
                 (message.getText().startsWith(Commands.startCommand) || !message.isGroupMessage())) {
             SendMessage sendMessageRequest = new SendMessage();
             String helpFormated = String.format(
-                    LocalisationService.getInstance().getString("helpTransifex", language),
+                    LocalisationService.getString("helpTransifex", language),
                     Commands.transifexiOSCommand, Commands.transifexAndroidCommand, Commands.transifexWebogram,
                     Commands.transifexTDesktop, Commands.transifexOSX, Commands.transifexWP,
                     Commands.transifexAndroidSupportCommand);
@@ -126,12 +126,12 @@ public class TransifexHandlers extends TelegramLongPollingBot {
         SendMessage answer = new SendMessage();
         answer.setChatId(message.getChatId());
         answer.setReplyToMessageId(message.getMessageId());
-        answer.setText(LocalisationService.getInstance().getString("movedToLangBot", language));
+        answer.setText(LocalisationService.getString("movedToLangBot", language));
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         List<InlineKeyboardButton> row = new ArrayList<>();
         InlineKeyboardButton button = new InlineKeyboardButton();
-        button.setText(LocalisationService.getInstance().getString("checkLangBot", language));
+        button.setText(LocalisationService.getString("checkLangBot", language));
         button.setUrl("https://telegram.me/langbot");
         row.add(button);
         rows.add(row);

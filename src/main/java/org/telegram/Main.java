@@ -8,6 +8,7 @@ import org.telegram.telegrambots.logging.BotsFileHandler;
 import org.telegram.updateshandlers.ChannelHandlers;
 import org.telegram.updateshandlers.CommandsHandler;
 import org.telegram.updateshandlers.DirectionsHandlers;
+import org.telegram.updateshandlers.ElektrollArtFanHandler;
 import org.telegram.updateshandlers.FilesHandlers;
 import org.telegram.updateshandlers.RaeHandlers;
 import org.telegram.updateshandlers.TransifexHandlers;
@@ -48,6 +49,7 @@ public class Main {
                 telegramBotsApi.registerBot(new TransifexHandlers());
                 telegramBotsApi.registerBot(new FilesHandlers());
                 telegramBotsApi.registerBot(new CommandsHandler());
+            	telegramBotsApi.registerBot(new ElektrollArtFanHandler());
             } catch (TelegramApiException e) {
                 BotLogger.error(LOGTAG, e);
             }

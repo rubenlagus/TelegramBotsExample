@@ -76,7 +76,7 @@ public class ConectionDB {
         int max = 0;
         try {
             final DatabaseMetaData metaData = this.currentConection.getMetaData();
-            final ResultSet res = metaData.getTables(null, null, null,
+            final ResultSet res = metaData.getTables(null, null, "",
                     new String[]{"TABLE"});
             while (res.next()) {
                 if (res.getString("TABLE_NAME").compareTo("Versions") == 0) {

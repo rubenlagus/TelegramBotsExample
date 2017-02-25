@@ -10,8 +10,8 @@ import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.ForceReplyKeyboard;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardHide;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -107,9 +107,9 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         List<String> directions = DirectionsService.getInstance().getDirections(origin, destiny, language);
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setChatId(message.getChatId());
-        ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
-        replyKeyboardHide.setSelective(true);
-        sendMessageRequest.setReplyMarkup(replyKeyboardHide);
+        ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
+        replyKeyboardRemove.setSelective(true);
+        sendMessageRequest.setReplyMarkup(replyKeyboardRemove);
         sendMessageRequest.setReplyToMessageId(message.getMessageId());
         for (String direction : directions) {
             sendMessageRequest.setText(direction);
@@ -253,9 +253,9 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
             sendMessageRequest.setText(LocalisationService.getString("errorLanguage"));
         }
         sendMessageRequest.setReplyToMessageId(message.getMessageId());
-        ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
-        replyKeyboardHide.setSelective(true);
-        sendMessageRequest.setReplyMarkup(replyKeyboardHide);
+        ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
+        replyKeyboardRemove.setSelective(true);
+        sendMessageRequest.setReplyMarkup(replyKeyboardRemove);
         try {
             sendMessage(sendMessageRequest);
             languageMessages.remove(message.getFrom().getId());

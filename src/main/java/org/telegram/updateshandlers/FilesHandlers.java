@@ -9,8 +9,8 @@ import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardHide;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -127,8 +127,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
             sendMessageRequest.setText(LocalisationService.getString("noFiles", language));
         }
         sendMessageRequest.setChatId(message.getChatId());
-        ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
-        sendMessageRequest.setReplyMarkup(replyKeyboardHide);
+        sendMessageRequest.setReplyMarkup(new ReplyKeyboardRemove());
         sendMessage(sendMessageRequest);
     }
 
@@ -253,9 +252,9 @@ public class FilesHandlers extends TelegramLongPollingBot {
             sendMessageRequest.setText(LocalisationService.getString("errorLanguage"));
         }
         sendMessageRequest.setReplyToMessageId(message.getMessageId());
-        ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
-        replyKeyboardHide.setSelective(true);
-        sendMessageRequest.setReplyMarkup(replyKeyboardHide);
+        ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
+        replyKeyboardRemove.setSelective(true);
+        sendMessageRequest.setReplyMarkup(replyKeyboardRemove);
         sendMessage(sendMessageRequest);
         languageMessages.remove(message.getFrom().getId());
     }

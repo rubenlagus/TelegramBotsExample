@@ -156,7 +156,7 @@ public class WeatherService {
      * @return userHash to be send to use
      * @note Forecast for the following 3 days
      */
-    public String fetchWeatherForecastByLocation(Double longitude, Double latitude, Integer userId, String language, String units) {
+    public String fetchWeatherForecastByLocation(Float longitude, Float latitude, Integer userId, String language, String units) {
         String cityFound;
         String responseToUser;
         try {
@@ -236,7 +236,7 @@ public class WeatherService {
      * @return userHash to be send to use
      * @note Forecast for the following 3 days
      */
-    public String fetchWeatherCurrentByLocation(Double longitude, Double latitude, Integer userId, String language, String units) {
+    public String fetchWeatherCurrentByLocation(Float longitude, Float latitude, Integer userId, String language, String units) {
         String cityFound;
         String responseToUser;
         try {

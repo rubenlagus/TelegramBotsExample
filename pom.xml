@@ -11,10 +11,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <httpcompontents.version>4.5.2</httpcompontents.version>
-        <telegrambots.version>2.4.3</telegrambots.version>
+        <httpcompontents.version>4.5.3</httpcompontents.version>
+        <telegrambots.version>2.4.4.5</telegrambots.version>
         <json.version>20160810</json.version>
-        <mysql.version>6.0.4</mysql.version>
+        <jsoup.version>1.10.2</jsoup.version>
+        <mysql.version>6.0.5</mysql.version>
     </properties>
 
     <dependencies>
@@ -51,7 +52,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.9.2</version>
+            <version>${jsoup.version}</version>
         </dependency>
     </dependencies>
 
@@ -138,6 +139,24 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.4.1</version>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <rules>
+                        <DependencyConvergence />
+                    </rules>
+                </configuration>
             </plugin>
         </plugins>
         <pluginManagement>

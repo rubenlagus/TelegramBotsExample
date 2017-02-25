@@ -14,8 +14,8 @@ import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardHide;
 import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
@@ -194,9 +194,9 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         sendMessage.setReplyToMessageId(messageId);
         sendMessage.setText(Emoji.WAVING_HAND_SIGN.toString());
 
-        ReplyKeyboardHide replyKeyboardHide = new ReplyKeyboardHide();
-        replyKeyboardHide.setSelective(true);
-        sendMessage.setReplyMarkup(replyKeyboardHide);
+        ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
+        replyKeyboardRemove.setSelective(true);
+        sendMessage.setReplyMarkup(replyKeyboardRemove);
 
         sendMessage(sendMessage);
         DatabaseManager.getInstance().insertWeatherState(userId, chatId, STARTSTATE);

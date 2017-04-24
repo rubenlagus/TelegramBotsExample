@@ -107,7 +107,7 @@ public class DatabaseManager {
     private int updateToVersion3() throws SQLException {
         connetion.executeQuery(CreationStrings.createDirectionsDatabase);
         connetion.executeQuery(String.format(CreationStrings.insertCurrentVersion, 3));
-        return 2;
+        return 3;
     }
 
     private int updateToVersion4() throws SQLException {

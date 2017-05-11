@@ -229,7 +229,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
             commands.add(commandRow);
         }
         replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboad(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(true);
         replyKeyboardMarkup.setKeyboard(commands);
         replyKeyboardMarkup.setSelective(true);
         sendMessageRequest.setReplyMarkup(replyKeyboardMarkup);

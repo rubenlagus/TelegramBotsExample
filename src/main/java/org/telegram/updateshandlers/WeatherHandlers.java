@@ -908,7 +908,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboad(false);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
 
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow keyboardFirstRow = new KeyboardRow();
@@ -928,7 +928,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboad(false);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
 
         List<KeyboardRow> keyboard = new ArrayList<>();
         for (String languageName : LocalisationService.getSupportedLanguages().stream().map(
@@ -950,7 +950,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboad(false);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
 
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow row = new KeyboardRow();
@@ -971,7 +971,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboad(false);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
 
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow keyboardFirstRow = new KeyboardRow();
@@ -995,7 +995,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboad(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(true);
 
         List<KeyboardRow> keyboard = new ArrayList<>();
         for (String recentWeather : DatabaseManager.getInstance().getRecentWeather(userId)) {
@@ -1027,7 +1027,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboad(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(true);
 
         List<KeyboardRow> keyboard = new ArrayList<>();
 
@@ -1054,7 +1054,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
             replyKeyboardMarkup = new ReplyKeyboardMarkup();
             replyKeyboardMarkup.setSelective(true);
             replyKeyboardMarkup.setResizeKeyboard(true);
-            replyKeyboardMarkup.setOneTimeKeyboad(true);
+            replyKeyboardMarkup.setOneTimeKeyboard(true);
 
             List<KeyboardRow> keyboard = new ArrayList<>();
             for (String alertCityName: alertCitiesNames) {

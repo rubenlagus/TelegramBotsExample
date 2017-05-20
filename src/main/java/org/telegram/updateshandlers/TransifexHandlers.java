@@ -8,7 +8,6 @@ import org.telegram.services.LocalisationService;
 import org.telegram.services.TransifexService;
 import org.telegram.telegrambots.api.methods.send.SendDocument;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -37,55 +36,11 @@ public class TransifexHandlers extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        BotLogger.severe("TEST", update.toString());
-        if (update.hasMessage()) {
-            if (update.getMessage().getText().startsWith("/command")) {
-                SendMessage message = new SendMessage();
-                message.setText("Second message after clicking >" + update.getMessage().getText() + "<");
-                message.setChatId(update.getMessage().getChatId());
-                try {
-                    sendMessage(message);
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            } else {
-                SendMessage message = new SendMessage();
-                message.setText("First message without command");
-                message.setChatId(update.getMessage().getChatId());
-                InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
-                List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-                List<InlineKeyboardButton> row = new ArrayList<>();
-                InlineKeyboardButton button = new InlineKeyboardButton();
-                button.setText("Edit message");
-                button.setCallbackData("EDIT");
-                row.add(button);
-                keyboard.add(row);
-                markup.setKeyboard(keyboard);
-                message.setReplyMarkup(markup);
-                try {
-                    sendMessage(message);
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-        } else if (update.hasCallbackQuery()) {
-            EditMessageText editMessage = new EditMessageText();
-            editMessage.setChatId(update.getCallbackQuery().getMessage().getChatId());
-            editMessage.setMessageId(update.getCallbackQuery().getMessage().getMessageId());
-            editMessage.setText("First message with /command, /command1 and /command2");
-            try {
-                editMessageText(editMessage);
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
-        }
-
-
-        /*try {
+        try {
             handleUpdate(update);
         } catch (Throwable e) {
             BotLogger.error(LOGTAG, e);
-        }*/
+        }
     }
 
     private void handleUpdate(Update update) throws InvalidObjectException, TelegramApiException {
@@ -127,7 +82,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
             } else if (parts[0].startsWith(Commands.help)) {
                 SendMessage sendMessageRequest = new SendMessage();
                 String helpFormated = String.format(
-                        LocalisationService.getInstance().getString("helpTransifex", language),
+                        LocalisationService.getString("helpTransifex", language),
                         Commands.transifexiOSCommand, Commands.transifexAndroidCommand, Commands.transifexWebogram,
                         Commands.transifexTDesktop, Commands.transifexOSX, Commands.transifexWP,
                         Commands.transifexAndroidSupportCommand);
@@ -152,7 +107,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
                 (message.getText().startsWith(Commands.startCommand) || !message.isGroupMessage())) {
             SendMessage sendMessageRequest = new SendMessage();
             String helpFormated = String.format(
-                    LocalisationService.getInstance().getString("helpTransifex", language),
+                    LocalisationService.getString("helpTransifex", language),
                     Commands.transifexiOSCommand, Commands.transifexAndroidCommand, Commands.transifexWebogram,
                     Commands.transifexTDesktop, Commands.transifexOSX, Commands.transifexWP,
                     Commands.transifexAndroidSupportCommand);
@@ -171,12 +126,12 @@ public class TransifexHandlers extends TelegramLongPollingBot {
         SendMessage answer = new SendMessage();
         answer.setChatId(message.getChatId());
         answer.setReplyToMessageId(message.getMessageId());
-        answer.setText(LocalisationService.getInstance().getString("movedToLangBot", language));
+        answer.setText(LocalisationService.getString("movedToLangBot", language));
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
         List<InlineKeyboardButton> row = new ArrayList<>();
         InlineKeyboardButton button = new InlineKeyboardButton();
-        button.setText(LocalisationService.getInstance().getString("checkLangBot", language));
+        button.setText(LocalisationService.getString("checkLangBot", language));
         button.setUrl("https://telegram.me/langbot");
         row.add(button);
         rows.add(row);

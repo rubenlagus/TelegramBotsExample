@@ -30,4 +30,7 @@ public class BotConfig {
 
     public static final String COMMANDS_TOKEN = "<token>";
     public static final String COMMANDS_USER = "MyCommandsBot";
+    
+    public static final String ELEKTROLLART_TOKEN = "<token>";
+    public static final String ELEKTROLLART_USER = "ElektrollArtFanBot";
 }

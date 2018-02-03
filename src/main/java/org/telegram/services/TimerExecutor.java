@@ -83,7 +83,7 @@ public class TimerExecutor {
     private long computNextDilay(int targetHour, int targetMin, int targetSec) {
         final LocalDateTime localNow = LocalDateTime.now(Clock.systemUTC());
         LocalDateTime localNextTarget = localNow.withHour(targetHour).withMinute(targetMin).withSecond(targetSec);
-        while (localNow.compareTo(localNextTarget) > 0) {
+        while (localNow.compareTo(localNextTarget.minusSeconds(1)) > 0) {
             localNextTarget = localNextTarget.plusDays(1);
         }
 

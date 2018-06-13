@@ -8,7 +8,7 @@ Samples for [TelegramBots](https://github.com/rubenlagus/TelegramBots) library
 Bots are now supporting multilanguage. If you want to add your own, feel free to translate at [transifex](https://www.transifex.com/projects/p/telegrambots/)
 
 ## Contributions
-Feel free to fork this project, work on it and then make a pull request agains **dev** branch.
+Feel free to fork this project, work on it and then make a pull request against **dev** branch.
 
 Most of the times I will accept them if they add something valuable to the code.
 

@@ -2,7 +2,7 @@ Let us create a simple echo bot
 
 - follow  [these](https://github.com/rubenlagus/TelegramBots/blob/master/eclipse%20configuration.md) steps to work with eclipse
 
-- got to org.telegram and edit `BuildVars.java` and fill it out
+- go to org.telegram and edit `BuildVars.java` and fill it out
 
 
 ```

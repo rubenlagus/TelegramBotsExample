@@ -1,14 +1,15 @@
 package org.telegram.commands;
 
 import org.telegram.database.DatabaseManager;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Chat;
-import org.telegram.telegrambots.api.objects.User;
-import org.telegram.telegrambots.bots.AbsSender;
-import org.telegram.telegrambots.bots.commands.BotCommand;
-import org.telegram.telegrambots.bots.commands.ICommandRegistry;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.logging.BotLogger;
+import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
+import org.telegram.telegrambots.extensions.bots.commandbot.commands.IBotCommand;
+import org.telegram.telegrambots.extensions.bots.commandbot.commands.ICommandRegistry;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Chat;
+import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.bots.AbsSender;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.logging.BotLogger;
 
 /**
  * This command helps the user to find the command they need
@@ -36,7 +37,7 @@ public class HelpCommand extends BotCommand {
         StringBuilder helpMessageBuilder = new StringBuilder("<b>Help</b>\n");
         helpMessageBuilder.append("These are the registered commands for this Bot:\n\n");
 
-        for (BotCommand botCommand : commandRegistry.getRegisteredCommands()) {
+        for (IBotCommand botCommand : commandRegistry.getRegisteredCommands()) {
             helpMessageBuilder.append(botCommand.toString()).append("\n\n");
         }
 
@@ -46,7 +47,7 @@ public class HelpCommand extends BotCommand {
         helpMessage.setText(helpMessageBuilder.toString());
 
         try {
-            absSender.sendMessage(helpMessage);
+            absSender.execute(helpMessage);
         } catch (TelegramApiException e) {
             BotLogger.error(LOGTAG, e);
         }

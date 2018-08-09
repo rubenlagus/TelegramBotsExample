@@ -3,24 +3,20 @@ package org.telegram.updateshandlers;
 import org.telegram.BotConfig;
 import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
-import org.telegram.services.CustomTimerTask;
-import org.telegram.services.Emoji;
-import org.telegram.services.LocalisationService;
-import org.telegram.services.TimerExecutor;
-import org.telegram.services.WeatherService;
+import org.telegram.services.*;
 import org.telegram.structure.WeatherAlert;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.replykeyboard.ForceReplyKeyboard;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboard;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
-import org.telegram.telegrambots.logging.BotLogger;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +109,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
             sendMessage.setChatId(String.valueOf(weatherAlert.getUserId()));
             sendMessage.setText(weather);
             try {
-                sendMessage(sendMessage);
+                execute(sendMessage);
             } catch (TelegramApiRequestException e) {
                 BotLogger.warn(LOGTAG, e);
                 if (e.getApiResponse().contains("Can't access the chat") || e.getApiResponse().contains("Bot was blocked by the user")) {
@@ -184,7 +180,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
                 break;
         }
 
-            sendMessage(sendMessageRequest);
+        execute(sendMessageRequest);
     }
 
     private void sendHideKeyboard(Integer userId, Long chatId, Integer messageId) throws TelegramApiException {
@@ -198,7 +194,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
         replyKeyboardRemove.setSelective(true);
         sendMessage.setReplyMarkup(replyKeyboardRemove);
 
-        sendMessage(sendMessage);
+        execute(sendMessage);
         DatabaseManager.getInstance().insertWeatherState(userId, chatId, STARTSTATE);
     }
 

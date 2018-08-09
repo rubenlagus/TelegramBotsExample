@@ -5,19 +5,19 @@ import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
 import org.telegram.services.DirectionsService;
 import org.telegram.services.LocalisationService;
-import org.telegram.telegrambots.api.methods.BotApiMethod;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.replykeyboard.ForceReplyKeyboard;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
-import org.telegram.telegrambots.logging.BotLogger;
-import org.telegram.telegrambots.updateshandlers.SentCallback;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.meta.logging.BotLogger;
+import org.telegram.telegrambots.meta.updateshandlers.SentCallback;
 
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
@@ -90,7 +90,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                             sendMessageRequest.setText(LocalisationService.getString("youNeedReplyDirections", language));
                             sendMessageRequest.setChatId(message.getChatId());
                             try {
-                                sendMessage(sendMessageRequest);
+                                execute(sendMessageRequest);
                             } catch (TelegramApiException e) {
                                 BotLogger.error(LOGTAG, e);
                             }
@@ -114,7 +114,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         for (String direction : directions) {
             sendMessageRequest.setText(direction);
             try {
-                sendMessageAsync(sendMessageRequest, new SentCallback<Message>() {
+                executeAsync(sendMessageRequest, new SentCallback<Message>() {
                     @Override
                     public void onResult(BotApiMethod<Message> botApiMethod, Message sentMessage) {
                         if (sentMessage != null) {
@@ -147,7 +147,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         sendMessageRequest.setText(LocalisationService.getString("sendDestination", language));
 
         try {
-            sendMessageAsync(sendMessageRequest, new SentCallback<Message>() {
+            executeAsync(sendMessageRequest, new SentCallback<Message>() {
                 @Override
                 public void onResult(BotApiMethod<Message> method, Message sentMessage) {
                     if (sentMessage != null) {
@@ -178,7 +178,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         sendMessageRequest.setText(helpDirectionsFormated);
         sendMessageRequest.setChatId(message.getChatId());
         try {
-            sendMessage(sendMessageRequest);
+            execute(sendMessageRequest);
         } catch (TelegramApiException e) {
             BotLogger.error(LOGTAG, e);
         }
@@ -194,7 +194,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         sendMessageRequest.setText(LocalisationService.getString("initDirections", language));
 
         try {
-            sendMessageAsync(sendMessageRequest, new SentCallback<Message>() {
+            executeAsync(sendMessageRequest, new SentCallback<Message>() {
                 @Override
                 public void onResult(BotApiMethod<Message> method, Message sentMessage) {
                     if (sentMessage != null) {
@@ -235,7 +235,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         sendMessageRequest.setReplyMarkup(replyKeyboardMarkup);
         sendMessageRequest.setText(LocalisationService.getString("chooselanguage", language));
         try {
-            sendMessage(sendMessageRequest);
+            execute(sendMessageRequest);
             languageMessages.add(message.getFrom().getId());
         } catch (TelegramApiException e) {
             BotLogger.error(LOGTAG, e);
@@ -257,7 +257,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         replyKeyboardRemove.setSelective(true);
         sendMessageRequest.setReplyMarkup(replyKeyboardRemove);
         try {
-            sendMessage(sendMessageRequest);
+            execute(sendMessageRequest);
             languageMessages.remove(message.getFrom().getId());
         } catch (TelegramApiException e) {
             BotLogger.error(LOGTAG, e);

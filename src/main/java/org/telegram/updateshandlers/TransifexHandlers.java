@@ -6,15 +6,15 @@ import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
 import org.telegram.services.LocalisationService;
 import org.telegram.services.TransifexService;
-import org.telegram.telegrambots.api.methods.send.SendDocument;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.logging.BotLogger;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
                 sendMessageRequest.setText(helpFormated);
                 sendMessageRequest.setChatId(message.getChatId());
                 try {
-                    sendMessage(sendMessageRequest);
+                    execute(sendMessageRequest);
                 } catch (TelegramApiException e) {
                     BotLogger.error(LOGTAG, e);
                 }
@@ -98,7 +98,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
             if (sendDocument != null) {
                 sendDocument.setChatId(message.getChatId());
                 try {
-                    sendDocument(sendDocument);
+                    execute(sendDocument);
                 } catch (TelegramApiException e) {
                     BotLogger.error(LOGTAG, e);
                 }
@@ -114,7 +114,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
             sendMessageRequest.setText(helpFormated);
             sendMessageRequest.setChatId(message.getChatId());
             try {
-                sendMessage(sendMessageRequest);
+                execute(sendMessageRequest);
             } catch (TelegramApiException e) {
                 BotLogger.error(LOGTAG, e);
             }
@@ -137,6 +137,6 @@ public class TransifexHandlers extends TelegramLongPollingBot {
         rows.add(row);
         inlineKeyboardMarkup.setKeyboard(rows);
         answer.setReplyMarkup(inlineKeyboardMarkup);
-        sendMessage(answer);
+        execute(answer);
     }
 }

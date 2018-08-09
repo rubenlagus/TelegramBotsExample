@@ -11,7 +11,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.telegram.BuildVars;
 import org.telegram.database.DatabaseManager;
-import org.telegram.telegrambots.logging.BotLogger;
+import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -162,7 +162,7 @@ public class WeatherService {
         try {
             String completURL = BASEURL + FORECASTPATH + "?lat=" + URLEncoder.encode(latitude + "", "UTF-8") + "&lon="
                     + URLEncoder.encode(longitude + "", "UTF-8") +
-                    FORECASTPARAMS.replace("@language@", language).replace("@units@", units) + APIIDEND;;
+                    FORECASTPARAMS.replace("@language@", language).replace("@units@", units) + APIIDEND;
             CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
             CloseableHttpResponse response = client.execute(request);
@@ -242,7 +242,7 @@ public class WeatherService {
         try {
             String completURL = BASEURL + CURRENTPATH + "?lat=" + URLEncoder.encode(latitude + "", "UTF-8") + "&lon="
                     + URLEncoder.encode(longitude + "", "UTF-8") +
-                    CURRENTPARAMS.replace("@language@", language).replace("@units@", units) + APIIDEND;;
+                    CURRENTPARAMS.replace("@language@", language).replace("@units@", units) + APIIDEND;
             CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
             HttpGet request = new HttpGet(completURL);
             CloseableHttpResponse response = client.execute(request);

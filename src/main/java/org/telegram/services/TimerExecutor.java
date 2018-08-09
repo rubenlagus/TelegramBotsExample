@@ -1,6 +1,6 @@
 package org.telegram.services;
 
-import org.telegram.telegrambots.logging.BotLogger;
+import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -12,8 +12,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Ruben Bermudez
  * @version 2.0
- * @brief Exectue a task periodically
- * @date 27/01/25
+ * Execute a task periodically
  */
 public class TimerExecutor {
     private static final String LOGTAG = "TIMEREXECUTOR";
@@ -99,7 +98,7 @@ public class TimerExecutor {
     /**
      * Stop the thread
      */
-    public void stop() {
+    private void stop() {
         executorService.shutdown();
         try {
             executorService.awaitTermination(1, TimeUnit.DAYS);

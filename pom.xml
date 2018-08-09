@@ -12,7 +12,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <httpcompontents.version>4.5.3</httpcompontents.version>
-        <telegrambots.version>3.0</telegrambots.version>
+        <telegrambots.version>4.0.1</telegrambots.version>
         <json.version>20160810</json.version>
         <jsoup.version>1.10.2</jsoup.version>
         <mysql.version>6.0.6</mysql.version>
@@ -23,6 +23,11 @@
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
+            <version>${telegrambots.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambotsextensions</artifactId>
             <version>${telegrambots.version}</version>
         </dependency>
         <dependency>

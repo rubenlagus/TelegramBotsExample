@@ -8,21 +8,14 @@
 package org.telegram.database;
 
 import org.telegram.BuildVars;
-import org.telegram.telegrambots.logging.BotLogger;
+import org.telegram.telegrambots.meta.logging.BotLogger;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * @author Ruben Bermudez
  * @version 2.0
- * @brief Connector to database
- * @date 3/12/14
+ * Connector to database
  */
 public class ConectionDB {
     private static final String LOGTAG = "CONNECTIONDB";

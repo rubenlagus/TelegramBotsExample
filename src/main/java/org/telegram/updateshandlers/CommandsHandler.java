@@ -7,12 +7,12 @@ import org.telegram.commands.StartCommand;
 import org.telegram.commands.StopCommand;
 import org.telegram.database.DatabaseManager;
 import org.telegram.services.Emoji;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.bots.TelegramLongPollingCommandBot;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.logging.BotLogger;
+import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.logging.BotLogger;
 
 /**
  * This handler mainly works with commands to demonstrate the Commands feature of the API
@@ -26,7 +26,9 @@ public class CommandsHandler extends TelegramLongPollingCommandBot {
     /**
      * Constructor.
      */
-    public CommandsHandler() {
+    public CommandsHandler(String botUsername) {
+        super(botUsername);
+
         register(new HelloCommand());
         register(new StartCommand());
         register(new StopCommand());
@@ -38,7 +40,7 @@ public class CommandsHandler extends TelegramLongPollingCommandBot {
             commandUnknownMessage.setChatId(message.getChatId());
             commandUnknownMessage.setText("The command '" + message.getText() + "' is not known by this bot. Here comes some help " + Emoji.AMBULANCE);
             try {
-                absSender.sendMessage(commandUnknownMessage);
+                absSender.execute(commandUnknownMessage);
             } catch (TelegramApiException e) {
                 BotLogger.error(LOGTAG, e);
             }
@@ -62,17 +64,12 @@ public class CommandsHandler extends TelegramLongPollingCommandBot {
                 echoMessage.setText("Hey heres your message:\n" + message.getText());
 
                 try {
-                    sendMessage(echoMessage);
+                    execute(echoMessage);
                 } catch (TelegramApiException e) {
                     BotLogger.error(LOGTAG, e);
                 }
             }
         }
-    }
-
-    @Override
-    public String getBotUsername() {
-        return BotConfig.COMMANDS_USER;
     }
 
     @Override

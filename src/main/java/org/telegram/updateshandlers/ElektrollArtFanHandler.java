@@ -1,20 +1,20 @@
 package org.telegram.updateshandlers;
 
 
+import org.telegram.BotConfig;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.telegram.BotConfig;
-import org.telegram.telegrambots.api.methods.AnswerCallbackQuery;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.api.objects.CallbackQuery;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 
 /**
@@ -90,7 +90,7 @@ public class ElektrollArtFanHandler extends TelegramLongPollingBot {
 					
 					
 					try {
-						sendMessage(sendMessagerequest);
+						execute(sendMessagerequest);
 					} catch (TelegramApiException e) {
 						e.printStackTrace();
 					}
@@ -140,7 +140,7 @@ public class ElektrollArtFanHandler extends TelegramLongPollingBot {
 					editMarkup.setMessageId(callbackquery.getMessage().getMessageId());
 					editMarkup.setReplyMarkup(markup);
 					try {
-						editMessageText(editMarkup);
+						execute(editMarkup);
 					} catch (TelegramApiException e) {
 						e.printStackTrace();
 					}
@@ -164,7 +164,7 @@ public class ElektrollArtFanHandler extends TelegramLongPollingBot {
 		answerCallbackQuery.setCallbackQueryId(callbackquery.getId());
 		answerCallbackQuery.setShowAlert(alert);
 		answerCallbackQuery.setText(text);
-		answerCallbackQuery(answerCallbackQuery);
+		execute(answerCallbackQuery);
 	}
 	
 	/**

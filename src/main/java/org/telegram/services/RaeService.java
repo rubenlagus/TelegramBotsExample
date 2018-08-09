@@ -12,7 +12,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.telegram.telegrambots.logging.BotLogger;
+import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.IOException;
 import java.net.URLEncoder;

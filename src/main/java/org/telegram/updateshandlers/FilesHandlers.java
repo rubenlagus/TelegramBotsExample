@@ -5,17 +5,17 @@ import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
 import org.telegram.services.Emoji;
 import org.telegram.services.LocalisationService;
-import org.telegram.telegrambots.api.methods.send.SendDocument;
-import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.ReplyKeyboardRemove;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.exceptions.TelegramApiException;
-import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
-import org.telegram.telegrambots.logging.BotLogger;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
@@ -109,7 +109,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
             sendMessageRequest.setText(LocalisationService.getString("fileUploaded", language) +
                     LocalisationService.getString("uploadedFileURL", language) + message.getDocument().getFileId());
             sendMessageRequest.setChatId(message.getChatId());
-            sendMessage(sendMessageRequest);
+            execute(sendMessageRequest);
         }
     }
 
@@ -128,7 +128,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
         }
         sendMessageRequest.setChatId(message.getChatId());
         sendMessageRequest.setReplyMarkup(new ReplyKeyboardRemove());
-        sendMessage(sendMessageRequest);
+        execute(sendMessageRequest);
     }
 
     private void onDeleteCommand(Message message, String language, String[] parts) throws InvalidObjectException, TelegramApiException {
@@ -160,7 +160,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
             replyKeyboardMarkup.setKeyboard(commands);
         }
         sendMessageRequest.setReplyMarkup(replyKeyboardMarkup);
-        sendMessage(sendMessageRequest);
+        execute(sendMessageRequest);
     }
 
     private void onDeleteCommandWithParameters(Message message, String language, String part) throws InvalidObjectException, TelegramApiException {
@@ -174,7 +174,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
         }
         sendMessageRequest.setChatId(message.getChatId());
 
-        sendMessage(sendMessageRequest);
+        execute(sendMessageRequest);
         DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
 
     }
@@ -184,7 +184,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setText(LocalisationService.getString("processFinished", language));
         sendMessageRequest.setChatId(message.getChatId());
-        sendMessage(sendMessageRequest);
+        execute(sendMessageRequest);
     }
 
     private void onUploadCommand(Message message, String language) throws InvalidObjectException, TelegramApiException {
@@ -192,7 +192,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
         SendMessage sendMessageRequest = new SendMessage();
         sendMessageRequest.setText(LocalisationService.getString("sendFileToUpload", language));
         sendMessageRequest.setChatId(message.getChatId());
-        sendMessage(sendMessageRequest);
+        execute(sendMessageRequest);
     }
 
     private void sendHelpMessage(Message message, String language) throws InvalidObjectException, TelegramApiException {
@@ -203,7 +203,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
                 Commands.listCommand);
         sendMessageRequest.setText(formatedString);
         sendMessageRequest.setChatId(message.getChatId());
-        sendMessage(sendMessageRequest);
+        execute(sendMessageRequest);
     }
 
     private void onStartWithParameters(Message message, String language, String part) throws InvalidObjectException, TelegramApiException {
@@ -211,12 +211,12 @@ public class FilesHandlers extends TelegramLongPollingBot {
             SendDocument sendDocumentRequest = new SendDocument();
             sendDocumentRequest.setDocument(part.trim());
             sendDocumentRequest.setChatId(message.getChatId());
-            sendDocument(sendDocumentRequest);
+            execute(sendDocumentRequest);
         } else {
             SendMessage sendMessageRequest = new SendMessage();
             sendMessageRequest.setText(LocalisationService.getString("wrongFileId", language));
             sendMessageRequest.setChatId(message.getChatId());
-            sendMessage(sendMessageRequest);
+            execute(sendMessageRequest);
         }
     }
 
@@ -237,7 +237,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
         replyKeyboardMarkup.setSelective(true);
         sendMessageRequest.setReplyMarkup(replyKeyboardMarkup);
         sendMessageRequest.setText(LocalisationService.getString("chooselanguage", language));
-        sendMessage(sendMessageRequest);
+        execute(sendMessageRequest);
         languageMessages.add(message.getFrom().getId());
     }
 
@@ -255,7 +255,7 @@ public class FilesHandlers extends TelegramLongPollingBot {
         ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
         replyKeyboardRemove.setSelective(true);
         sendMessageRequest.setReplyMarkup(replyKeyboardRemove);
-        sendMessage(sendMessageRequest);
+        execute(sendMessageRequest);
         languageMessages.remove(message.getFrom().getId());
     }
 }

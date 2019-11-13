@@ -1,5 +1,7 @@
 package org.telegram.updateshandlers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.BotConfig;
 import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
@@ -16,7 +18,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRem
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +30,7 @@ import java.util.stream.Collectors;
  * @date 24 of June of 2015
  */
 public class WeatherHandlers extends TelegramLongPollingBot {
-    private static final String LOGTAG = "WEATHERHANDLERS";
-
+    private static final Logger log = LogManager.getLogger(WeatherHandlers.class);
     private static final int STARTSTATE = 0;
     private static final int MAINMENU = 1;
     private static final int CURRENTWEATHER = 2;
@@ -66,7 +66,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
                 }
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
@@ -98,7 +98,7 @@ public class WeatherHandlers extends TelegramLongPollingBot {
                 try {
                     Thread.currentThread().wait(35);
                 } catch (InterruptedException e) {
-                    BotLogger.severe(LOGTAG, e);
+                    log.fatal(e.getLocalizedMessage(), e);
                 }
             }
             String[] userOptions = DatabaseManager.getInstance().getUserWeatherOptions(weatherAlert.getUserId());
@@ -111,12 +111,12 @@ public class WeatherHandlers extends TelegramLongPollingBot {
             try {
                 execute(sendMessage);
             } catch (TelegramApiRequestException e) {
-                BotLogger.warn(LOGTAG, e);
+                log.warn(e.getLocalizedMessage(), e);
                 if (e.getApiResponse().contains("Can't access the chat") || e.getApiResponse().contains("Bot was blocked by the user")) {
                     DatabaseManager.getInstance().deleteAlertsForUser(weatherAlert.getUserId());
                 }
             } catch (Exception e) {
-                BotLogger.severe(LOGTAG, e);
+                log.fatal(e.getLocalizedMessage(), e);
             }
         }
     }

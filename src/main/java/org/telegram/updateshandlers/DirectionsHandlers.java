@@ -1,5 +1,7 @@
 package org.telegram.updateshandlers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.BotConfig;
 import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
@@ -16,7 +18,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRem
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 import org.telegram.telegrambots.meta.updateshandlers.SentCallback;
 
 import java.io.InvalidObjectException;
@@ -31,7 +32,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @date 24 of June of 2015
  */
 public class DirectionsHandlers extends TelegramLongPollingBot {
-    private static final String LOGTAG = "DIRECTIONSHANDLERS";
+    private static final Logger log = LogManager.getLogger(DirectionsHandlers.class);
 
     private static final int WATING_ORIGIN_STATUS = 0;
     private static final int WATING_DESTINY_STATUS = 1;
@@ -48,7 +49,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         try {
             handleDirections(update);
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
@@ -92,7 +93,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                             try {
                                 execute(sendMessageRequest);
                             } catch (TelegramApiException e) {
-                                BotLogger.error(LOGTAG, e);
+                                log.error(e.getLocalizedMessage(), e);
                             }
                         }
                     }
@@ -131,7 +132,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                     }
                 });
             } catch (TelegramApiException e) {
-                BotLogger.error(LOGTAG, e);
+                log.error(e.getLocalizedMessage(), e);
             }
         }
 
@@ -165,7 +166,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                 }
             });
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
 
     }
@@ -180,7 +181,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         try {
             execute(sendMessageRequest);
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
@@ -212,7 +213,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                 }
             });
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
 
     }
@@ -238,7 +239,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
             execute(sendMessageRequest);
             languageMessages.add(message.getFrom().getId());
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
@@ -260,7 +261,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
             execute(sendMessageRequest);
             languageMessages.remove(message.getFrom().getId());
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 }

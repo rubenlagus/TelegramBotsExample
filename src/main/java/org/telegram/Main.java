@@ -1,15 +1,12 @@
 package org.telegram;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.logging.BotLogger;
-import org.telegram.telegrambots.meta.logging.BotsFileHandler;
-import org.telegram.updateshandlers.*;
-
-import java.io.IOException;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
+import org.telegram.updateshandlers.WeatherHandlers;
+import org.telegram.updateshandlers.WebHookExampleHandlers;
 
 /**
  * @author Ruben Bermudez
@@ -18,35 +15,27 @@ import java.util.logging.Level;
  * @date 20 of June of 2015
  */
 public class Main {
-    private static final String LOGTAG = "MAIN";
+    private static final Logger log = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) {
-        BotLogger.setLevel(Level.ALL);
-        BotLogger.registerLogger(new ConsoleHandler());
-        try {
-            BotLogger.registerLogger(new BotsFileHandler());
-        } catch (IOException e) {
-            BotLogger.severe(LOGTAG, e);
-        }
-
         try {
             ApiContextInitializer.init();
             TelegramBotsApi telegramBotsApi = createTelegramBotsApi();
             try {
                 // Register long polling bots. They work regardless type of TelegramBotsApi we are creating
-                telegramBotsApi.registerBot(new ChannelHandlers());
-                telegramBotsApi.registerBot(new DirectionsHandlers());
-                telegramBotsApi.registerBot(new RaeHandlers());
+                // telegramBotsApi.registerBot(new ChannelHandlers());
+                // telegramBotsApi.registerBot(new DirectionsHandlers());
+                // telegramBotsApi.registerBot(new RaeHandlers());
                 telegramBotsApi.registerBot(new WeatherHandlers());
-                telegramBotsApi.registerBot(new TransifexHandlers());
-                telegramBotsApi.registerBot(new FilesHandlers());
-                telegramBotsApi.registerBot(new CommandsHandler(BotConfig.COMMANDS_USER));
-            	telegramBotsApi.registerBot(new ElektrollArtFanHandler());
+                // telegramBotsApi.registerBot(new TransifexHandlers());
+                // telegramBotsApi.registerBot(new FilesHandlers());
+                // telegramBotsApi.registerBot(new CommandsHandler(BotConfig.COMMANDS_USER));
+            	// telegramBotsApi.registerBot(new ElektrollArtFanHandler());
             } catch (TelegramApiException e) {
-                BotLogger.error(LOGTAG, e);
+                log.error(e.getLocalizedMessage(), e);
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 

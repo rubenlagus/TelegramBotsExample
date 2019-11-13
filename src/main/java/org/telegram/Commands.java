@@ -26,6 +26,8 @@ public class Commands {
     public static final String help = commandInitChar + "help";
     /// Upload command
     public static final String uploadCommand = commandInitChar + "upload";
+    /// Report command
+    public static final String reportCommand = commandInitChar + "report";
     /// Start command
     public static final String startCommand = commandInitChar + "start";
     /// Cancel command

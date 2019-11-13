@@ -7,8 +7,9 @@
  */
 package org.telegram.database;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.structure.WeatherAlert;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,7 +26,7 @@ import java.util.List;
  * @date 3/12/14
  */
 public class DatabaseManager {
-    private static final String LOGTAG = "DATABASEMANAGER";
+    private static final Logger log = LogManager.getLogger(DatabaseManager.class);
 
     private static volatile DatabaseManager instance;
     private static volatile ConectionDB connetion;
@@ -36,7 +37,7 @@ public class DatabaseManager {
     private DatabaseManager() {
         connetion = new ConectionDB();
         final int currentVersion = connetion.checkVersion();
-        BotLogger.info(LOGTAG, "Current db version: " + currentVersion);
+        log.info("Current db version: " + currentVersion);
         if (currentVersion < CreationStrings.version) {
             recreateTable(currentVersion);
         }
@@ -94,7 +95,7 @@ public class DatabaseManager {
             }
             connetion.commitTransaction();
         } catch (SQLException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 

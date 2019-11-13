@@ -1,5 +1,7 @@
 package org.telegram.updateshandlers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.BotConfig;
 import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
@@ -15,7 +17,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRem
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @date 24 of June of 2015
  */
 public class FilesHandlers extends TelegramLongPollingBot {
-    private static final String LOGTAG = "FILESHANDLERS";
+    private static final Logger log = LogManager.getLogger(FilesHandlers.class);
 
     private static final int INITIAL_UPLOAD_STATUS = 0;
     private static final int DELETE_UPLOADED_STATUS = 1;
@@ -48,7 +49,12 @@ public class FilesHandlers extends TelegramLongPollingBot {
         try {
             if (update.hasMessage()) {
                 try {
-                    handleFileUpdate(update);
+                    SendMessage sendMessageRequest = new SendMessage();
+                    sendMessageRequest.setText("Since this bot was used to spread copyrighted content, we had to disable its functionality until further announcement.\n\nSorry for the troubles, just blame those that used the bot for illegal purposes.");
+                    sendMessageRequest.setChatId(update.getMessage().getChatId());
+                    execute(sendMessageRequest);
+
+                    //handleFileUpdate(update);
                 } catch (TelegramApiRequestException e) {
                     if (e.getApiResponse().contains("Bot was blocked by the user")) {
                         if (update.getMessage().getFrom() != null) {
@@ -56,11 +62,11 @@ public class FilesHandlers extends TelegramLongPollingBot {
                         }
                     }
                 } catch (Exception e) {
-                    BotLogger.severe(LOGTAG, e);
+                    log.fatal(e.getLocalizedMessage(), e);
                 }
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 

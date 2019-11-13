@@ -1,5 +1,7 @@
 package org.telegram.updateshandlers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.BotConfig;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -8,7 +10,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.InvalidObjectException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 24 of June of 2015
  */
 public class ChannelHandlers extends TelegramLongPollingBot {
-    private static final String LOGTAG = "CHANNELHANDLERS";
+    private static final Logger log = LogManager.getLogger(ChannelHandlers.class);
 
     private static final int WAITINGCHANNEL = 1;
 
@@ -42,11 +43,11 @@ public class ChannelHandlers extends TelegramLongPollingBot {
                 try {
                     handleIncomingMessage(message);
                 } catch (InvalidObjectException e) {
-                    BotLogger.severe(LOGTAG, e);
+                    log.fatal(e.getLocalizedMessage(), e);
                 }
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
@@ -92,7 +93,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
                 }
             }
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
@@ -123,7 +124,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
@@ -165,7 +166,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 }

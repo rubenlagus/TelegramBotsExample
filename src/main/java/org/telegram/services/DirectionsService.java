@@ -8,11 +8,12 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.telegram.BuildVars;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -27,7 +28,7 @@ import java.util.List;
  * @date 20 of June of 2015
  */
 public class DirectionsService {
-    private static final String LOGTAG = "DIRECTIONSSERVICE";
+    private static final Logger log = LogManager.getLogger(DirectionsService.class);
 
     private static final String BASEURL = "https://maps.googleapis.com/maps/api/directions/json"; ///< Base url for REST
     private static final String APIIDEND = "&key=" + BuildVars.DirectionsApiKey;
@@ -98,7 +99,7 @@ public class DirectionsService {
                 responseToUser.add(LocalisationService.getString("directionsNotFound", language));
             }
         } catch (Exception e) {
-            BotLogger.warn(LOGTAG, e);
+            log.warn(e.getLocalizedMessage(), e);
             responseToUser.add(LocalisationService.getString("errorFetchingDirections", language));
         }
         return responseToUser;

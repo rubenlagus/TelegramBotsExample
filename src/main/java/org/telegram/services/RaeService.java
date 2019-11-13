@@ -8,11 +8,12 @@ import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -28,7 +29,7 @@ import java.util.Map;
  * @date 20 of June of 2015
  */
 public class RaeService {
-    private static final String LOGTAG = "RAESERVICE";
+    private static final Logger log = LogManager.getLogger(RaeService.class);
 
     private static final String BASEURL = "http://dle.rae.es/srv/"; ///< Base url for REST
     private static final String SEARCHEXACTURL = "search?m=30&w=";
@@ -66,7 +67,7 @@ public class RaeService {
                 results = getResultsFromExactMatch(elements, query, articleId);
             }
         } catch (IOException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
 
         return results;
@@ -103,7 +104,7 @@ public class RaeService {
                 }
             }
         } catch (IOException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
 
         return results;
@@ -137,7 +138,7 @@ public class RaeService {
                 results = getResultsFromExactMatch(elements, word, articleId);
             }
         } catch (IOException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
 
         return results;

@@ -1,5 +1,7 @@
 package org.telegram.updateshandlers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.BotConfig;
 import org.telegram.BuildVars;
 import org.telegram.Commands;
@@ -14,7 +16,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import java.util.List;
  * @date 24 of June of 2015
  */
 public class TransifexHandlers extends TelegramLongPollingBot {
-    private static final String LOGTAG = "TRANSIFEXHANDLERS";
+    private static final Logger log = LogManager.getLogger(TransifexHandlers.class);
 
     @Override
     public String getBotToken() {
@@ -39,7 +40,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
         try {
             handleUpdate(update);
         } catch (Throwable e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
@@ -91,7 +92,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
                 try {
                     execute(sendMessageRequest);
                 } catch (TelegramApiException e) {
-                    BotLogger.error(LOGTAG, e);
+                    log.error(e.getLocalizedMessage(), e);
                 }
             }
 
@@ -100,7 +101,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
                 try {
                     execute(sendDocument);
                 } catch (TelegramApiException e) {
-                    BotLogger.error(LOGTAG, e);
+                    log.error(e.getLocalizedMessage(), e);
                 }
             }
         } else if (parts[0].startsWith(Commands.help) ||
@@ -116,7 +117,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
             try {
                 execute(sendMessageRequest);
             } catch (TelegramApiException e) {
-                BotLogger.error(LOGTAG, e);
+                log.error(e.getLocalizedMessage(), e);
             }
         }
     }

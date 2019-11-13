@@ -8,10 +8,11 @@ import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.telegram.BuildVars;
 import org.telegram.database.DatabaseManager;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -27,7 +28,7 @@ import java.time.format.DateTimeFormatter;
  * @date 20 of June of 2015
  */
 public class WeatherService {
-    private static final String LOGTAG = "WEATHERSERVICE";
+    private static final Logger log = LogManager.getLogger(WeatherService.class);
 
     public static final String METRICSYSTEM = "metric";
     public static final String IMPERIALSYSTEM = "imperial";
@@ -91,7 +92,7 @@ public class WeatherService {
             String responseString = EntityUtils.toString(buf, "UTF-8");
 
             JSONObject jsonObject = new JSONObject(responseString);
-            BotLogger.info(LOGTAG, jsonObject.toString());
+            log.info(jsonObject.toString());
             if (jsonObject.getInt("cod") == 200) {
                 cityFound = jsonObject.getJSONObject("city").getString("name") + " (" +
                         jsonObject.getJSONObject("city").getString("country") + ")";
@@ -99,11 +100,11 @@ public class WeatherService {
                 responseToUser = String.format(LocalisationService.getString("weatherAlert", language),
                         cityFound, convertListOfForecastToString(jsonObject, language, units, false));
             } else {
-                BotLogger.warn(LOGTAG, jsonObject.toString());
+                log.warn(jsonObject.toString());
                 responseToUser = LocalisationService.getString("cityNotFound", language);
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
             responseToUser = LocalisationService.getString("errorFetchingWeather", language);
         }
         return responseToUser;
@@ -132,7 +133,7 @@ public class WeatherService {
             String responseString = EntityUtils.toString(buf, "UTF-8");
 
             JSONObject jsonObject = new JSONObject(responseString);
-            BotLogger.info(LOGTAG, jsonObject.toString());
+            log.info(jsonObject.toString());
             if (jsonObject.getInt("cod") == 200) {
                 cityFound = jsonObject.getJSONObject("city").getString("name") + " (" +
                         jsonObject.getJSONObject("city").getString("country") + ")";
@@ -140,11 +141,11 @@ public class WeatherService {
                 responseToUser = String.format(LocalisationService.getString("weatherForcast", language),
                         cityFound, convertListOfForecastToString(jsonObject, language, units, true));
             } else {
-                BotLogger.warn(LOGTAG, jsonObject.toString());
+                log.warn(jsonObject.toString());
                 responseToUser = LocalisationService.getString("cityNotFound", language);
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
             responseToUser = LocalisationService.getString("errorFetchingWeather", language);
         }
         return responseToUser;
@@ -179,11 +180,11 @@ public class WeatherService {
                 responseToUser = String.format(LocalisationService.getString("weatherForcast", language),
                         cityFound, convertListOfForecastToString(jsonObject, language, units, true));
             } else {
-                BotLogger.warn(LOGTAG, jsonObject.toString());
+                log.warn(jsonObject.toString());
                 responseToUser = LocalisationService.getString("cityNotFound", language);
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
             responseToUser = LocalisationService.getString("errorFetchingWeather", language);
         }
         return responseToUser;
@@ -220,11 +221,11 @@ public class WeatherService {
                 responseToUser = String.format(LocalisationService.getString("weatherCurrent", language),
                         cityFound, convertCurrentWeatherToString(jsonObject, language, units, emoji));
             } else {
-                BotLogger.warn(LOGTAG, jsonObject.toString());
+                log.warn(jsonObject.toString());
                 responseToUser = LocalisationService.getString("cityNotFound", language);
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
             responseToUser = LocalisationService.getString("errorFetchingWeather", language);
         }
         return responseToUser;
@@ -259,11 +260,11 @@ public class WeatherService {
                 responseToUser = String.format(LocalisationService.getString("weatherCurrent", language),
                         cityFound, convertCurrentWeatherToString(jsonObject, language, units, null));
             } else {
-                BotLogger.warn(LOGTAG, jsonObject.toString());
+                log.warn(jsonObject.toString());
                 responseToUser = LocalisationService.getString("cityNotFound", language);
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
             responseToUser = LocalisationService.getString("errorFetchingWeather", language);
         }
         return responseToUser;

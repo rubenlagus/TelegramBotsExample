@@ -1,5 +1,7 @@
 package org.telegram.commands;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.database.DatabaseManager;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -7,7 +9,6 @@ import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 /**
  * This command simply replies with a hello to the users command and
@@ -16,8 +17,7 @@ import org.telegram.telegrambots.meta.logging.BotLogger;
  * @author Timo Schulz (Mit0x2)
  */
 public class HelloCommand extends BotCommand {
-
-    private static final String LOGTAG = "HELLOCOMMAND";
+    private static final Logger log = LogManager.getLogger(HelloCommand.class);
 
     public HelloCommand() {
         super("hello", "Say hallo to this bot");
@@ -49,7 +49,7 @@ public class HelloCommand extends BotCommand {
         try {
             absSender.execute(answer);
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 }

@@ -1,6 +1,7 @@
 package org.telegram.services;
 
-import org.telegram.telegrambots.meta.logging.BotLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -15,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * Execute a task periodically
  */
 public class TimerExecutor {
-    private static final String LOGTAG = "TIMEREXECUTOR";
+    private static final Logger log = LogManager.getLogger(TimerExecutor.class);
     private static volatile TimerExecutor instance; ///< Instance
     private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1); ///< Thread to execute operations
 
@@ -55,14 +56,14 @@ public class TimerExecutor {
      * @param targetSec  Second to execute it
      */
     public void startExecutionEveryDayAt(CustomTimerTask task, int targetHour, int targetMin, int targetSec) {
-        BotLogger.warn(LOGTAG, "Posting new task" + task.getTaskName());
+        log.warn("Posting new task" + task.getTaskName());
         final Runnable taskWrapper = () -> {
             try {
                 task.execute();
                 task.reduceTimes();
                 startExecutionEveryDayAt(task, targetHour, targetMin, targetSec);
             } catch (Exception e) {
-                BotLogger.severe(LOGTAG, "Bot threw an unexpected exception at TimerExecutor", e);
+                log.fatal("Bot threw an unexpected exception at TimerExecutor", e);
             }
         };
         if (task.getTimes() != 0) {
@@ -103,9 +104,9 @@ public class TimerExecutor {
         try {
             executorService.awaitTermination(1, TimeUnit.DAYS);
         } catch (InterruptedException ex) {
-            BotLogger.severe(LOGTAG, ex);
+            log.fatal(ex.getLocalizedMessage(), ex);
         } catch (Exception e) {
-            BotLogger.severe(LOGTAG, "Bot threw an unexpected exception at TimerExecutor", e);
+            log.fatal(e.getLocalizedMessage(), "Bot threw an unexpected exception at TimerExecutor", e);
         }
     }
 }

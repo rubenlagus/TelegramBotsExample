@@ -1,5 +1,7 @@
 package org.telegram.updateshandlers;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.BotConfig;
 import org.telegram.services.RaeService;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -12,7 +14,6 @@ import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessageconten
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResult;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.List;
  * @date 24 of June of 2015
  */
 public class RaeHandlers extends TelegramLongPollingBot {
-    private static final String LOGTAG = "RAEHANDLERS";
+    private static final Logger log = LogManager.getLogger(RaeHandlers.class);
 
     private static final Integer CACHETIME = 86400;
     private final RaeService raeService = new RaeService();
@@ -50,11 +51,11 @@ public class RaeHandlers extends TelegramLongPollingBot {
                 try {
                     execute(getHelpMessage(update.getMessage()));
                 } catch (TelegramApiException e) {
-                    BotLogger.error(LOGTAG, e);
+                    log.error(e.getLocalizedMessage(), e);
                 }
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
@@ -69,7 +70,7 @@ public class RaeHandlers extends TelegramLongPollingBot {
      */
     private void handleIncomingInlineQuery(InlineQuery inlineQuery) {
         String query = inlineQuery.getQuery();
-        BotLogger.debug(LOGTAG, "Searching: " + query);
+        log.debug("Searching: " + query);
         try {
             if (!query.isEmpty()) {
                 List<RaeService.RaeResult> results = raeService.getResults(query);
@@ -78,7 +79,7 @@ public class RaeHandlers extends TelegramLongPollingBot {
                 execute(converteResultsToResponse(inlineQuery, new ArrayList<>()));
             }
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 

@@ -7,9 +7,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.telegram.BuildVars;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.*;
 
@@ -20,7 +21,7 @@ import java.io.*;
  * @date 21 of June of 2015
  */
 public class TransifexService {
-    private static final String LOGTAG = "TRANSIFEXSERVICE";
+    private static final Logger log = LogManager.getLogger(TransifexService.class);
 
     private static final String BASEURLAndroid = "http://" + BuildVars.TRANSIFEXUSER + ":" + BuildVars.TRANSIFEXPASSWORD + "@www.transifex.com/api/2/project/telegram/resource/stringsxml-48/translation/@language?file";  ///< Base url for REST
     private static final String BASEURLiOS = "http://" + BuildVars.TRANSIFEXUSER + ":" + BuildVars.TRANSIFEXPASSWORD + "@www.transifex.com/api/2/project/iphone-1/resource/localizablestrings/translation/@language?file";  ///< Base url for REST
@@ -77,7 +78,7 @@ public class TransifexService {
                 result = responseString;
             }
         } catch (IOException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
         return result;
     }
@@ -90,7 +91,7 @@ public class TransifexService {
             HttpResponse response = client.execute(request);
             result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"), "UTF-16LE");
         } catch (IOException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
         return result;
     }
@@ -103,7 +104,7 @@ public class TransifexService {
             HttpResponse response = client.execute(request);
             result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"), "UTF-16LE");
         } catch (IOException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
         return result;
     }
@@ -116,7 +117,7 @@ public class TransifexService {
             HttpResponse response = client.execute(request);
             result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"), "UTF-16LE");
         } catch (IOException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
         return result;
     }
@@ -129,7 +130,7 @@ public class TransifexService {
             HttpResponse response = client.execute(request);
             result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-8"), "UTF-8");
         } catch (IOException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
         return result;
     }
@@ -142,7 +143,7 @@ public class TransifexService {
             HttpResponse response = client.execute(request);
             result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"), "UTF-16LE");
         } catch (IOException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
         return result;
     }
@@ -155,7 +156,7 @@ public class TransifexService {
             HttpResponse response = client.execute(request);
             result = IOUtils.toByteArray(new InputStreamReader(response.getEntity().getContent(), "UTF-16LE"), "UTF-16LE");
         } catch (IOException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
         return result;
     }
@@ -195,11 +196,11 @@ public class TransifexService {
                     sendDocument = new SendDocument();
                     sendDocument.setDocument(fileToUpload);
                 } catch (FileNotFoundException e) {
-                    BotLogger.error(LOGTAG, e);
+                    log.error(e.getLocalizedMessage(), e);
                 }
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
         return sendDocument;
     }
@@ -222,11 +223,11 @@ public class TransifexService {
                     sendDocument = new SendDocument();
                     sendDocument.setDocument(fileToUpload);
                 } catch (FileNotFoundException e) {
-                    BotLogger.error(LOGTAG, e);
+                    log.error(e.getLocalizedMessage(), e);
                 }
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
         return sendDocument;
     }
@@ -250,11 +251,11 @@ public class TransifexService {
                     sendDocument = new SendDocument();
                     sendDocument.setDocument(fileToUpload);
                 } catch (IOException e) {
-                    BotLogger.error(LOGTAG, e);
+                    log.error(e.getLocalizedMessage(), e);
                 }
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
         return sendDocument;
     }
@@ -277,11 +278,11 @@ public class TransifexService {
                     sendDocument = new SendDocument();
                     sendDocument.setDocument(fileToUpload);
                 } catch (IOException e) {
-                    BotLogger.error(LOGTAG, e);
+                    log.error(e.getLocalizedMessage(), e);
                 }
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
         return sendDocument;
     }

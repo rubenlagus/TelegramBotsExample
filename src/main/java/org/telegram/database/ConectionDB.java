@@ -7,8 +7,7 @@
  */
 package org.telegram.database;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.BuildVars;
 
 import java.sql.Connection;
@@ -24,9 +23,8 @@ import java.sql.Statement;
  * @version 2.0
  * Connector to database
  */
+@Slf4j
 public class ConectionDB {
-    private static final Logger log = LogManager.getLogger(ConectionDB.class);
-
     private Connection currentConection;
 
     public ConectionDB() {

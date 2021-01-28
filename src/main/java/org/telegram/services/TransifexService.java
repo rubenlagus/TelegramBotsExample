@@ -1,5 +1,6 @@
 package org.telegram.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -7,10 +8,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.telegram.BuildVars;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 
 import java.io.*;
 
@@ -20,9 +20,8 @@ import java.io.*;
  * @brief Service that allow transifex files download
  * @date 21 of June of 2015
  */
+@Slf4j
 public class TransifexService {
-    private static final Logger log = LogManager.getLogger(TransifexService.class);
-
     private static final String BASEURLAndroid = "http://" + BuildVars.TRANSIFEXUSER + ":" + BuildVars.TRANSIFEXPASSWORD + "@www.transifex.com/api/2/project/telegram/resource/stringsxml-48/translation/@language?file";  ///< Base url for REST
     private static final String BASEURLiOS = "http://" + BuildVars.TRANSIFEXUSER + ":" + BuildVars.TRANSIFEXPASSWORD + "@www.transifex.com/api/2/project/iphone-1/resource/localizablestrings/translation/@language?file";  ///< Base url for REST
     private static final String BASEURLOSX = "http://" + BuildVars.TRANSIFEXUSER + ":" + BuildVars.TRANSIFEXPASSWORD + "@www.transifex.com/api/2/project/osx/resource/localizablestrings/translation/@language?file";  ///< Base url for REST
@@ -194,7 +193,7 @@ public class TransifexService {
                     localFile.close();
                     File fileToUpload = new File(fileName);
                     sendDocument = new SendDocument();
-                    sendDocument.setDocument(fileToUpload);
+                    sendDocument.setDocument(new InputFile(fileToUpload));
                 } catch (FileNotFoundException e) {
                     log.error(e.getLocalizedMessage(), e);
                 }
@@ -221,7 +220,7 @@ public class TransifexService {
                     localFile.close();
                     File fileToUpload = new File(fileName);
                     sendDocument = new SendDocument();
-                    sendDocument.setDocument(fileToUpload);
+                    sendDocument.setDocument(new InputFile(fileToUpload));
                 } catch (FileNotFoundException e) {
                     log.error(e.getLocalizedMessage(), e);
                 }
@@ -249,7 +248,7 @@ public class TransifexService {
                     IOUtils.write(file, output);
                     output.close();
                     sendDocument = new SendDocument();
-                    sendDocument.setDocument(fileToUpload);
+                    sendDocument.setDocument(new InputFile(fileToUpload));
                 } catch (IOException e) {
                     log.error(e.getLocalizedMessage(), e);
                 }
@@ -276,7 +275,7 @@ public class TransifexService {
                     IOUtils.write(file, output);
                     output.close();
                     sendDocument = new SendDocument();
-                    sendDocument.setDocument(fileToUpload);
+                    sendDocument.setDocument(new InputFile(fileToUpload));
                 } catch (IOException e) {
                     log.error(e.getLocalizedMessage(), e);
                 }
@@ -304,7 +303,7 @@ public class TransifexService {
                     output.close();
                     if (fileToUpload.exists()) {
                         sendDocument = new SendDocument();
-                        sendDocument.setDocument(fileToUpload);
+                        sendDocument.setDocument(new InputFile(fileToUpload));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -333,7 +332,7 @@ public class TransifexService {
                     output.close();
                     if (fileToUpload.exists()) {
                         sendDocument = new SendDocument();
-                        sendDocument.setDocument(fileToUpload);
+                        sendDocument.setDocument(new InputFile(fileToUpload));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -362,7 +361,7 @@ public class TransifexService {
                     output.close();
                     if (fileToUpload.exists()) {
                         sendDocument = new SendDocument();
-                        sendDocument.setDocument(fileToUpload);
+                        sendDocument.setDocument(new InputFile(fileToUpload));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

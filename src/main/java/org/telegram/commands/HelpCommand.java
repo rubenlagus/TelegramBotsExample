@@ -1,9 +1,7 @@
 package org.telegram.commands;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.database.DatabaseManager;
-import org.telegram.services.RaeService;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.IBotCommand;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.ICommandRegistry;
@@ -18,9 +16,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  *
  * @author Timo Schulz (Mit0x2)
  */
+@Slf4j
 public class HelpCommand extends BotCommand {
-    private static final Logger log = LogManager.getLogger(RaeService.class);
-
     private final ICommandRegistry commandRegistry;
 
     public HelpCommand(ICommandRegistry commandRegistry) {

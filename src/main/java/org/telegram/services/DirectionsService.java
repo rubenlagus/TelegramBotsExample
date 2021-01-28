@@ -1,5 +1,6 @@
 package org.telegram.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -8,8 +9,6 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -27,9 +26,8 @@ import java.util.List;
  * @brief Weather service
  * @date 20 of June of 2015
  */
+@Slf4j
 public class DirectionsService {
-    private static final Logger log = LogManager.getLogger(DirectionsService.class);
-
     private static final String BASEURL = "https://maps.googleapis.com/maps/api/directions/json"; ///< Base url for REST
     private static final String APIIDEND = "&key=" + BuildVars.DirectionsApiKey;
     private static final String PARAMS = "&language=@language@&units=metric";

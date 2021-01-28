@@ -1,7 +1,6 @@
 package org.telegram.services;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -15,8 +14,8 @@ import java.util.concurrent.TimeUnit;
  * @version 2.0
  * Execute a task periodically
  */
+@Slf4j
 public class TimerExecutor {
-    private static final Logger log = LogManager.getLogger(TimerExecutor.class);
     private static volatile TimerExecutor instance; ///< Instance
     private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1); ///< Thread to execute operations
 
@@ -63,7 +62,7 @@ public class TimerExecutor {
                 task.reduceTimes();
                 startExecutionEveryDayAt(task, targetHour, targetMin, targetSec);
             } catch (Exception e) {
-                log.fatal("Bot threw an unexpected exception at TimerExecutor", e);
+                log.error("Bot threw an unexpected exception at TimerExecutor", e);
             }
         };
         if (task.getTimes() != 0) {
@@ -104,9 +103,9 @@ public class TimerExecutor {
         try {
             executorService.awaitTermination(1, TimeUnit.DAYS);
         } catch (InterruptedException ex) {
-            log.fatal(ex.getLocalizedMessage(), ex);
+            log.error(ex.getLocalizedMessage(), ex);
         } catch (Exception e) {
-            log.fatal(e.getLocalizedMessage(), "Bot threw an unexpected exception at TimerExecutor", e);
+            log.error(e.getLocalizedMessage(), "Bot threw an unexpected exception at TimerExecutor", e);
         }
     }
 }

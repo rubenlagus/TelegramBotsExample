@@ -1,7 +1,6 @@
 package org.telegram.updateshandlers;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.BotConfig;
 import org.telegram.commands.HelloCommand;
 import org.telegram.commands.HelpCommand;
@@ -20,15 +19,17 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  *
  * @author Timo Schulz (Mit0x2)
  */
+@Slf4j
 public class CommandsHandler extends TelegramLongPollingCommandBot {
 
-    private static final Logger log = LogManager.getLogger(CommandsHandler.class);
+    private final String botUsername;
+
     /**
      * Constructor.
      */
     public CommandsHandler(String botUsername) {
-        super(botUsername);
-
+        super();
+        this.botUsername = botUsername;
         register(new HelloCommand());
         register(new StartCommand());
         register(new StopCommand());
@@ -37,7 +38,7 @@ public class CommandsHandler extends TelegramLongPollingCommandBot {
 
         registerDefaultAction((absSender, message) -> {
             SendMessage commandUnknownMessage = new SendMessage();
-            commandUnknownMessage.setChatId(message.getChatId());
+            commandUnknownMessage.setChatId(Long.toString(message.getChatId()));
             commandUnknownMessage.setText("The command '" + message.getText() + "' is not known by this bot. Here comes some help " + Emoji.AMBULANCE);
             try {
                 absSender.execute(commandUnknownMessage);
@@ -46,6 +47,11 @@ public class CommandsHandler extends TelegramLongPollingCommandBot {
             }
             helpCommand.execute(absSender, message.getFrom(), message.getChat(), new String[] {});
         });
+    }
+
+    @Override
+    public String getBotUsername() {
+        return botUsername;
     }
 
     @Override
@@ -60,7 +66,7 @@ public class CommandsHandler extends TelegramLongPollingCommandBot {
 
             if (message.hasText()) {
                 SendMessage echoMessage = new SendMessage();
-                echoMessage.setChatId(message.getChatId());
+                echoMessage.setChatId(Long.toString(message.getChatId()));
                 echoMessage.setText("Hey heres your message:\n" + message.getText());
 
                 try {

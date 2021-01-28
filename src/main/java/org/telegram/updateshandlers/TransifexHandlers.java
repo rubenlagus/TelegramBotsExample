@@ -1,7 +1,6 @@
 package org.telegram.updateshandlers;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.BotConfig;
 import org.telegram.BuildVars;
 import org.telegram.Commands;
@@ -27,9 +26,8 @@ import java.util.List;
  * @brief Handler for updates to Transifex Bot
  * @date 24 of June of 2015
  */
+@Slf4j
 public class TransifexHandlers extends TelegramLongPollingBot {
-    private static final Logger log = LogManager.getLogger(TransifexHandlers.class);
-
     @Override
     public String getBotToken() {
         return BotConfig.TRANSIFEX_TOKEN;
@@ -88,7 +86,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
                         Commands.transifexTDesktop, Commands.transifexOSX, Commands.transifexWP,
                         Commands.transifexAndroidSupportCommand);
                 sendMessageRequest.setText(helpFormated);
-                sendMessageRequest.setChatId(message.getChatId());
+                sendMessageRequest.setChatId(Long.toString(message.getChatId()));
                 try {
                     execute(sendMessageRequest);
                 } catch (TelegramApiException e) {
@@ -97,7 +95,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
             }
 
             if (sendDocument != null) {
-                sendDocument.setChatId(message.getChatId());
+                sendDocument.setChatId(Long.toString(message.getChatId()));
                 try {
                     execute(sendDocument);
                 } catch (TelegramApiException e) {
@@ -113,7 +111,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
                     Commands.transifexTDesktop, Commands.transifexOSX, Commands.transifexWP,
                     Commands.transifexAndroidSupportCommand);
             sendMessageRequest.setText(helpFormated);
-            sendMessageRequest.setChatId(message.getChatId());
+            sendMessageRequest.setChatId(Long.toString(message.getChatId()));
             try {
                 execute(sendMessageRequest);
             } catch (TelegramApiException e) {
@@ -125,7 +123,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
     private void sendMovedToMessage(Message message) throws InvalidObjectException, TelegramApiException {
         String language = DatabaseManager.getInstance().getUserLanguage(message.getFrom().getId());
         SendMessage answer = new SendMessage();
-        answer.setChatId(message.getChatId());
+        answer.setChatId(Long.toString(message.getChatId()));
         answer.setReplyToMessageId(message.getMessageId());
         answer.setText(LocalisationService.getString("movedToLangBot", language));
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();

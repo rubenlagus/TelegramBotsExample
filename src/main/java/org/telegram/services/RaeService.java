@@ -1,5 +1,6 @@
 package org.telegram.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -8,8 +9,6 @@ import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -28,9 +27,8 @@ import java.util.Map;
  * @brief Rae service
  * @date 20 of June of 2015
  */
+@Slf4j
 public class RaeService {
-    private static final Logger log = LogManager.getLogger(RaeService.class);
-
     private static final String BASEURL = "http://dle.rae.es/srv/"; ///< Base url for REST
     private static final String SEARCHEXACTURL = "search?m=30&w=";
     private static final String SEARCHWORDURL = "search?m=form&w=";

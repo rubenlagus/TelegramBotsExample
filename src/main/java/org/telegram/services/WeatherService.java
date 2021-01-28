@@ -1,5 +1,6 @@
 package org.telegram.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -8,8 +9,6 @@ import org.apache.http.entity.BufferedHttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.telegram.BuildVars;
 import org.telegram.database.DatabaseManager;
@@ -27,9 +26,8 @@ import java.time.format.DateTimeFormatter;
  * @brief Weather service
  * @date 20 of June of 2015
  */
+@Slf4j
 public class WeatherService {
-    private static final Logger log = LogManager.getLogger(WeatherService.class);
-
     public static final String METRICSYSTEM = "metric";
     public static final String IMPERIALSYSTEM = "imperial";
 
@@ -157,7 +155,7 @@ public class WeatherService {
      * @return userHash to be send to use
      * @note Forecast for the following 3 days
      */
-    public String fetchWeatherForecastByLocation(Float longitude, Float latitude, Integer userId, String language, String units) {
+    public String fetchWeatherForecastByLocation(Double longitude, Double latitude, Integer userId, String language, String units) {
         String cityFound;
         String responseToUser;
         try {
@@ -237,7 +235,7 @@ public class WeatherService {
      * @return userHash to be send to use
      * @note Forecast for the following 3 days
      */
-    public String fetchWeatherCurrentByLocation(Float longitude, Float latitude, Integer userId, String language, String units) {
+    public String fetchWeatherCurrentByLocation(Double longitude, Double latitude, Integer userId, String language, String units) {
         String cityFound;
         String responseToUser;
         try {

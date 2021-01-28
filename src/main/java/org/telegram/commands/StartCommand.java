@@ -1,7 +1,6 @@
 package org.telegram.commands;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.database.DatabaseManager;
 import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -15,9 +14,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  *
  * @author Timo Schulz (Mit0x2)
  */
+@Slf4j
 public class StartCommand extends BotCommand {
-    private static final Logger log = LogManager.getLogger(StartCommand.class);
-
     public StartCommand() {
         super("start", "With this command you can start the Bot");
     }

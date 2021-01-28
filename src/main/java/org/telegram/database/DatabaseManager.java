@@ -7,8 +7,7 @@
  */
 package org.telegram.database;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.structure.WeatherAlert;
 
 import java.sql.PreparedStatement;
@@ -22,12 +21,10 @@ import java.util.List;
 /**
  * @author Ruben Bermudez
  * @version 2.0
- * @brief Database Manager to perform database operations
- * @date 3/12/14
+ * Database Manager to perform database operations
  */
+@Slf4j
 public class DatabaseManager {
-    private static final Logger log = LogManager.getLogger(DatabaseManager.class);
-
     private static volatile DatabaseManager instance;
     private static volatile ConectionDB connetion;
 

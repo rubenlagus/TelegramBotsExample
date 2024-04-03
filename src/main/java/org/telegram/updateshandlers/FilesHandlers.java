@@ -1,22 +1,23 @@
 package org.telegram.updateshandlers;
 
 import lombok.extern.slf4j.Slf4j;
-import org.telegram.BotConfig;
 import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
 import org.telegram.services.Emoji;
 import org.telegram.services.LocalisationService;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
+import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
@@ -32,28 +33,22 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * This bot is an example for the use of sendMessage asynchronously
  */
 @Slf4j
-public class FilesHandlers extends TelegramLongPollingBot {
-
+public class FilesHandlers implements LongPollingSingleThreadUpdateConsumer {
     private static final int INITIAL_UPLOAD_STATUS = 0;
     private static final int DELETE_UPLOADED_STATUS = 1;
-    private final ConcurrentLinkedQueue<Integer> languageMessages = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Long> languageMessages = new ConcurrentLinkedQueue<>();
+    private final TelegramClient telegramClient;
 
-    @Override
-    public String getBotToken() {
-        return BotConfig.FILES_TOKEN;
+    public FilesHandlers(String botToken) {
+        telegramClient = new OkHttpTelegramClient(botToken);
     }
 
     @Override
-    public void onUpdateReceived(Update update) {
+    public void consume(Update update) {
         try {
             if (update.hasMessage()) {
                 try {
-                    SendMessage sendMessageRequest = new SendMessage();
-                    sendMessageRequest.setText("Since this bot was used to spread copyrighted content, we had to disable its functionality until further announcement.\n\nSorry for the troubles, just blame those that used the bot for illegal purposes.");
-                    sendMessageRequest.setChatId(Long.toString(update.getMessage().getChatId()));
-                    execute(sendMessageRequest);
-
-                    //handleFileUpdate(update);
+                    handleFileUpdate(update);
                 } catch (TelegramApiRequestException e) {
                     if (e.getApiResponse().contains("Bot was blocked by the user")) {
                         if (update.getMessage().getFrom() != null) {
@@ -61,17 +56,12 @@ public class FilesHandlers extends TelegramLongPollingBot {
                         }
                     }
                 } catch (Exception e) {
-                    log.error(e.getLocalizedMessage(), e);
+                    log.error("Error handling file update", e);
                 }
             }
         } catch (Exception e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Unknown exception", e);
         }
-    }
-
-    @Override
-    public String getBotUsername() {
-        return BotConfig.FILES_USER;
     }
 
     private void handleFileUpdate(Update update) throws InvalidObjectException, TelegramApiException {
@@ -110,30 +100,27 @@ public class FilesHandlers extends TelegramLongPollingBot {
                 && DatabaseManager.getInstance().getUserStatusForFile(message.getFrom().getId()) == INITIAL_UPLOAD_STATUS) {
             String language = DatabaseManager.getInstance().getUserLanguage(update.getMessage().getFrom().getId());
             DatabaseManager.getInstance().addFile(message.getDocument().getFileId(), message.getFrom().getId(), message.getDocument().getFileName());
-            SendMessage sendMessageRequest = new SendMessage();
-            sendMessageRequest.setText(LocalisationService.getString("fileUploaded", language) +
+            SendMessage sendMessageRequest = new SendMessage(String.valueOf(message.getChatId()), LocalisationService.getString("fileUploaded", language) +
                     LocalisationService.getString("uploadedFileURL", language) + message.getDocument().getFileId());
-            sendMessageRequest.setChatId(Long.toString(message.getChatId()));
-            execute(sendMessageRequest);
+            telegramClient.execute(sendMessageRequest);
         }
     }
 
     private void onListCommand(Message message, String language) throws InvalidObjectException, TelegramApiException {
         HashMap<String, String> files = DatabaseManager.getInstance().getFilesByUser(message.getFrom().getId());
-        SendMessage sendMessageRequest = new SendMessage();
-        if (files.size() > 0) {
-            String text = LocalisationService.getString("listOfFiles", language) + ":\n\n";
+        SendMessage.SendMessageBuilder<?, ?> sendMessageRequestBuilder = SendMessage.builder();
+        if (!files.isEmpty()) {
+            StringBuilder text = new StringBuilder(LocalisationService.getString("listOfFiles", language) + ":\n\n");
             for (Map.Entry<String, String> entry : files.entrySet()) {
-                text += LocalisationService.getString("uploadedFileURL", language)
-                        + entry.getKey() + " " + Emoji.LEFT_RIGHT_ARROW.toString() + " " + entry.getValue() + "\n";
+                text.append(LocalisationService.getString("uploadedFileURL", language)).append(entry.getKey()).append(" ").append(Emoji.LEFT_RIGHT_ARROW).append(" ").append(entry.getValue()).append("\n");
             }
-            sendMessageRequest.setText(text);
+            sendMessageRequestBuilder.text(text.toString());
         } else {
-            sendMessageRequest.setText(LocalisationService.getString("noFiles", language));
+            sendMessageRequestBuilder.text(LocalisationService.getString("noFiles", language));
         }
-        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
-        sendMessageRequest.setReplyMarkup(new ReplyKeyboardRemove());
-        execute(sendMessageRequest);
+        sendMessageRequestBuilder.chatId(message.getChatId());
+        sendMessageRequestBuilder.replyMarkup(ReplyKeyboardRemove.builder().build());
+        telegramClient.execute(sendMessageRequestBuilder.build());
     }
 
     private void onDeleteCommand(Message message, String language, String[] parts) throws InvalidObjectException, TelegramApiException {
@@ -145,122 +132,107 @@ public class FilesHandlers extends TelegramLongPollingBot {
         }
     }
 
-    private void onDeleteCommandWithoutParameters(Message message, String language) throws InvalidObjectException, TelegramApiException {
+    private void onDeleteCommandWithoutParameters(Message message, String language) throws TelegramApiException {
         DatabaseManager.getInstance().addUserForFile(message.getFrom().getId(), DELETE_UPLOADED_STATUS);
-        SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setText(LocalisationService.getString("deleteUploadedFile", language));
-        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
+        SendMessage sendMessageRequest = new SendMessage(String.valueOf(message.getChatId()), LocalisationService.getString("deleteUploadedFile", language));
         HashMap<String, String> files = DatabaseManager.getInstance().getFilesByUser(message.getFrom().getId());
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        if (files.size() > 0) {
+        ReplyKeyboardMarkup replyKeyboardMarkup = null;
+        if (!files.isEmpty()) {
             List<KeyboardRow> commands = new ArrayList<>();
             for (Map.Entry<String, String> entry : files.entrySet()) {
                 KeyboardRow commandRow = new KeyboardRow();
-                commandRow.add(Commands.deleteCommand + " " + entry.getKey() + " " + Emoji.LEFT_RIGHT_ARROW.toString()
+                commandRow.add(Commands.deleteCommand + " " + entry.getKey() + " " + Emoji.LEFT_RIGHT_ARROW
                         + " " + entry.getValue());
                 commands.add(commandRow);
             }
+            replyKeyboardMarkup = new ReplyKeyboardMarkup(commands);
             replyKeyboardMarkup.setResizeKeyboard(true);
             replyKeyboardMarkup.setOneTimeKeyboard(true);
-            replyKeyboardMarkup.setKeyboard(commands);
         }
         sendMessageRequest.setReplyMarkup(replyKeyboardMarkup);
-        execute(sendMessageRequest);
+        telegramClient.execute(sendMessageRequest);
     }
 
-    private void onDeleteCommandWithParameters(Message message, String language, String part) throws InvalidObjectException, TelegramApiException {
+    private void onDeleteCommandWithParameters(Message message, String language, String part) throws TelegramApiException {
         String[] innerParts = part.split(Emoji.LEFT_RIGHT_ARROW.toString(), 2);
         boolean removed = DatabaseManager.getInstance().deleteFile(innerParts[0].trim());
-        SendMessage sendMessageRequest = new SendMessage();
+        SendMessage.SendMessageBuilder<?, ?> sendMessageRequestBuilder = SendMessage.builder();
         if (removed) {
-            sendMessageRequest.setText(LocalisationService.getString("fileDeleted", language));
+            sendMessageRequestBuilder.text(LocalisationService.getString("fileDeleted", language));
         } else {
-            sendMessageRequest.setText(LocalisationService.getString("wrongFileId", language));
+            sendMessageRequestBuilder.text(LocalisationService.getString("wrongFileId", language));
         }
-        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
+        sendMessageRequestBuilder.chatId(message.getChatId());
 
-        execute(sendMessageRequest);
+        telegramClient.execute(sendMessageRequestBuilder.build());
         DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
 
     }
 
-    private void onCancelCommand(Message message, String language) throws InvalidObjectException, TelegramApiException {
+    private void onCancelCommand(Message message, String language) throws TelegramApiException {
         DatabaseManager.getInstance().deleteUserForFile(message.getFrom().getId());
-        SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setText(LocalisationService.getString("processFinished", language));
-        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
-        execute(sendMessageRequest);
+        SendMessage sendMessageRequest = new SendMessage(String.valueOf(message.getChatId()), LocalisationService.getString("processFinished", language));
+        telegramClient.execute(sendMessageRequest);
     }
 
-    private void onUploadCommand(Message message, String language) throws InvalidObjectException, TelegramApiException {
+    private void onUploadCommand(Message message, String language) throws TelegramApiException {
         DatabaseManager.getInstance().addUserForFile(message.getFrom().getId(), INITIAL_UPLOAD_STATUS);
-        SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setText(LocalisationService.getString("sendFileToUpload", language));
-        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
-        execute(sendMessageRequest);
+        SendMessage sendMessageRequest = new SendMessage(String.valueOf(message.getChatId()), LocalisationService.getString("sendFileToUpload", language));
+        telegramClient.execute(sendMessageRequest);
     }
 
-    private void sendHelpMessage(Message message, String language) throws InvalidObjectException, TelegramApiException {
-        SendMessage sendMessageRequest = new SendMessage();
+    private void sendHelpMessage(Message message, String language) throws TelegramApiException {
+
         String formatedString = String.format(
                 LocalisationService.getString("helpFiles", language),
                 Commands.startCommand, Commands.uploadCommand, Commands.deleteCommand,
                 Commands.listCommand);
-        sendMessageRequest.setText(formatedString);
-        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
-        execute(sendMessageRequest);
+        SendMessage sendMessageRequest = new SendMessage(String.valueOf(message.getChatId()), formatedString);
+        telegramClient.execute(sendMessageRequest);
     }
 
-    private void onStartWithParameters(Message message, String language, String part) throws InvalidObjectException, TelegramApiException {
+    private void onStartWithParameters(Message message, String language, String part) throws TelegramApiException {
         if (DatabaseManager.getInstance().doesFileExists(part.trim())) {
-            SendDocument sendDocumentRequest = new SendDocument();
-            sendDocumentRequest.setDocument(new InputFile(part.trim()));
-            sendDocumentRequest.setChatId(Long.toString(message.getChatId()));
-            execute(sendDocumentRequest);
+            SendDocument sendDocumentRequest = new SendDocument(String.valueOf(message.getChatId()), new InputFile(part.trim()));
+            telegramClient.execute(sendDocumentRequest);
         } else {
-            SendMessage sendMessageRequest = new SendMessage();
-            sendMessageRequest.setText(LocalisationService.getString("wrongFileId", language));
-            sendMessageRequest.setChatId(Long.toString(message.getChatId()));
-            execute(sendMessageRequest);
+            SendMessage sendMessageRequest = new SendMessage(String.valueOf(message.getChatId()), LocalisationService.getString("wrongFileId", language));
+            telegramClient.execute(sendMessageRequest);
         }
     }
 
-    private void onSetLanguageCommand(Message message, String language) throws InvalidObjectException, TelegramApiException {
-        SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+    private void onSetLanguageCommand(Message message, String language) throws TelegramApiException {
+        SendMessage sendMessageRequest = new SendMessage(String.valueOf(message.getChatId()), LocalisationService.getString("chooselanguage", language));
         List<LocalisationService.Language> languages = LocalisationService.getSupportedLanguages();
         List<KeyboardRow> commands = new ArrayList<>();
         for (LocalisationService.Language languageItem : languages) {
             KeyboardRow commandRow = new KeyboardRow();
-            commandRow.add(languageItem.getCode() + " " + Emoji.LEFT_RIGHT_ARROW.toString() + " " + languageItem.getName());
+            commandRow.add(languageItem.getCode() + " " + Emoji.LEFT_RIGHT_ARROW + " " + languageItem.getName());
             commands.add(commandRow);
         }
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup(commands);
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboard(true);
-        replyKeyboardMarkup.setKeyboard(commands);
         replyKeyboardMarkup.setSelective(true);
         sendMessageRequest.setReplyMarkup(replyKeyboardMarkup);
-        sendMessageRequest.setText(LocalisationService.getString("chooselanguage", language));
-        execute(sendMessageRequest);
+        telegramClient.execute(sendMessageRequest);
         languageMessages.add(message.getFrom().getId());
     }
 
-    private void onLanguageReceived(Message message) throws InvalidObjectException, TelegramApiException {
+    private void onLanguageReceived(Message message) throws TelegramApiException {
         String[] parts = message.getText().split(Emoji.LEFT_RIGHT_ARROW.toString(), 2);
-        SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
+        SendMessage.SendMessageBuilder<?, ?> sendMessageRequestBuilder = SendMessage.builder();
+        sendMessageRequestBuilder.chatId(message.getChatId());
         if (LocalisationService.getLanguageByCode(parts[0].trim()) != null) {
             DatabaseManager.getInstance().putUserLanguage(message.getFrom().getId(), parts[0].trim());
-            sendMessageRequest.setText(LocalisationService.getString("languageModified", parts[0].trim()));
+            sendMessageRequestBuilder.text(LocalisationService.getString("languageModified", parts[0].trim()));
         } else {
-            sendMessageRequest.setText(LocalisationService.getString("errorLanguage"));
+            sendMessageRequestBuilder.text(LocalisationService.getString("errorLanguage"));
         }
-        sendMessageRequest.setReplyToMessageId(message.getMessageId());
-        ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
-        replyKeyboardRemove.setSelective(true);
-        sendMessageRequest.setReplyMarkup(replyKeyboardRemove);
-        execute(sendMessageRequest);
+        sendMessageRequestBuilder.replyToMessageId(message.getMessageId());
+        ReplyKeyboardRemove replyKeyboardRemove = ReplyKeyboardRemove.builder().selective(true).build();
+        sendMessageRequestBuilder.replyMarkup(replyKeyboardRemove);
+        telegramClient.execute(sendMessageRequestBuilder.build());
         languageMessages.remove(message.getFrom().getId());
     }
 }

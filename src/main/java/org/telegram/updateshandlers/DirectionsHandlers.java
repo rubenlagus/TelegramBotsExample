@@ -1,23 +1,21 @@
 package org.telegram.updateshandlers;
 
 import lombok.extern.slf4j.Slf4j;
-import org.telegram.BotConfig;
 import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
 import org.telegram.services.DirectionsService;
 import org.telegram.services.LocalisationService;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
+import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
-import org.telegram.telegrambots.meta.updateshandlers.SentCallback;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
@@ -27,33 +25,26 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * @author Ruben Bermudez
  * @version 1.0
- * @brief Handler for updates to Directions Bot
- * @date 24 of June of 2015
+ * Handler for updates to Directions Bot
  */
 @Slf4j
-public class DirectionsHandlers extends TelegramLongPollingBot {
+public class DirectionsHandlers implements LongPollingSingleThreadUpdateConsumer {
     private static final int WATING_ORIGIN_STATUS = 0;
     private static final int WATING_DESTINY_STATUS = 1;
-    private final ConcurrentLinkedQueue<Integer> languageMessages = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Long> languageMessages = new ConcurrentLinkedQueue<>();
+    private final TelegramClient telegramClient;
 
-
-    @Override
-    public String getBotToken() {
-        return BotConfig.DIRECTIONS_TOKEN;
+    public DirectionsHandlers(String botToken) {
+        telegramClient = new OkHttpTelegramClient(botToken);
     }
 
     @Override
-    public void onUpdateReceived(Update update) {
+    public void consume(Update update) {
         try {
             handleDirections(update);
         } catch (Exception e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Error processing update in directions bot", e);
         }
-    }
-
-    @Override
-    public String getBotUsername() {
-        return BotConfig.DIRECTIONS_USER;
     }
 
     private void handleDirections(Update update) throws InvalidObjectException {
@@ -85,13 +76,11 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                         if (DatabaseManager.getInstance().getUserDestinationStatus(message.getFrom().getId()) == -1) {
                             sendHelpMessage(message, language);
                         } else {
-                            SendMessage sendMessageRequest = new SendMessage();
-                            sendMessageRequest.setText(LocalisationService.getString("youNeedReplyDirections", language));
-                            sendMessageRequest.setChatId(Long.toString(message.getChatId()));
+                            SendMessage sendMessageRequest = new SendMessage(String.valueOf(message.getChatId()), LocalisationService.getString("youNeedReplyDirections", language));
                             try {
-                                execute(sendMessageRequest);
+                                telegramClient.execute(sendMessageRequest);
                             } catch (TelegramApiException e) {
-                                log.error(e.getLocalizedMessage(), e);
+                                log.error("Error handling directions", e);
                             }
                         }
                     }
@@ -104,122 +93,78 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         String origin = DatabaseManager.getInstance().getUserOrigin(message.getFrom().getId());
         String destiny = message.getText();
         List<String> directions = DirectionsService.getInstance().getDirections(origin, destiny, language);
-        SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
-        ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
-        replyKeyboardRemove.setSelective(true);
-        sendMessageRequest.setReplyMarkup(replyKeyboardRemove);
-        sendMessageRequest.setReplyToMessageId(message.getMessageId());
+        SendMessage.SendMessageBuilder<?, ?> sendMessageRequestBuilder = SendMessage.builder();
+        sendMessageRequestBuilder.chatId(message.getChatId());
+        ReplyKeyboardRemove replyKeyboardRemove = ReplyKeyboardRemove.builder().selective(true).build();
+        sendMessageRequestBuilder.replyMarkup(replyKeyboardRemove);
+        sendMessageRequestBuilder.replyToMessageId(message.getMessageId());
         for (String direction : directions) {
-            sendMessageRequest.setText(direction);
+            sendMessageRequestBuilder.text(direction);
             try {
-                executeAsync(sendMessageRequest, new SentCallback<Message>() {
-                    @Override
-                    public void onResult(BotApiMethod<Message> botApiMethod, Message sentMessage) {
-                        if (sentMessage != null) {
-                            DatabaseManager.getInstance().deleteUserForDirections(message.getFrom().getId());
-                        }
+                telegramClient.executeAsync(sendMessageRequestBuilder.build()).thenAccept(sentMessage -> {
+                    if (sentMessage != null) {
+                        DatabaseManager.getInstance().deleteUserForDirections(message.getFrom().getId());
                     }
-
-                    @Override
-                    public void onError(BotApiMethod<Message> botApiMethod, TelegramApiRequestException e) {
-                    }
-
-                    @Override
-                    public void onException(BotApiMethod<Message> botApiMethod, Exception e) {
-                    }
-                });
+                }).thenAccept(unused -> log.info("Sent destination received"));
             } catch (TelegramApiException e) {
-                log.error(e.getLocalizedMessage(), e);
+                log.error("Error on destination received", e);
             }
         }
 
     }
 
     private void onOriginReceived(Message message, String language) {
-        SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
+        SendMessage sendMessageRequest = new SendMessage(String.valueOf(message.getChatId()), LocalisationService.getString("sendDestination", language));
         sendMessageRequest.setReplyToMessageId(message.getMessageId());
         ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
         forceReplyKeyboard.setSelective(true);
         sendMessageRequest.setReplyMarkup(forceReplyKeyboard);
-        sendMessageRequest.setText(LocalisationService.getString("sendDestination", language));
 
         try {
-            executeAsync(sendMessageRequest, new SentCallback<Message>() {
-                @Override
-                public void onResult(BotApiMethod<Message> method, Message sentMessage) {
-                    if (sentMessage != null) {
-                        DatabaseManager.getInstance().addUserForDirection(message.getFrom().getId(), WATING_DESTINY_STATUS,
-                                sentMessage.getMessageId(), message.getText());
-                    }
+            telegramClient.executeAsync(sendMessageRequest).thenAccept(sentMessage -> {
+                if (sentMessage != null) {
+                    DatabaseManager.getInstance().addUserForDirection(message.getFrom().getId(), WATING_DESTINY_STATUS,
+                            sentMessage.getMessageId(), message.getText());
                 }
-
-                @Override
-                public void onError(BotApiMethod<Message> botApiMethod, TelegramApiRequestException e) {
-                }
-
-                @Override
-                public void onException(BotApiMethod<Message> botApiMethod, Exception e) {
-                }
-            });
+            }).thenAccept(unused -> log.info("Sent origin received"));
         } catch (TelegramApiException e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Error on origin received", e);
         }
-
     }
 
     private void sendHelpMessage(Message message, String language) throws InvalidObjectException {
-        SendMessage sendMessageRequest = new SendMessage();
         String helpDirectionsFormated = String.format(
                 LocalisationService.getString("helpDirections", language),
                 Commands.startDirectionCommand);
-        sendMessageRequest.setText(helpDirectionsFormated);
-        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
+        SendMessage sendMessageRequest = new SendMessage(String.valueOf(message.getChatId()), helpDirectionsFormated);
         try {
-            execute(sendMessageRequest);
+            telegramClient.execute(sendMessageRequest);
         } catch (TelegramApiException e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Error sending help", e);
         }
     }
 
     private void onStartdirectionsCommand(Message message, String language) {
-        SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
+        SendMessage sendMessageRequest = new SendMessage(String.valueOf(message.getChatId()), LocalisationService.getString("initDirections", language));
         sendMessageRequest.setReplyToMessageId(message.getMessageId());
         ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
         forceReplyKeyboard.setSelective(true);
         sendMessageRequest.setReplyMarkup(forceReplyKeyboard);
-        sendMessageRequest.setText(LocalisationService.getString("initDirections", language));
-
         try {
-            executeAsync(sendMessageRequest, new SentCallback<Message>() {
-                @Override
-                public void onResult(BotApiMethod<Message> method, Message sentMessage) {
-                    if (sentMessage != null) {
-                        DatabaseManager.getInstance().addUserForDirection(message.getFrom().getId(), WATING_ORIGIN_STATUS,
-                                sentMessage.getMessageId(), null);
-                    }
+            telegramClient.executeAsync(sendMessageRequest).thenAccept(sentMessage -> {
+                if (sentMessage != null) {
+                    DatabaseManager.getInstance().addUserForDirection(message.getFrom().getId(), WATING_ORIGIN_STATUS,
+                            sentMessage.getMessageId(), null);
                 }
-
-                @Override
-                public void onError(BotApiMethod<Message> botApiMethod, TelegramApiRequestException e) {
-                }
-
-                @Override
-                public void onException(BotApiMethod<Message> botApiMethod, Exception e) {
-                }
-            });
+            }).thenAccept(unused -> log.info("Sent start directions"));
         } catch (TelegramApiException e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Error on start directions", e);
         }
-
     }
 
     private void onSetLanguageCommand(Message message, String language) throws InvalidObjectException {
-        SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        SendMessage sendMessageRequest = new SendMessage(String.valueOf(message.getChatId()), LocalisationService.getString("chooselanguage", language));
+        ReplyKeyboardMarkup.ReplyKeyboardMarkupBuilder<?, ?> replyKeyboardMarkupBuilder = ReplyKeyboardMarkup.builder();
         List<LocalisationService.Language> languages = LocalisationService.getSupportedLanguages();
         List<KeyboardRow> commands = new ArrayList<>();
         for (LocalisationService.Language languageItem : languages) {
@@ -227,39 +172,37 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
             commandRow.add(languageItem.getCode() + " --> " + languageItem.getName());
             commands.add(commandRow);
         }
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setOneTimeKeyboard(true);
-        replyKeyboardMarkup.setKeyboard(commands);
-        replyKeyboardMarkup.setSelective(true);
-        sendMessageRequest.setReplyMarkup(replyKeyboardMarkup);
-        sendMessageRequest.setText(LocalisationService.getString("chooselanguage", language));
+        replyKeyboardMarkupBuilder.resizeKeyboard(true);
+        replyKeyboardMarkupBuilder.oneTimeKeyboard(true);
+        replyKeyboardMarkupBuilder.keyboard(commands);
+        replyKeyboardMarkupBuilder.selective(true);
+        sendMessageRequest.setReplyMarkup(replyKeyboardMarkupBuilder.build());
         try {
-            execute(sendMessageRequest);
+            telegramClient.execute(sendMessageRequest);
             languageMessages.add(message.getFrom().getId());
         } catch (TelegramApiException e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Error setting language", e);
         }
     }
 
     private void onLanguageSelected(Message message) throws InvalidObjectException {
         String[] parts = message.getText().split("-->", 2);
-        SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
+        SendMessage.SendMessageBuilder<?, ?> sendMessageRequestBuilder = SendMessage.builder();
+        sendMessageRequestBuilder.chatId(message.getChatId());
         if (LocalisationService.getLanguageByCode(parts[0].trim()) != null) {
             DatabaseManager.getInstance().putUserLanguage(message.getFrom().getId(), parts[0].trim());
-            sendMessageRequest.setText(LocalisationService.getString("languageModified", parts[0].trim()));
+            sendMessageRequestBuilder.text(LocalisationService.getString("languageModified", parts[0].trim()));
         } else {
-            sendMessageRequest.setText(LocalisationService.getString("errorLanguage"));
+            sendMessageRequestBuilder.text(LocalisationService.getString("errorLanguage"));
         }
-        sendMessageRequest.setReplyToMessageId(message.getMessageId());
-        ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
-        replyKeyboardRemove.setSelective(true);
-        sendMessageRequest.setReplyMarkup(replyKeyboardRemove);
+        sendMessageRequestBuilder.replyToMessageId(message.getMessageId());
+        ReplyKeyboardRemove replyKeyboardRemove = ReplyKeyboardRemove.builder().selective(true).build();
+        sendMessageRequestBuilder.replyMarkup(replyKeyboardRemove);
         try {
-            execute(sendMessageRequest);
+            telegramClient.execute(sendMessageRequestBuilder.build());
             languageMessages.remove(message.getFrom().getId());
         } catch (TelegramApiException e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Error on lanaguage selected", e);
         }
     }
 }

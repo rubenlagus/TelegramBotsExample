@@ -6,8 +6,8 @@ import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 /**
  * This command simply replies with a hello to the users command and
@@ -17,12 +17,15 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  */
 @Slf4j
 public class HelloCommand extends BotCommand {
+
+    private static final String LOGTAG = "HELLOCOMMAND";
+
     public HelloCommand() {
         super("hello", "Say hallo to this bot");
     }
 
     @Override
-    public void execute(AbsSender absSender, User user, Chat chat, String[] arguments) {
+    public void execute(TelegramClient telegramClient, User user, Chat chat, String[] arguments) {
 
         if (!DatabaseManager.getInstance().getUserStateForCommandsBot(user.getId())) {
             return;
@@ -40,14 +43,12 @@ public class HelloCommand extends BotCommand {
             messageTextBuilder.append(String.join(" ", arguments));
         }
 
-        SendMessage answer = new SendMessage();
-        answer.setChatId(chat.getId().toString());
-        answer.setText(messageTextBuilder.toString());
+        SendMessage answer = new SendMessage(chat.getId().toString(), messageTextBuilder.toString());
 
         try {
-            absSender.execute(answer);
+            telegramClient.execute(answer);
         } catch (TelegramApiException e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Error", e);
         }
     }
 }

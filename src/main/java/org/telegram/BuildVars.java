@@ -26,7 +26,7 @@ public class BuildVars {
 
     public static final String TRANSIFEXUSER = "<transifex-user>";
     public static final String TRANSIFEXPASSWORD = "<transifex-password>";
-    public static final List<Integer> ADMINS = new ArrayList<>();
+    public static final List<Long> ADMINS = new ArrayList<>();
 
     public static final String pathToLogs = "./";
 

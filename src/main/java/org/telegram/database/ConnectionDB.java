@@ -10,6 +10,7 @@ package org.telegram.database;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.BuildVars;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -24,20 +25,21 @@ import java.sql.Statement;
  * Connector to database
  */
 @Slf4j
-public class ConectionDB {
-    private Connection currentConection;
+public class ConnectionDB {
+    private final Connection currentConection;
 
-    public ConectionDB() {
+    public ConnectionDB() {
         this.currentConection = openConexion();
     }
 
     private Connection openConexion() {
         Connection connection = null;
         try {
-            Class.forName(BuildVars.controllerDB).newInstance();
+            Class.forName(BuildVars.controllerDB).getDeclaredConstructor().newInstance();
             connection = DriverManager.getConnection(BuildVars.linkDB, BuildVars.userDB, BuildVars.password);
-        } catch (SQLException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-            log.error(e.getLocalizedMessage(), e);
+        } catch (SQLException | ClassNotFoundException | IllegalAccessException | InstantiationException |
+                 NoSuchMethodException | InvocationTargetException e) {
+            log.error("Error opening connection", e);
         }
 
         return connection;
@@ -47,7 +49,7 @@ public class ConectionDB {
         try {
             this.currentConection.close();
         } catch (SQLException e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Error closing the connection", e);
         }
 
     }
@@ -79,14 +81,15 @@ public class ConectionDB {
                     new String[]{"TABLE"});
             while (res.next()) {
                 if (res.getString("TABLE_NAME").compareTo("Versions") == 0) {
-                    final ResultSet result = runSqlQuery("SELECT Max(Version) FROM Versions");
-                    while (result.next()) {
-                        max = (max > result.getInt(1)) ? max : result.getInt(1);
+                    try(ResultSet result = runSqlQuery("SELECT Max(Version) FROM Versions")) {
+                        while (result.next()) {
+                            max = Math.max(max, result.getInt(1));
+                        }
                     }
                 }
             }
         } catch (SQLException e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Error checking version", e);
         }
         return max;
     }
@@ -111,7 +114,17 @@ public class ConectionDB {
                 this.currentConection.rollback();
             }
         } finally {
-            this.currentConection.setAutoCommit(false);
+            this.currentConection.setAutoCommit(true);
+        }
+    }
+
+    public void rollbackTransaction() throws SQLException {
+        try {
+            this.currentConection.rollback();
+        } catch (SQLException e) {
+            log.error("Error rolling back the transaction", e);
+        } finally {
+            this.currentConection.setAutoCommit(true);
         }
     }
 }

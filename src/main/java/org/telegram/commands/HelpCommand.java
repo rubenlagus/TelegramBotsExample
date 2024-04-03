@@ -8,8 +8,8 @@ import org.telegram.telegrambots.extensions.bots.commandbot.commands.ICommandReg
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Chat;
 import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 /**
  * This command helps the user to find the command they need
@@ -18,6 +18,9 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
  */
 @Slf4j
 public class HelpCommand extends BotCommand {
+
+    private static final String LOGTAG = "HELPCOMMAND";
+
     private final ICommandRegistry commandRegistry;
 
     public HelpCommand(ICommandRegistry commandRegistry) {
@@ -26,7 +29,7 @@ public class HelpCommand extends BotCommand {
     }
 
     @Override
-    public void execute(AbsSender absSender, User user, Chat chat, String[] strings) {
+    public void execute(TelegramClient telegramClient, User user, Chat chat, String[] strings) {
 
         if (!DatabaseManager.getInstance().getUserStateForCommandsBot(user.getId())) {
             return;
@@ -39,15 +42,13 @@ public class HelpCommand extends BotCommand {
             helpMessageBuilder.append(botCommand.toString()).append("\n\n");
         }
 
-        SendMessage helpMessage = new SendMessage();
-        helpMessage.setChatId(chat.getId().toString());
+        SendMessage helpMessage = new SendMessage(chat.getId().toString(), helpMessageBuilder.toString());
         helpMessage.enableHtml(true);
-        helpMessage.setText(helpMessageBuilder.toString());
 
         try {
-            absSender.execute(helpMessage);
+            telegramClient.execute(helpMessage);
         } catch (TelegramApiException e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Error", e);
         }
     }
 }

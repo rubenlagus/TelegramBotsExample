@@ -1,19 +1,20 @@
 package org.telegram.updateshandlers;
 
 import lombok.extern.slf4j.Slf4j;
-import org.telegram.BotConfig;
 import org.telegram.services.RaeService;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
+import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.InlineQuery;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResult;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.result.InlineQueryResultArticle;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +22,10 @@ import java.util.List;
 /**
  * @author Ruben Bermudez
  * @version 1.0
- * @brief Handler for inline queries in Raebot
- * @date 24 of June of 2015
+ * Handler for inline queries in Raebot
  */
 @Slf4j
-public class RaeHandlers extends TelegramLongPollingBot {
+public class RaeHandlers implements LongPollingSingleThreadUpdateConsumer {
     private static final Integer CACHETIME = 86400;
     private final RaeService raeService = new RaeService();
     private static final String THUMBNAILBLUE = "https://lh5.ggpht.com/-kSFHGvQkFivERzyCNgKPIECtIOELfPNWAQdXqQ7uqv2xztxqll4bVibI0oHJYAuAas=w300";
@@ -36,31 +36,27 @@ public class RaeHandlers extends TelegramLongPollingBot {
             "\n\n" +
             "Por ejemplo, intenta escribir `@raebot Punto` aquí.";
 
-    @Override
-    public String getBotToken() {
-        return BotConfig.RAE_TOKEN;
+    private final TelegramClient telegramClient;
+
+    public RaeHandlers(String botToken) {
+        telegramClient = new OkHttpTelegramClient(botToken);
     }
 
     @Override
-    public void onUpdateReceived(Update update) {
+    public void consume(Update update) {
         try {
             if (update.hasInlineQuery()) {
                 handleIncomingInlineQuery(update.getInlineQuery());
             } else if (update.hasMessage() && update.getMessage().isUserMessage()) {
                 try {
-                    execute(getHelpMessage(update.getMessage()));
+                    telegramClient.execute(getHelpMessage(update.getMessage()));
                 } catch (TelegramApiException e) {
-                    log.error(e.getLocalizedMessage(), e);
+                    log.error("Error", e);
                 }
             }
         } catch (Exception e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Unknown exception", e);
         }
-    }
-
-    @Override
-    public String getBotUsername() {
-        return BotConfig.RAE_USER;
     }
 
     /**
@@ -69,16 +65,16 @@ public class RaeHandlers extends TelegramLongPollingBot {
      */
     private void handleIncomingInlineQuery(InlineQuery inlineQuery) {
         String query = inlineQuery.getQuery();
-        log.debug("Searching: " + query);
+        log.debug("Searching: {}", query);
         try {
             if (!query.isEmpty()) {
                 List<RaeService.RaeResult> results = raeService.getResults(query);
-                execute(converteResultsToResponse(inlineQuery, results));
+                telegramClient.execute(converteResultsToResponse(inlineQuery, results));
             } else {
-                execute(converteResultsToResponse(inlineQuery, new ArrayList<>()));
+                telegramClient.execute(converteResultsToResponse(inlineQuery, new ArrayList<>()));
             }
         } catch (TelegramApiException e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Error handing inline query", e);
         }
     }
 
@@ -89,11 +85,12 @@ public class RaeHandlers extends TelegramLongPollingBot {
      * @return AnswerInlineQuery method to answer the query
      */
     private static AnswerInlineQuery converteResultsToResponse(InlineQuery inlineQuery, List<RaeService.RaeResult> results) {
-        AnswerInlineQuery answerInlineQuery = new AnswerInlineQuery();
-        answerInlineQuery.setInlineQueryId(inlineQuery.getId());
-        answerInlineQuery.setCacheTime(CACHETIME);
-        answerInlineQuery.setResults(convertRaeResults(results));
-        return answerInlineQuery;
+        return AnswerInlineQuery
+                .builder()
+                .inlineQueryId(inlineQuery.getId())
+                .cacheTime(CACHETIME)
+                .results(convertRaeResults(results))
+                .build();
     }
 
     /**
@@ -106,16 +103,18 @@ public class RaeHandlers extends TelegramLongPollingBot {
 
         for (int i = 0; i < raeResults.size(); i++) {
             RaeService.RaeResult raeResult = raeResults.get(i);
-            InputTextMessageContent messageContent = new InputTextMessageContent();
-            messageContent.setDisableWebPagePreview(true);
-            messageContent.setParseMode(ParseMode.MARKDOWN);
-            messageContent.setMessageText(raeResult.getDefinition());
-            InlineQueryResultArticle article = new InlineQueryResultArticle();
-            article.setInputMessageContent(messageContent);
-            article.setId(Integer.toString(i));
-            article.setTitle(raeResult.getTitle());
+            InlineQueryResultArticle article = new InlineQueryResultArticle(
+                    Integer.toString(i),
+                    raeResult.getTitle(),
+                    InputTextMessageContent
+                            .builder()
+                            .disableWebPagePreview(true)
+                            .parseMode(ParseMode.MARKDOWN)
+                            .messageText(raeResult.getDefinition())
+                            .build()
+            );
             article.setDescription(raeResult.getDescription());
-            article.setThumbUrl(THUMBNAILBLUE);
+            article.setThumbnailUrl(THUMBNAILBLUE);
             results.add(article);
         }
 
@@ -128,10 +127,11 @@ public class RaeHandlers extends TelegramLongPollingBot {
      * @return SendMessage method
      */
     private static SendMessage getHelpMessage(Message message) {
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(Long.toString(message.getChatId()));
-        sendMessage.enableMarkdown(true);
-        sendMessage.setText(helpMessage);
-        return sendMessage;
+        return SendMessage
+                .builder()
+                .chatId(message.getChatId())
+                .parseMode(ParseMode.MARKDOWN)
+                .text(helpMessage)
+                .build();
     }
 }

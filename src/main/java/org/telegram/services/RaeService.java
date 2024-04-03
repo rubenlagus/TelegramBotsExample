@@ -1,14 +1,10 @@
 package org.telegram.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,16 +12,17 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Ruben Bermudez
  * @version 1.0
- * @brief Rae service
- * @date 20 of June of 2015
+ * Rae service
  */
 @Slf4j
 public class RaeService {
@@ -34,38 +31,45 @@ public class RaeService {
     private static final String SEARCHWORDURL = "search?m=form&w=";
     private static final String WORDLINKBYID = "http://dle.rae.es/?id=";
 
+    private final OkHttpClient okHttpClient = new OkHttpClient().newBuilder().build();
 
     public List<RaeResult> getResults(String query) {
         List<RaeResult> results = new ArrayList<>();
 
         String completeURL;
         try {
-            completeURL = BASEURL + SEARCHEXACTURL + URLEncoder.encode(query, "UTF-8");
+            completeURL = BASEURL + SEARCHEXACTURL + URLEncoder.encode(query, StandardCharsets.UTF_8);
 
-            CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
-            HttpGet request = new HttpGet(completeURL);
+            Request request = new Request.Builder()
+                    .url(completeURL)
+                    .header("charset", StandardCharsets.UTF_8.name())
+                    .header("content-type", "application/json")
+                    .get()
+                    .build();
 
-            CloseableHttpResponse response = client.execute(request);
-            HttpEntity ht = response.getEntity();
+            try (Response response = okHttpClient.newCall(request).execute()) {
+                if (response.isSuccessful()) {
+                    try (ResponseBody body = response.body()) {
+                        if (body != null) {
+                            Document document = Jsoup.parse(body.string());
+                            Element article = document.getElementsByTag("article").first();
+                            String articleId = null;
+                            if (article != null) {
+                                articleId = article.attributes().get("id");
+                            }
+                            Elements elements = document.select(".j");
 
-            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
-            String responseString = EntityUtils.toString(buf, "UTF-8");
-
-            Document document = Jsoup.parse(responseString);
-            Element article = document.getElementsByTag("article").first();
-            String articleId = null;
-            if (article != null) {
-                articleId = article.attributes().get("id");
-            }
-            Elements elements = document.select(".j");
-
-            if (elements.isEmpty()) {
-                results = getResultsWordSearch(query);
-            } else {
-                results = getResultsFromExactMatch(elements, query, articleId);
+                            if (elements.isEmpty()) {
+                                results = getResultsWordSearch(query);
+                            } else {
+                                results = getResultsFromExactMatch(elements, query, articleId);
+                            }
+                        }
+                    }
+                }
             }
         } catch (IOException e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Error getting RAE results", e);
         }
 
         return results;
@@ -76,33 +80,38 @@ public class RaeService {
 
         String completeURL;
         try {
-            completeURL = BASEURL + SEARCHWORDURL + URLEncoder.encode(query, "UTF-8");
+            completeURL = BASEURL + SEARCHWORDURL + URLEncoder.encode(query, StandardCharsets.UTF_8);
 
-            CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
-            HttpGet request = new HttpGet(completeURL);
+            Request request = new Request.Builder()
+                    .url(completeURL)
+                    .header("charset", StandardCharsets.UTF_8.name())
+                    .get()
+                    .build();
 
-            CloseableHttpResponse response = client.execute(request);
-            HttpEntity ht = response.getEntity();
+            try (Response response = okHttpClient.newCall(request).execute()) {
+                if (response.isSuccessful()) {
+                    try (ResponseBody body = response.body()) {
+                        if (body != null) {
+                            Document document = Jsoup.parse(body.string());
+                            Element list = document.select("body div ul").first();
 
-            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
-            String responseString = EntityUtils.toString(buf, "UTF-8");
-
-            Document document = Jsoup.parse(responseString);
-            Element list = document.select("body div ul").first();
-
-            if (list != null) {
-                Elements links = list.getElementsByTag("a");
-                if (!links.isEmpty()) {
-                    for (Element link : links) {
-                        List<RaeResult> partialResults = fetchWord(URLEncoder.encode(link.attributes().get("href"), "UTF-8"), link.text());
-                        if (!partialResults.isEmpty()) {
-                            results.addAll(partialResults);
+                            if (list != null) {
+                                Elements links = list.getElementsByTag("a");
+                                if (!links.isEmpty()) {
+                                    for (Element link : links) {
+                                        List<RaeResult> partialResults = fetchWord(URLEncoder.encode(link.attributes().get("href"), StandardCharsets.UTF_8), link.text());
+                                        if (!partialResults.isEmpty()) {
+                                            results.addAll(partialResults);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         } catch (IOException e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Error getting results from search", e);
         }
 
         return results;
@@ -115,28 +124,33 @@ public class RaeService {
         try {
             completeURL = BASEURL + link;
 
-            CloseableHttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
-            HttpGet request = new HttpGet(completeURL);
+            Request request = new Request.Builder()
+                    .url(completeURL)
+                    .header("charset", StandardCharsets.UTF_8.name())
+                    .get()
+                    .build();
 
-            CloseableHttpResponse response = client.execute(request);
-            HttpEntity ht = response.getEntity();
+            try (Response response = okHttpClient.newCall(request).execute()) {
+                if (response.isSuccessful()) {
+                    try (ResponseBody body = response.body()) {
+                        if (body != null) {
+                            Document document = Jsoup.parse(body.string());
+                            Element article = document.getElementsByTag("article").first();
+                            String articleId = null;
+                            if (article != null) {
+                                articleId = article.attributes().get("id");
+                            }
+                            Elements elements = document.select(".j");
 
-            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
-            String responseString = EntityUtils.toString(buf, "UTF-8");
-
-            Document document = Jsoup.parse(responseString);
-            Element article = document.getElementsByTag("article").first();
-            String articleId = null;
-            if (article != null) {
-                articleId = article.attributes().get("id");
-            }
-            Elements elements = document.select(".j");
-
-            if (!elements.isEmpty()) {
-                results = getResultsFromExactMatch(elements, word, articleId);
+                            if (!elements.isEmpty()) {
+                                results = getResultsFromExactMatch(elements, word, articleId);
+                            }
+                        }
+                    }
+                }
             }
         } catch (IOException e) {
-            log.error(e.getLocalizedMessage(), e);
+            log.error("Fetching words", e);
         }
 
         return results;
@@ -153,19 +167,19 @@ public class RaeService {
             result.index = i;
             result.word = capitalizeFirstLetter(word);
             Elements tags = element.getElementsByTag("abbr");
-            tags.removeIf(x -> !x.parent().equals(element));
+            tags.removeIf(x -> !Objects.equals(x.parent(), element));
             for (Element tag : tags) {
                 result.tags.put(tag.text(), tag.attributes().get("title"));
             }
             Elements definition = element.getElementsByTag("mark");
-            definition.removeIf(x -> !x.parent().equals(element));
+            definition.removeIf(x -> !Objects.equals(x.parent(), element));
             if (definition.isEmpty()) {
                 results.addAll(findResultsFromRedirect(element, word));
             } else {
                 StringBuilder definitionBuilder = new StringBuilder();
-                definition.stream().forEachOrdered(y -> {
+                definition.forEach(y -> {
                     String partialText = y.text();
-                    if (definitionBuilder.length() > 0) {
+                    if (!definitionBuilder.isEmpty()) {
                         definitionBuilder.append(" ");
                         partialText = partialText.toLowerCase();
                     }
@@ -191,7 +205,7 @@ public class RaeService {
     }
 
     private static String capitalizeFirstLetter(String original) {
-        if (original == null || original.length() == 0) {
+        if (original == null || original.isEmpty()) {
             return original;
         }
         return original.substring(0, 1).toUpperCase() + original.substring(1);

@@ -55,7 +55,7 @@ public class TimerExecutor {
      * @param targetSec  Second to execute it
      */
     public void startExecutionEveryDayAt(CustomTimerTask task, int targetHour, int targetMin, int targetSec) {
-        log.warn("Posting new task" + task.getTaskName());
+        log.warn("Posting new task {}", task.getTaskName());
         final Runnable taskWrapper = () -> {
             try {
                 task.execute();
@@ -82,7 +82,7 @@ public class TimerExecutor {
     private long computNextDilay(int targetHour, int targetMin, int targetSec) {
         final LocalDateTime localNow = LocalDateTime.now(Clock.systemUTC());
         LocalDateTime localNextTarget = localNow.withHour(targetHour).withMinute(targetMin).withSecond(targetSec);
-        while (localNow.compareTo(localNextTarget.minusSeconds(1)) > 0) {
+        while (localNow.isAfter(localNextTarget.minusSeconds(1))) {
             localNextTarget = localNextTarget.plusDays(1);
         }
 
@@ -103,9 +103,9 @@ public class TimerExecutor {
         try {
             executorService.awaitTermination(1, TimeUnit.DAYS);
         } catch (InterruptedException ex) {
-            log.error(ex.getLocalizedMessage(), ex);
+            log.error("Task interrupted", ex);
         } catch (Exception e) {
-            log.error(e.getLocalizedMessage(), "Bot threw an unexpected exception at TimerExecutor", e);
+            log.error("Bot threw an unexpected exception at TimerExecutor", e);
         }
     }
 }

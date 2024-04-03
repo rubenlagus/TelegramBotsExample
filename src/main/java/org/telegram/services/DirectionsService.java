@@ -1,14 +1,10 @@
 package org.telegram.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.entity.BufferedHttpEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -16,6 +12,7 @@ import org.telegram.BuildVars;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +20,7 @@ import java.util.List;
 /**
  * @author Ruben Bermudez
  * @version 1.0
- * @brief Weather service
- * @date 20 of June of 2015
+ * Weather service
  */
 @Slf4j
 public class DirectionsService {
@@ -72,32 +68,40 @@ public class DirectionsService {
         try {
             String completURL = BASEURL + "?origin=" + getQuery(origin) + "&destination=" +
                     getQuery(destination) + PARAMS.replace("@language@", language) + APIIDEND;
-            HttpClient client = HttpClientBuilder.create().setSSLHostnameVerifier(new NoopHostnameVerifier()).build();
-            HttpGet request = new HttpGet(completURL);
-            HttpResponse response = client.execute(request);
-            HttpEntity ht = response.getEntity();
-
-            BufferedHttpEntity buf = new BufferedHttpEntity(ht);
-            String responseContent = EntityUtils.toString(buf, "UTF-8");
-
-            JSONObject jsonObject = new JSONObject(responseContent);
-            if (jsonObject.getString("status").equals("OK")) {
-                JSONObject route = jsonObject.getJSONArray("routes").getJSONObject(0);
-                String startOfAddress = LocalisationService.getString("directionsInit", language);
-                String partialResponseToUser = String.format(startOfAddress,
-                        route.getJSONArray("legs").getJSONObject(0).getString("start_address"),
-                        route.getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text"),
-                        route.getJSONArray("legs").getJSONObject(0).getString("end_address"),
-                        route.getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text")
-                        );
-                responseToUser.add(partialResponseToUser);
-                responseToUser.addAll(getDirectionsSteps(
-                        route.getJSONArray("legs").getJSONObject(0).getJSONArray("steps"), language));
-            } else {
-                responseToUser.add(LocalisationService.getString("directionsNotFound", language));
+            OkHttpClient okHttpClient = new OkHttpClient().newBuilder().build();
+            Request request = new Request.Builder()
+                    .url(completURL)
+                    .header("charset", StandardCharsets.UTF_8.name())
+                    .header("content-type", "application/json")
+                    .get()
+                    .build();
+            try (Response response = okHttpClient.newCall(request).execute()) {
+                if (response.isSuccessful()) {
+                    try (ResponseBody body = response.body()) {
+                        if (body != null) {
+                            JSONObject jsonObject = new JSONObject(body.string());
+                            if (jsonObject.getString("status").equals("OK")) {
+                                JSONObject route = jsonObject.getJSONArray("routes").getJSONObject(0);
+                                String startOfAddress = LocalisationService.getString("directionsInit", language);
+                                String partialResponseToUser = String.format(startOfAddress,
+                                        route.getJSONArray("legs").getJSONObject(0).getString("start_address"),
+                                        route.getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getString("text"),
+                                        route.getJSONArray("legs").getJSONObject(0).getString("end_address"),
+                                        route.getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getString("text")
+                                );
+                                responseToUser.add(partialResponseToUser);
+                                responseToUser.addAll(getDirectionsSteps(
+                                        route.getJSONArray("legs").getJSONObject(0).getJSONArray("steps"), language));
+                            } else {
+                                responseToUser.add(LocalisationService.getString("directionsNotFound", language));
+                            }
+                        } else {
+                        }
+                    }
+                }
             }
         } catch (Exception e) {
-            log.warn(e.getLocalizedMessage(), e);
+            log.warn("Error getting directions", e);
             responseToUser.add(LocalisationService.getString("errorFetchingDirections", language));
         }
         return responseToUser;

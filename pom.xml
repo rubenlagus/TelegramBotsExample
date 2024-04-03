@@ -11,15 +11,32 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <httpcompontents.version>4.5.3</httpcompontents.version>
-        <telegrambots.version>4.0.1</telegrambots.version>
-        <json.version>20160810</json.version>
-        <jsoup.version>1.10.2</jsoup.version>
-        <mysql.version>6.0.6</mysql.version>
-        <commonsio.version>2.5</commonsio.version>
+        <httpcompontents.version>4.5.13</httpcompontents.version>
+        <telegrambots.version>5.0.1.1</telegrambots.version>
+        <json.version>20201115</json.version>
+        <jsoup.version>1.13.1</jsoup.version>
+        <mysql.version>8.0.23</mysql.version>
+        <commonsio.version>2.8.0</commonsio.version>
+        <lombok.version>1.18.16</lombok.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.12.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
@@ -145,24 +162,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.4.1</version>
-                <executions>
-                    <execution>
-                        <id>enforce</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <rules>
-                        <DependencyConvergence />
-                    </rules>
-                </configuration>
             </plugin>
         </plugins>
         <pluginManagement>

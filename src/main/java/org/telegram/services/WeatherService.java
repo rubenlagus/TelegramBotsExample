@@ -1,5 +1,6 @@
 package org.telegram.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -11,7 +12,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.telegram.BuildVars;
 import org.telegram.database.DatabaseManager;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -26,9 +26,8 @@ import java.time.format.DateTimeFormatter;
  * @brief Weather service
  * @date 20 of June of 2015
  */
+@Slf4j
 public class WeatherService {
-    private static final String LOGTAG = "WEATHERSERVICE";
-
     public static final String METRICSYSTEM = "metric";
     public static final String IMPERIALSYSTEM = "imperial";
 
@@ -91,7 +90,7 @@ public class WeatherService {
             String responseString = EntityUtils.toString(buf, "UTF-8");
 
             JSONObject jsonObject = new JSONObject(responseString);
-            BotLogger.info(LOGTAG, jsonObject.toString());
+            log.info(jsonObject.toString());
             if (jsonObject.getInt("cod") == 200) {
                 cityFound = jsonObject.getJSONObject("city").getString("name") + " (" +
                         jsonObject.getJSONObject("city").getString("country") + ")";
@@ -99,11 +98,11 @@ public class WeatherService {
                 responseToUser = String.format(LocalisationService.getString("weatherAlert", language),
                         cityFound, convertListOfForecastToString(jsonObject, language, units, false));
             } else {
-                BotLogger.warn(LOGTAG, jsonObject.toString());
+                log.warn(jsonObject.toString());
                 responseToUser = LocalisationService.getString("cityNotFound", language);
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
             responseToUser = LocalisationService.getString("errorFetchingWeather", language);
         }
         return responseToUser;
@@ -132,7 +131,7 @@ public class WeatherService {
             String responseString = EntityUtils.toString(buf, "UTF-8");
 
             JSONObject jsonObject = new JSONObject(responseString);
-            BotLogger.info(LOGTAG, jsonObject.toString());
+            log.info(jsonObject.toString());
             if (jsonObject.getInt("cod") == 200) {
                 cityFound = jsonObject.getJSONObject("city").getString("name") + " (" +
                         jsonObject.getJSONObject("city").getString("country") + ")";
@@ -140,11 +139,11 @@ public class WeatherService {
                 responseToUser = String.format(LocalisationService.getString("weatherForcast", language),
                         cityFound, convertListOfForecastToString(jsonObject, language, units, true));
             } else {
-                BotLogger.warn(LOGTAG, jsonObject.toString());
+                log.warn(jsonObject.toString());
                 responseToUser = LocalisationService.getString("cityNotFound", language);
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
             responseToUser = LocalisationService.getString("errorFetchingWeather", language);
         }
         return responseToUser;
@@ -156,7 +155,7 @@ public class WeatherService {
      * @return userHash to be send to use
      * @note Forecast for the following 3 days
      */
-    public String fetchWeatherForecastByLocation(Float longitude, Float latitude, Integer userId, String language, String units) {
+    public String fetchWeatherForecastByLocation(Double longitude, Double latitude, Integer userId, String language, String units) {
         String cityFound;
         String responseToUser;
         try {
@@ -179,11 +178,11 @@ public class WeatherService {
                 responseToUser = String.format(LocalisationService.getString("weatherForcast", language),
                         cityFound, convertListOfForecastToString(jsonObject, language, units, true));
             } else {
-                BotLogger.warn(LOGTAG, jsonObject.toString());
+                log.warn(jsonObject.toString());
                 responseToUser = LocalisationService.getString("cityNotFound", language);
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
             responseToUser = LocalisationService.getString("errorFetchingWeather", language);
         }
         return responseToUser;
@@ -220,11 +219,11 @@ public class WeatherService {
                 responseToUser = String.format(LocalisationService.getString("weatherCurrent", language),
                         cityFound, convertCurrentWeatherToString(jsonObject, language, units, emoji));
             } else {
-                BotLogger.warn(LOGTAG, jsonObject.toString());
+                log.warn(jsonObject.toString());
                 responseToUser = LocalisationService.getString("cityNotFound", language);
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
             responseToUser = LocalisationService.getString("errorFetchingWeather", language);
         }
         return responseToUser;
@@ -236,7 +235,7 @@ public class WeatherService {
      * @return userHash to be send to use
      * @note Forecast for the following 3 days
      */
-    public String fetchWeatherCurrentByLocation(Float longitude, Float latitude, Integer userId, String language, String units) {
+    public String fetchWeatherCurrentByLocation(Double longitude, Double latitude, Integer userId, String language, String units) {
         String cityFound;
         String responseToUser;
         try {
@@ -259,11 +258,11 @@ public class WeatherService {
                 responseToUser = String.format(LocalisationService.getString("weatherCurrent", language),
                         cityFound, convertCurrentWeatherToString(jsonObject, language, units, null));
             } else {
-                BotLogger.warn(LOGTAG, jsonObject.toString());
+                log.warn(jsonObject.toString());
                 responseToUser = LocalisationService.getString("cityNotFound", language);
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
             responseToUser = LocalisationService.getString("errorFetchingWeather", language);
         }
         return responseToUser;

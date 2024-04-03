@@ -198,15 +198,15 @@ public class ElektrollArtFanHandler extends TelegramLongPollingBot {
 		List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>();
 		
 		List<InlineKeyboardButton> rowInline = new ArrayList<>();
-		rowInline.add(new InlineKeyboardButton().setText(this.urls.get(index)[2]).setCallbackData("gallery:text:" + index));
+		rowInline.add(InlineKeyboardButton.builder().text(this.urls.get(index)[2]).callbackData("gallery:text:" + index).build());
 		
 		
 		List<InlineKeyboardButton> rowInline2 = new ArrayList<>();
-		rowInline2.add(new InlineKeyboardButton().setText(BACK).setCallbackData("gallery:back:" + index));
-		rowInline2.add(new InlineKeyboardButton().setText(NEXT).setCallbackData("gallery:next:" + index));
+		rowInline2.add(InlineKeyboardButton.builder().text(BACK).callbackData("gallery:back:" + index).build());
+		rowInline2.add(InlineKeyboardButton.builder().text(NEXT).callbackData("gallery:next:" + index).build());
 		
 		List<InlineKeyboardButton> rowInline3 = new ArrayList<>();
-		rowInline3.add(new InlineKeyboardButton().setText("Link").setUrl(this.urls.get(index)[0]));
+		rowInline3.add(InlineKeyboardButton.builder().text("Link").url(this.urls.get(index)[0]).build());
 		
 		
 		rowsInline.add(rowInline);

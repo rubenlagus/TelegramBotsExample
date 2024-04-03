@@ -1,5 +1,6 @@
 package org.telegram.updateshandlers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.BotConfig;
 import org.telegram.Commands;
 import org.telegram.database.DatabaseManager;
@@ -16,7 +17,6 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRem
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 import org.telegram.telegrambots.meta.updateshandlers.SentCallback;
 
 import java.io.InvalidObjectException;
@@ -30,9 +30,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @brief Handler for updates to Directions Bot
  * @date 24 of June of 2015
  */
+@Slf4j
 public class DirectionsHandlers extends TelegramLongPollingBot {
-    private static final String LOGTAG = "DIRECTIONSHANDLERS";
-
     private static final int WATING_ORIGIN_STATUS = 0;
     private static final int WATING_DESTINY_STATUS = 1;
     private final ConcurrentLinkedQueue<Integer> languageMessages = new ConcurrentLinkedQueue<>();
@@ -48,7 +47,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         try {
             handleDirections(update);
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
@@ -88,11 +87,11 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                         } else {
                             SendMessage sendMessageRequest = new SendMessage();
                             sendMessageRequest.setText(LocalisationService.getString("youNeedReplyDirections", language));
-                            sendMessageRequest.setChatId(message.getChatId());
+                            sendMessageRequest.setChatId(Long.toString(message.getChatId()));
                             try {
                                 execute(sendMessageRequest);
                             } catch (TelegramApiException e) {
-                                BotLogger.error(LOGTAG, e);
+                                log.error(e.getLocalizedMessage(), e);
                             }
                         }
                     }
@@ -106,7 +105,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
         String destiny = message.getText();
         List<String> directions = DirectionsService.getInstance().getDirections(origin, destiny, language);
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
         ReplyKeyboardRemove replyKeyboardRemove = new ReplyKeyboardRemove();
         replyKeyboardRemove.setSelective(true);
         sendMessageRequest.setReplyMarkup(replyKeyboardRemove);
@@ -131,7 +130,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                     }
                 });
             } catch (TelegramApiException e) {
-                BotLogger.error(LOGTAG, e);
+                log.error(e.getLocalizedMessage(), e);
             }
         }
 
@@ -139,7 +138,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
 
     private void onOriginReceived(Message message, String language) {
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
         sendMessageRequest.setReplyToMessageId(message.getMessageId());
         ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
         forceReplyKeyboard.setSelective(true);
@@ -165,7 +164,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                 }
             });
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
 
     }
@@ -176,17 +175,17 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                 LocalisationService.getString("helpDirections", language),
                 Commands.startDirectionCommand);
         sendMessageRequest.setText(helpDirectionsFormated);
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
         try {
             execute(sendMessageRequest);
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
     private void onStartdirectionsCommand(Message message, String language) {
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
         sendMessageRequest.setReplyToMessageId(message.getMessageId());
         ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
         forceReplyKeyboard.setSelective(true);
@@ -212,14 +211,14 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
                 }
             });
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
 
     }
 
     private void onSetLanguageCommand(Message message, String language) throws InvalidObjectException {
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         List<LocalisationService.Language> languages = LocalisationService.getSupportedLanguages();
         List<KeyboardRow> commands = new ArrayList<>();
@@ -238,14 +237,14 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
             execute(sendMessageRequest);
             languageMessages.add(message.getFrom().getId());
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
     private void onLanguageSelected(Message message) throws InvalidObjectException {
         String[] parts = message.getText().split("-->", 2);
         SendMessage sendMessageRequest = new SendMessage();
-        sendMessageRequest.setChatId(message.getChatId());
+        sendMessageRequest.setChatId(Long.toString(message.getChatId()));
         if (LocalisationService.getLanguageByCode(parts[0].trim()) != null) {
             DatabaseManager.getInstance().putUserLanguage(message.getFrom().getId(), parts[0].trim());
             sendMessageRequest.setText(LocalisationService.getString("languageModified", parts[0].trim()));
@@ -260,7 +259,7 @@ public class DirectionsHandlers extends TelegramLongPollingBot {
             execute(sendMessageRequest);
             languageMessages.remove(message.getFrom().getId());
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 }

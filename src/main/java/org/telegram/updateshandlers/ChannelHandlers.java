@@ -1,5 +1,6 @@
 package org.telegram.updateshandlers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.BotConfig;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -8,7 +9,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.InvalidObjectException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,9 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * This is a use case that will send a message to a channel if it is added as an admin to it.
  * @date 24 of June of 2015
  */
+@Slf4j
 public class ChannelHandlers extends TelegramLongPollingBot {
-    private static final String LOGTAG = "CHANNELHANDLERS";
-
     private static final int WAITINGCHANNEL = 1;
 
     private static final String HELP_TEXT = "Send me the channel username where you added me as admin.";
@@ -42,11 +41,11 @@ public class ChannelHandlers extends TelegramLongPollingBot {
                 try {
                     handleIncomingMessage(message);
                 } catch (InvalidObjectException e) {
-                    BotLogger.severe(LOGTAG, e);
+                    log.error(e.getLocalizedMessage(), e);
                 }
             }
         } catch (Exception e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
@@ -92,7 +91,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
                 }
             }
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
@@ -114,7 +113,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     private void sendErrorMessage(Message message, String errorText) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(Long.toString(message.getChatId()));
         sendMessage.setReplyToMessageId(message.getMessageId());
 
         sendMessage.setText(String.format(ERROR_MESSAGE_TEXT, message.getText().trim(), errorText.replace("\"", "\\\"")));
@@ -123,14 +122,14 @@ public class ChannelHandlers extends TelegramLongPollingBot {
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
     private static SendMessage getWrongUsernameMessage(Message message) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(Long.toString(message.getChatId()));
         sendMessage.setReplyToMessageId(message.getMessageId());
 
         ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard();
@@ -145,7 +144,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     private static SendMessage getMessageToChannelSent(Message message) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(message.getChatId());
+        sendMessage.setChatId(Long.toString(message.getChatId()));
         sendMessage.setReplyToMessageId(message.getMessageId());
 
         sendMessage.setText(AFTER_CHANNEL_TEXT);
@@ -155,7 +154,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
     private void sendHelpMessage(Long chatId, Integer messageId, ReplyKeyboardMarkup replyKeyboardMarkup) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.enableMarkdown(true);
-        sendMessage.setChatId(chatId);
+        sendMessage.setChatId(Long.toString(chatId));
         sendMessage.setReplyToMessageId(messageId);
         if (replyKeyboardMarkup != null) {
             sendMessage.setReplyMarkup(replyKeyboardMarkup);
@@ -165,7 +164,7 @@ public class ChannelHandlers extends TelegramLongPollingBot {
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 }

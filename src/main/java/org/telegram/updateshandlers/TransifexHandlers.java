@@ -1,5 +1,6 @@
 package org.telegram.updateshandlers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.BotConfig;
 import org.telegram.BuildVars;
 import org.telegram.Commands;
@@ -14,7 +15,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
@@ -26,9 +26,8 @@ import java.util.List;
  * @brief Handler for updates to Transifex Bot
  * @date 24 of June of 2015
  */
+@Slf4j
 public class TransifexHandlers extends TelegramLongPollingBot {
-    private static final String LOGTAG = "TRANSIFEXHANDLERS";
-
     @Override
     public String getBotToken() {
         return BotConfig.TRANSIFEX_TOKEN;
@@ -39,7 +38,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
         try {
             handleUpdate(update);
         } catch (Throwable e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
     }
 
@@ -87,20 +86,20 @@ public class TransifexHandlers extends TelegramLongPollingBot {
                         Commands.transifexTDesktop, Commands.transifexOSX, Commands.transifexWP,
                         Commands.transifexAndroidSupportCommand);
                 sendMessageRequest.setText(helpFormated);
-                sendMessageRequest.setChatId(message.getChatId());
+                sendMessageRequest.setChatId(Long.toString(message.getChatId()));
                 try {
                     execute(sendMessageRequest);
                 } catch (TelegramApiException e) {
-                    BotLogger.error(LOGTAG, e);
+                    log.error(e.getLocalizedMessage(), e);
                 }
             }
 
             if (sendDocument != null) {
-                sendDocument.setChatId(message.getChatId());
+                sendDocument.setChatId(Long.toString(message.getChatId()));
                 try {
                     execute(sendDocument);
                 } catch (TelegramApiException e) {
-                    BotLogger.error(LOGTAG, e);
+                    log.error(e.getLocalizedMessage(), e);
                 }
             }
         } else if (parts[0].startsWith(Commands.help) ||
@@ -112,11 +111,11 @@ public class TransifexHandlers extends TelegramLongPollingBot {
                     Commands.transifexTDesktop, Commands.transifexOSX, Commands.transifexWP,
                     Commands.transifexAndroidSupportCommand);
             sendMessageRequest.setText(helpFormated);
-            sendMessageRequest.setChatId(message.getChatId());
+            sendMessageRequest.setChatId(Long.toString(message.getChatId()));
             try {
                 execute(sendMessageRequest);
             } catch (TelegramApiException e) {
-                BotLogger.error(LOGTAG, e);
+                log.error(e.getLocalizedMessage(), e);
             }
         }
     }
@@ -124,7 +123,7 @@ public class TransifexHandlers extends TelegramLongPollingBot {
     private void sendMovedToMessage(Message message) throws InvalidObjectException, TelegramApiException {
         String language = DatabaseManager.getInstance().getUserLanguage(message.getFrom().getId());
         SendMessage answer = new SendMessage();
-        answer.setChatId(message.getChatId());
+        answer.setChatId(Long.toString(message.getChatId()));
         answer.setReplyToMessageId(message.getMessageId());
         answer.setText(LocalisationService.getString("movedToLangBot", language));
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();

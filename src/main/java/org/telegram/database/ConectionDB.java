@@ -7,18 +7,24 @@
  */
 package org.telegram.database;
 
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.BuildVars;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * @author Ruben Bermudez
  * @version 2.0
  * Connector to database
  */
+@Slf4j
 public class ConectionDB {
-    private static final String LOGTAG = "CONNECTIONDB";
     private Connection currentConection;
 
     public ConectionDB() {
@@ -31,7 +37,7 @@ public class ConectionDB {
             Class.forName(BuildVars.controllerDB).newInstance();
             connection = DriverManager.getConnection(BuildVars.linkDB, BuildVars.userDB, BuildVars.password);
         } catch (SQLException | ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
 
         return connection;
@@ -41,7 +47,7 @@ public class ConectionDB {
         try {
             this.currentConection.close();
         } catch (SQLException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
 
     }
@@ -80,7 +86,7 @@ public class ConectionDB {
                 }
             }
         } catch (SQLException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
         return max;
     }

@@ -1,5 +1,6 @@
 package org.telegram.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -12,7 +13,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -27,9 +27,8 @@ import java.util.Map;
  * @brief Rae service
  * @date 20 of June of 2015
  */
+@Slf4j
 public class RaeService {
-    private static final String LOGTAG = "RAESERVICE";
-
     private static final String BASEURL = "http://dle.rae.es/srv/"; ///< Base url for REST
     private static final String SEARCHEXACTURL = "search?m=30&w=";
     private static final String SEARCHWORDURL = "search?m=form&w=";
@@ -66,7 +65,7 @@ public class RaeService {
                 results = getResultsFromExactMatch(elements, query, articleId);
             }
         } catch (IOException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
 
         return results;
@@ -103,7 +102,7 @@ public class RaeService {
                 }
             }
         } catch (IOException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
 
         return results;
@@ -137,7 +136,7 @@ public class RaeService {
                 results = getResultsFromExactMatch(elements, word, articleId);
             }
         } catch (IOException e) {
-            BotLogger.error(LOGTAG, e);
+            log.error(e.getLocalizedMessage(), e);
         }
 
         return results;

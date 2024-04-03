@@ -1,5 +1,6 @@
 package org.telegram.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -12,7 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.telegram.BuildVars;
-import org.telegram.telegrambots.meta.logging.BotLogger;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -26,9 +26,8 @@ import java.util.List;
  * @brief Weather service
  * @date 20 of June of 2015
  */
+@Slf4j
 public class DirectionsService {
-    private static final String LOGTAG = "DIRECTIONSSERVICE";
-
     private static final String BASEURL = "https://maps.googleapis.com/maps/api/directions/json"; ///< Base url for REST
     private static final String APIIDEND = "&key=" + BuildVars.DirectionsApiKey;
     private static final String PARAMS = "&language=@language@&units=metric";
@@ -98,7 +97,7 @@ public class DirectionsService {
                 responseToUser.add(LocalisationService.getString("directionsNotFound", language));
             }
         } catch (Exception e) {
-            BotLogger.warn(LOGTAG, e);
+            log.warn(e.getLocalizedMessage(), e);
             responseToUser.add(LocalisationService.getString("errorFetchingDirections", language));
         }
         return responseToUser;
